@@ -302,3 +302,28 @@ def soap_030_1(session_id, jaar):
     </soap:Envelope>'''
 
     return body
+
+
+
+def soap_050_1(session_id):
+
+    body = f'''<?xml version="1.0" encoding="utf-16"?>
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <soap:Header>
+    	 <Header xmlns="http://www.twinfield.com/">
+    	  <SessionID>{session_id}</SessionID>
+    	</Header>
+      </soap:Header>
+      <soap:Body>
+    	 <ProcessXmlDocument xmlns="http://www.twinfield.com/">
+    		<xmlRequest>
+    <columns code="050_1">
+    <column xmlns="">
+    </columns>
+    		</xmlRequest>
+    	</ProcessXmlDocument>
+      </soap:Body>
+    </soap:Envelope>'''
+
+    return body
+

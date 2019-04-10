@@ -5,56 +5,39 @@ import soap_bodies
 import functions
 
 
+def read_offices(param):
 
-def read_030_1(param):
+    url = 'https://c4.twinfield.com/webservices/processxml.asmx?wsdl'
+    body = soap_bodies.soap_offices(param.session_id)
+    response = requests.post(url=url, headers=param.header, data=body)
 
-    period = '2019'
+    data = functions.parse_session_response(response, param)
+
+    officecodes_in_scope = ['1038632', '1060253', '1060254', '1060255', '1060256', '1060257', '1060258', '1060259',
+                            '1060260', '1060261', '1060262', '1060265', '1060266', '1060267', '1060269', '1060270',
+                            '1060271', '1060272', '1060273', '1060274', '1063019', '1064667', '1064668', '1064670',
+                            '1064671', '1064672', '1064673', '1064678', '1064679', '1064680', '1064681', '1064682_',
+                            '1064683_','1064684', '1064685', '1066219', '1074700', '1074701', '1074702', '1074703',
+                            '1074704']
+
+    data = data[data.index.isin(officecodes_in_scope)]
+
+    return data
+
+def read_030_1(param, jaar):
+
+    period = jaar
     url = 'https://c4.twinfield.com/webservices/processxml.asmx?wsdl'
     body = soap_bodies.soap_030_1(param.session_id, period)
-
     response = requests.post(url=url, headers=param.header, data=body)
-    root = ET.fromstring(response.text)
-    body = root.find('env:Body', param.ns)
-    data = body.find('tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult', param.ns)
 
-    data = parse_response(data, param)
+    data = functions.parse_response(response, param)
+
+    # metadata ophalen en gebruiken om velden te hernoemen
+    #fieldmapping = functions.get_metadata(module='030_1', param=param)
+    #data.rename(fieldmapping, axis=1, inplace=True)
 
 
     return data
 
-
-def parse_response(data, param):
-    browse = data.find('browse')
-    tr = browse.findall('tr')
-
-    ttl_records = list()
-
-    for trans in tr:
-
-        info = dict()
-
-        for col in trans:
-
-            val = col.text
-
-            if 'field' in col.attrib.keys():
-                name = col.attrib['field']
-
-                info[name] = val
-
-        ttl_records.append(info)
-
-    data = pd.DataFrame(ttl_records)
-
-    # metadata ophalen
-
-    metadata = functions.get_metadata(module = '030_1', param=param)
-    fieldmapping = metadata['label'].to_dict()
-
-    data.rename(fieldmapping, axis=1, inplace=True)
-
-    return data
-
-
-# read column metadata for browse module
 

@@ -34,6 +34,8 @@ class SessionParameters():
 
         self.session_id = SessionParameters.get_session_id(self, self.url, self.header, self.body)
 
+        print(f'session id: {self.session_id}')
+
     def parse_session_id(self, root):
 
         header = root.find('env:Header/tw:Header', self.ns)
@@ -57,8 +59,6 @@ class SessionParameters():
         return session_id
 
 
-
-
 def str_decoding(base64_str):
     decoded = codecs.decode(base64_str.encode(), 'base64').decode()
 
@@ -72,20 +72,6 @@ def str_encoding(str_input):
 
 # offices
 
-def get_offices(param):
-
-    url = 'https://c4.twinfield.com/webservices/processxml.asmx?wsdl'
-    body = soap_bodies.soap_offices(param.session_id)
-
-    response = requests.post(url=url, headers=param.header, data=body)
-
-    if response:
-        offices = parse_session_response(response, param)
-    else:
-        print('niet gelukt om data binnen te halen')
-        offices = pd.DataFrame()
-
-    return offices
 
 def parse_session_response(response, param):
 
@@ -134,9 +120,12 @@ def get_metadata(module, param):
 
     metadata.set_index('field', inplace=True)
 
-    return metadata
+    fieldmapping = metadata['label'].to_dict()
+
+    return fieldmapping
 
 def parse_metadata_response(data):
+
     col = data.find('columns')
 
     rec = list()
@@ -152,6 +141,41 @@ def parse_metadata_response(data):
     df = pd.DataFrame(rec)
 
     return df
+
+
+def parse_response(response, param):
+
+    root = ET.fromstring(response.text)
+    body = root.find('env:Body', param.ns)
+    try:
+        data = body.find('tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult', param.ns)
+    except:
+        return pd.DataFrame()
+
+    browse = data.find('browse')
+
+    tr = browse.findall('tr')
+
+    ttl_records = list()
+
+    for trans in tr:
+
+        info = dict()
+
+        for col in trans:
+
+            val = col.text
+
+            if 'field' in col.attrib.keys():
+                name = col.attrib['field']
+
+                info[name] = val
+
+        ttl_records.append(info)
+
+    data = pd.DataFrame(ttl_records)
+
+    return data
 
 
 def select_office(officecode, param):
@@ -171,5 +195,5 @@ def select_office(officecode, param):
 
     pass_fail = data.text
 
-    print(pass_fail)
+    print(pass_fail, '!')
 

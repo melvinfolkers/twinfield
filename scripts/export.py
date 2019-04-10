@@ -3,7 +3,7 @@ from datetime import datetime
 import codecs
 from sqlalchemy import create_engine
 from azure.storage.blob import BlockBlobService
-
+import os
 
 
 def push_bigquery(df, folder,filename):
@@ -53,7 +53,7 @@ def upload_to_blob(df, tablename, container = 'staffing-twinfield'):
 
     df = remove_special_chars(df)
 
-    df.to_csv(filename, index=False)
+    df.to_csv(tablename + '.csv', index=False)
 
     try:
         # Create the BlockBlockService that is used to call the Blob service for the storage account
@@ -64,7 +64,7 @@ def upload_to_blob(df, tablename, container = 'staffing-twinfield'):
         block_blob_service.create_container(container)
 
         # Determine file to upload
-        full_path_to_file = os.path.join(os.getcwd(), tablename)
+        full_path_to_file = os.path.join(os.getcwd(), tablename +  '.csv')
 
         print("\nUploading to Blob storage as blob " + tablename)
 
@@ -86,3 +86,5 @@ def remove_special_chars(df):
     df = df.apply(lambda x: x.str.replace(r'\n', ''), axis=0)
 
     return df
+
+

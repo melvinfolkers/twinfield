@@ -1,22 +1,9 @@
-import pandas_gbq as gbq
-from datetime import datetime
+
 import codecs
 from sqlalchemy import create_engine
 from azure.storage.blob import BlockBlobService
 import os
-
-
-def push_bigquery(df, folder,filename):
-    # 5.2 exporteren naar google bigquery
-
-    #exporteer het naar google bigquery
-    starttime = datetime.now()
-    print('aantal rijen:', len(df), 'aantal kolommen:', len(df.columns))
-    print('start met uploaden van', len(df), 'records naar google bigquery...')
-    gbq.to_gbq(df, f'{folder}.{filename}', 'yellowstacks-217623', if_exists ='replace')
-
-    print('cloud upload success! tijd:', datetime.now() - starttime)
-
+import logging
 
 def auth_azure():
     uid = 'lavastormadmin'
@@ -47,43 +34,39 @@ def push_to_azure(df, tablename):
     numberofcolumns = str(len(df.columns))
 
     result = f'push successful ({tablename}):', len(df), 'records pushed to Microsoft Azure', f'({numberofcolumns} columns)'
-    print(result)
+    logging.info(result)
 
-def upload_to_blob(df, tablename, container = 'staffing-twinfield'):
+def upload_to_blob(df, tablename,stagingdir, container = 'staffing-twinfield'):
 
     df = remove_special_chars(df)
 
-    df.to_csv(tablename + '.csv', index=False)
+    full_path_to_file = os.path.join(stagingdir, tablename + '.csv')
+    df.to_csv(full_path_to_file, index=False)    # export file to staging
 
     try:
         # Create the BlockBlockService that is used to call the Blob service for the storage account
-        block_blob_service = BlockBlobService(account_name='staffingeu1',
-                                              account_key='NTBe2jAEUgrDZZ+J0caCVOTGEwksnYaHpOczEHkyz7d2JbgXvugr7n6Am2GSFUhIyuNIIpVsLMri2IukhgPgUw==')
-
+        block_blob_service = BlockBlobService(account_name='staffingeu2',
+                                              account_key='hRR5Mkf7i6JFGa18RC3gA5nClnzpnr0+74hTSMql2oHzcLmxyHyiAz7nljNDHyh0dUyCnUz+EE6BIGs6rpMLhw==')
 
         block_blob_service.create_container(container)
 
-        # Determine file to upload
-        full_path_to_file = os.path.join(os.getcwd(), tablename +  '.csv')
+        logging.info(f'Uploading to Blob storage as blob {tablename}')
 
-        print("\nUploading to Blob storage as blob " + tablename)
-
-        # Upload the created file, use local_file_name for the blob name
+        # Upload the  file, use tablename for the blob name
         block_blob_service.create_blob_from_path(container, tablename, full_path_to_file)
 
+        logging.info(f'Upload {tablename} to blob done!')
     except Exception as e:
         print(e)
 
 
 def remove_special_chars(df):
 
-    #.replace('.', '_')
-
     oldlist = df.columns
     newlist = [(x.replace('/', '_').replace('-', '_').replace(' ', '_')) for x in oldlist]
     df.columns = newlist
 
-    df = df.apply(lambda x: x.str.replace(r'\n', ''), axis=0)
+    #df = df.apply(lambda x: x.str.replace(r'\n', ''), axis=0)
 
     return df
 

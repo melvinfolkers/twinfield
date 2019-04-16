@@ -4,7 +4,7 @@ import codecs
 import requests
 import xml.etree.ElementTree as ET
 import soap_bodies
-
+import logging
 
 class SessionParameters():
 
@@ -34,7 +34,7 @@ class SessionParameters():
 
         self.session_id = SessionParameters.get_session_id(self, self.url, self.header, self.body)
 
-        print(f'session id: {self.session_id}')
+        logging.info(f'session id: {self.session_id}')
 
     def parse_session_id(self, root):
 
@@ -179,7 +179,7 @@ def parse_response(response, param):
 
 
 def select_office(officecode, param):
-    print('selecting office: {office}...')
+    logging.info(f'selecting office: {officecode}...')
 
     url = 'https://c4.twinfield.com/webservices/session.asmx?wsdl'
 
@@ -195,5 +195,57 @@ def select_office(officecode, param):
 
     pass_fail = data.text
 
-    print(pass_fail, '!')
+    logging.info(f'{pass_fail} !')
+
+def period_groups(window = 'year'):
+
+    if window == 'year':
+
+        period = [{'from': '00', 'to':'55'}]
+
+    elif window == 'half-year':
+
+        period = [{'from': '00', 'to': '06'},
+                  {'from': '07', 'to': '55'}]
+
+    elif window == 'quarter':
+
+        period = [{'from': '00', 'to': '03'},
+                  {'from': '04', 'to': '06'},
+                  {'from': '07', 'to': '09'},
+                  {'from': '10', 'to': '55'}]
+
+    elif window == 'two_months':
+
+        period = [{'from': '00', 'to':'02'},
+                  {'from': '03', 'to': '04'},
+                  {'from': '05', 'to': '06'},
+                  {'from': '07', 'to': '08'},
+                  {'from': '09', 'to': '10'},
+                  {'from': '11', 'to': '12'},
+                  {'from': '13', 'to': '55'}]
+
+
+    elif window == 'month':
+
+        period = [{'from': '00', 'to':'00'},
+                  {'from': '01', 'to': '01'},
+                  {'from': '02', 'to': '02'},
+                  {'from': '03', 'to': '03'},
+                  {'from': '04', 'to': '04'},
+                  {'from': '05', 'to': '05'},
+                  {'from': '06', 'to': '06'},
+                  {'from': '07', 'to': '07'},
+                  {'from': '08', 'to': '08'},
+                  {'from': '09', 'to': '09'},
+                  {'from': '10', 'to': '10'},
+                  {'from': '11', 'to': '11'},
+                  {'from': '12', 'to': '12'},
+                  {'from': '13', 'to': '13'},
+                  {'from': '55', 'to': '55'}]
+
+    else:
+        info.error('geen periode kunnen toewijzen')
+
+    return period
 

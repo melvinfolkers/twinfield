@@ -1,5 +1,5 @@
 
-
+import logging
 
 def soap_metadata(param, module):
 
@@ -75,7 +75,7 @@ def soap_select_office(param, officecode):
 
 
 
-def soap_030_1(session_id, jaar):
+def soap_030_1(session_id, jaar, periode):
 
     body = f'''<?xml version="1.0" encoding="utf-16"?>
     <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -98,17 +98,20 @@ def soap_030_1(session_id, jaar):
           <field>fin.trs.head.yearperiod</field>
           <ask>true</ask>
           <operator>between</operator>
-          <from>{jaar}/00</from>
-          <to>{jaar}/55</to>
+          <from>{jaar}/{periode['from']}</from>
+          <to>{jaar}/{periode['to']}</to>
        </column> 
     <column xmlns="">
           <field>fin.trs.head.year</field>
+          <visible>true</visible>
        </column>
     <column xmlns="">
           <field>fin.trs.head.period</field>
+          <visible>true</visible>
        </column>
     <column xmlns="">
           <field>fin.trs.head.code</field>
+          <visible>true</visible>
        </column>
     <column xmlns="">
           <field>fin.trs.head.number</field>
@@ -300,6 +303,8 @@ def soap_030_1(session_id, jaar):
     	</ProcessXmlDocument>
       </soap:Body>
     </soap:Envelope>'''
+
+    logging.debug(body)
 
     return body
 

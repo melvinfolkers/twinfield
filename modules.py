@@ -43,8 +43,30 @@ def read_030_1(param, jaar, periode):
     logging.info(f'{len(data)} records in {datetime.now() - start}')
     # metadata ophalen en gebruiken om velden te hernoemen
     #fieldmapping = functions.get_metadata(module='030_1', param=param)
+    #fieldmapping = metadata['label'].to_dict()
     #data.rename(fieldmapping, axis=1, inplace=True)
 
     return data
 
 
+
+def read_164(param):
+
+    start = datetime.now()
+
+    logging.info('start request credit management')
+
+    url = 'https://c4.twinfield.com/webservices/processxml.asmx?wsdl'
+    body = soap_bodies.soap_164(param.session_id)
+    response = requests.post(url=url, headers=param.header, data=body)
+
+    data = functions.parse_response(response, param)
+
+    logging.info(f'{len(data)} records in {datetime.now() - start}')
+
+    # metadata ophalen en gebruiken om velden te hernoemen
+    #fieldmapping = functions.get_metadata(module='164', param=param)
+    #fieldmapping = metadata['label'].to_dict()
+    #data.rename(fieldmapping, axis=1, inplace=True)
+
+    return data

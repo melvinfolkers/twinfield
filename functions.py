@@ -1,3 +1,5 @@
+import os
+from datetime import datetime
 
 import pandas as pd
 import codecs
@@ -5,6 +7,7 @@ import requests
 import xml.etree.ElementTree as ET
 import soap_bodies
 import logging
+
 
 class SessionParameters():
 
@@ -120,9 +123,9 @@ def get_metadata(module, param):
 
     metadata.set_index('field', inplace=True)
 
-    fieldmapping = metadata['label'].to_dict()
+    #fieldmapping = metadata['label'].to_dict()
 
-    return fieldmapping
+    return metadata
 
 def parse_metadata_response(data):
 
@@ -249,3 +252,51 @@ def period_groups(window = 'year'):
 
     return period
 
+
+def soap_columns(metadata):
+    ttl = ''
+
+    for field, rows in metadata.iterrows():
+        column_template = f'''<column xmlns="">
+              <field>{field}</field>
+              <label>{rows['label']}</label>
+              <visible>{rows['visible']}</visible>
+           </column>
+           '''
+
+        ttl = ttl + column_template
+
+    return ttl
+
+
+def set_logging(run_params):
+
+
+    start = datetime.now()
+
+    logfilename = 'runlog_' + start.strftime(format='%Y%m%d_%H%M') + '.log'
+    full_path = os.path.join(run_params.logdir, logfilename)
+
+    logging.getLogger().setLevel(logging.INFO)
+    logging.basicConfig(filename=full_path, level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+    return start
+
+
+class RunParameters():
+
+    def __init__(self):
+
+        self.projectdir = os.getcwd()
+
+        self.logdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'log'))
+        self.stagingdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'staging'))
+
+    def create_dir(destination):
+
+        try:
+            if not os.path.exists(destination):
+                os.makedirs(destination)
+        except OSError:
+            logging.warning('Error Creating directory. ' + destination)
+        return destination

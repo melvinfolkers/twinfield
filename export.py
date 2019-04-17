@@ -4,6 +4,9 @@ from sqlalchemy import create_engine
 from azure.storage.blob import BlockBlobService
 import os
 import logging
+from datetime import datetime
+from mailing import send_mail
+
 
 def auth_azure():
     uid = 'lavastormadmin'
@@ -71,3 +74,15 @@ def remove_special_chars(df):
     return df
 
 
+def upload_data(name, data,start,run_params):
+
+    tablename = f'twinfield_{name}'
+
+    push_to_azure(data.head(n=0), tablename) # zorg dat het schema in met juiste veldeigenschappen klaarstaat in Azure (o regels)
+    upload_to_blob(data, tablename, run_params.stagingdir)
+
+    send_mail(subject=f'ADF: Twinfield data {name} geupload',
+                  message=f'uploaddtijd: {datetime.now() - start} \naantal transacties: {len(data)}')
+
+
+    logging.info(f'Finished in {datetime.now() - start} \n number of transactions: {len(data)}')

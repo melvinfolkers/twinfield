@@ -308,7 +308,123 @@ def soap_030_1(session_id, jaar, periode):
 
     return body
 
+def soap_164(session_id):
 
+    body = f'''<?xml version="1.0" encoding="utf-16"?>
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <soap:Header>
+    	 <Header xmlns="http://www.twinfield.com/">
+    	  <SessionID>{session_id}</SessionID>
+    	</Header>
+      </soap:Header>
+      <soap:Body>
+    	 <ProcessXmlDocument xmlns="http://www.twinfield.com/">
+    		<xmlRequest>
+    <columns code="164">
+<column xmlns="">
+              <field>fin.trs.head.office</field>
+              <label>Administratie</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.head.officename</field>
+              <label>Adm.naam</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.dim2</field>
+              <label>Debiteur</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.dim2name</field>
+              <label>Naam</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.costcenter</field>
+              <label>KPL</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.costcentername</field>
+              <label>Kpl.-naam</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.invnumber</field>
+              <label>Factuurnr.</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.head.date</field>
+              <label>Factuurdatum</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.basevaluesigned</field>
+              <label>Basisbedrag</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.openbasevaluesigned</field>
+              <label>Openstaand bedrag</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.datedue</field>
+              <label>Vervaldatum</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.actioncode</field>
+              <label>Dispuutcode</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.actionname</field>
+              <label>Dispuutnaam</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.actiondate</field>
+              <label>Dispuutdatum</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.actionvalue</field>
+              <label>Dispuutbedrag</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.actiondescription</field>
+              <label>Dispuutomschrijving</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.actioncreated</field>
+              <label>Aanmaakdatum dispuut</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.actionuser</field>
+              <label>Kredietbeheerder</label>
+              <visible>true</visible>
+           </column>
+           <column xmlns="">
+              <field>fin.trs.line.actionusername</field>
+              <label>Naam kredietbeheerder</label>
+              <visible>true</visible>
+           </column>
+    </columns>
+    		</xmlRequest>
+    	</ProcessXmlDocument>
+      </soap:Body>
+    </soap:Envelope>'''
+
+    logging.debug(body)
+
+    return body
 
 def soap_050_1(session_id):
 

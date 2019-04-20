@@ -19,11 +19,13 @@ def pull_transactions(offices,login, jaar = 2019):
         periodes = functions.period_groups(window = 'two_months')
 
         period = request_period(login,jaar, periodes)
+
+        period['administratienaam'] = rows['name']
+        period['administratienummer'] = office
+        period['wm'] = rows['shortname']
+
         data = pd.concat([data, period], axis=0, ignore_index=True, sort=False)
 
-        data['administratienaam'] = rows['name']
-        data['administratienummer'] = office
-        data['wm'] = rows['shortname']
 
     return data
 
@@ -49,6 +51,6 @@ def run_transactions(run_params,login, start, officecode = None, jaar = '2019'):
 
     trans = pull_transactions(offices, login, jaar)
 
-    upload_data('2019', trans, start, run_params)
+    upload_data(jaar, trans, start, run_params)
 
     return trans

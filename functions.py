@@ -277,6 +277,9 @@ def set_logging(run_params):
     logfilename = 'runlog_' + start.strftime(format='%Y%m%d_%H%M') + '.log'
     full_path = os.path.join(run_params.logdir, logfilename)
 
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+
     logging.getLogger().setLevel(logging.INFO)
     logging.basicConfig(filename=full_path, level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 

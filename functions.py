@@ -37,12 +37,11 @@ class SessionParameters():
 
         self.session_id = SessionParameters.get_session_id(self, self.url, self.header, self.body)
 
-        logging.info(f'session id: {self.session_id}')
-
     def parse_session_id(self, root):
 
         header = root.find('env:Header/tw:Header', self.ns)
         session_id = header.find('tw:SessionID', self.ns).text
+        logging.info(f'session id: {session_id}')
 
         return session_id
 
@@ -281,7 +280,7 @@ def set_logging(run_params):
         logging.root.removeHandler(handler)
 
     logging.getLogger().setLevel(logging.INFO)
-    logging.basicConfig(filename=full_path, level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    logging.basicConfig(filename=full_path, level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
 
     return start
 

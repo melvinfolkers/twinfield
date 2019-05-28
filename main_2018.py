@@ -13,7 +13,7 @@ if __name__ == "__main__":
                               pw=r'U3RhZmZpbmcyMDE5IQ==\n',
                               organisation='Associates')
 
-    jaren = ['2019']
+    jaren = ['2018']
 
     for jaar in jaren:
 
@@ -22,6 +22,3 @@ if __name__ == "__main__":
                                 start = start,
                                 jaar = jaar,
                                 upload = True)
-
-
-

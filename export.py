@@ -15,7 +15,7 @@ def auth_azure():
     database = 'landing'
     driver = 'ODBC Driver 13 for SQL Server'
 
-    connectionstring = f'mssql+pyodbc://{uid}:{str_decoding(password)}@{server}:1433/{database}?driver={driver}'
+    connectionstring = 'mssql+pyodbc://{}:{}@{}:1433/{}?driver={}'.format(uid,str_decoding(password),server,database, driver)
 
     return connectionstring
 
@@ -36,7 +36,7 @@ def push_to_azure(df, tablename):
     df.to_sql(tablename, engn, chunksize=100000, if_exists='replace', index=False)
     numberofcolumns = str(len(df.columns))
 
-    result = f'push successful ({tablename}):', len(df), 'records pushed to Microsoft Azure', f'({numberofcolumns} columns)'
+    result = 'push successful ({}):'.format(tablename), len(df), 'records pushed to Microsoft Azure','({} columns)'.format(numberofcolumns)
     logging.info(result)
 
 def upload_to_blob(df, tablename,stagingdir, container = 'staffing-twinfield'):
@@ -53,12 +53,12 @@ def upload_to_blob(df, tablename,stagingdir, container = 'staffing-twinfield'):
 
         block_blob_service.create_container(container)
 
-        logging.info(f'Uploading to Blob storage as blob {tablename}')
+        logging.info('Uploading to Blob storage as blob {}'.format(tablename))
 
         # Upload the  file, use tablename for the blob name
         block_blob_service.create_blob_from_path(container, tablename, full_path_to_file)
 
-        logging.info(f'Upload {tablename} to blob done!')
+        logging.info('Upload {} to blob done!'.format(tablename))
     except Exception as e:
         print(e)
 
@@ -76,13 +76,13 @@ def remove_special_chars(df):
 
 def upload_data(name, data,start,run_params):
 
-    tablename = f'twinfield_{name}'
+    tablename = 'twinfield_{}'.format(name)
 
     push_to_azure(data.head(n=0), tablename) # zorg dat het schema in met juiste veldeigenschappen klaarstaat in Azure (o regels)
     upload_to_blob(data, tablename, run_params.stagingdir)
 
-    send_mail(subject=f'ADF: Twinfield data {name} geupload',
-                  message=f'uploaddtijd: {datetime.now() - start} \naantal transacties: {len(data)}')
+    send_mail(subject='ADF: Twinfield data {} geupload'.format(name),
+                  message='uploaddtijd: {} \naantal transacties: {}'.format(datetime.now() - start,len(data) ))
 
 
-    logging.info(f'Finished in {datetime.now() - start} \n number of transactions: {len(data)}')
+    logging.info('Finished in {} \n number of transactions: {}'.format(datetime.now() - start,len(data) ))

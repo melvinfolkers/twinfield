@@ -24,16 +24,16 @@ class SessionParameters():
         self.ns = {'env': 'http://schemas.xmlsoap.org/soap/envelope/',
                    'tw': 'http://www.twinfield.com/'}
 
-        self.body = f'''<?xml version="1.0" encoding="utf-8"?>
+        self.body = '''<?xml version="1.0" encoding="utf-8"?>
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XmlSchema-instance" xmlns:xsd="http://www.w3.org/2001/XmlSchema">
           <soap:Body>
             <Logon xmlns="http://www.twinfield.com/">
-              <user>{user}</user>
-              <password>{str_decoding(pw)}</password>
-              <organisation>{organisation}</organisation>
+              <user>{}</user>
+              <password>{}</password>
+              <organisation>{}</organisation>
             </Logon>
           </soap:Body>
-        </soap:Envelope>'''
+        </soap:Envelope>'''.format(user,str_decoding(pw),organisation  )
 
         self.session_id = SessionParameters.get_session_id(self, self.url, self.header, self.body)
 
@@ -41,7 +41,7 @@ class SessionParameters():
 
         header = root.find('env:Header/tw:Header', self.ns)
         session_id = header.find('tw:SessionID', self.ns).text
-        logging.info(f'session id: {session_id}')
+        logging.info('session id: {}'.format(session_id))
 
         return session_id
 
@@ -181,7 +181,7 @@ def parse_response(response, param):
 
 
 def select_office(officecode, param):
-    logging.info(f'selecting office: {officecode}...')
+    logging.info('selecting office: {}...'.format(officecode))
 
     url = 'https://c4.twinfield.com/webservices/session.asmx?wsdl'
 
@@ -197,7 +197,7 @@ def select_office(officecode, param):
 
     pass_fail = data.text
 
-    logging.info(f'{pass_fail} !')
+    logging.info(pass_fail)
 
 def period_groups(window = 'year'):
 
@@ -256,12 +256,12 @@ def soap_columns(metadata):
     ttl = ''
 
     for field, rows in metadata.iterrows():
-        column_template = f'''<column xmlns="">
-              <field>{field}</field>
-              <label>{rows['label']}</label>
-              <visible>{rows['visible']}</visible>
+        column_template = '''<column xmlns="">
+              <field>{}</field>
+              <label>{}</label>
+              <visible>{}</visible>
            </column>
-           '''
+           '''.format(field,rows['label'],rows['visible'])
 
         ttl = ttl + column_template
 

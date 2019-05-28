@@ -40,14 +40,13 @@ def read_030_1(param, jaar, periode):
 
     data = functions.parse_response(response, param)
 
-    logging.info(f'{len(data)} records in {datetime.now() - start}')
+    logging.info('{} records in {}'.format(len(data),datetime.now() - start))
     # metadata ophalen en gebruiken om velden te hernoemen
     #fieldmapping = functions.get_metadata(module='030_1', param=param)
     #fieldmapping = metadata['label'].to_dict()
     #data.rename(fieldmapping, axis=1, inplace=True)
 
     return data
-
 
 
 def read_164(param):
@@ -62,8 +61,8 @@ def read_164(param):
 
     data = functions.parse_response(response, param)
 
-    logging.info(f'{len(data)} records in {datetime.now() - start}')
-
+    logging.info('{} records in {}'.format(len(data),datetime.now() - start))
+    
     # metadata ophalen en gebruiken om velden te hernoemen
     #fieldmapping = functions.get_metadata(module='164', param=param)
     #fieldmapping = metadata['label'].to_dict()

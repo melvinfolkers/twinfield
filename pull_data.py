@@ -16,7 +16,7 @@ def pull_transactions(offices, jaar = 2019):
 
     for office, rows in offices.iterrows():
 
-        logging.info('\t' + 3 * '-' + rows['name'] + 3 * '-')
+        logging.info('\t' + 3 * '-' + str(rows['shortname']) + 3 * '-')
 
         # refresh login (session id) for every run
 

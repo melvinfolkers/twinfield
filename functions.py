@@ -35,7 +35,8 @@ class SessionParameters():
           </soap:Body>
         </soap:Envelope>'''.format(user,str_decoding(pw),organisation  )
 
-        self.session_id = SessionParameters.get_session_id(self, self.url, self.header, self.body)
+        self.session_id,self.cluster = SessionParameters.get_session_info(self, self.url, self.header, self.body)
+
 
     def parse_session_id(self, root):
 
@@ -45,20 +46,29 @@ class SessionParameters():
 
         return session_id
 
-    def get_session_id(self, url, header, body):
+    def parse_cluster(self, root):
+
+        header = root.find('env:Body/tw:LogonResponse', self.ns)
+        cluster = header.find('tw:cluster', self.ns).text
+        cluster = cluster.split('//')[1].split('.')[0]
+        logging.info('cluster: {}'.format(cluster))
+
+        return cluster
+
+    def get_session_info(self, url, header, body):
 
         response = requests.post(url=url, headers=header, data=body)
 
         if response:
             session_id = SessionParameters.parse_session_id(self,
                                                             root=ET.fromstring(response.text))  # lees de response uit
+            cluster = SessionParameters.parse_cluster(self,
+                                                            root=ET.fromstring(response.text))  # lees de response uit
+
         else:
-            print('niet gelukt om data binnen te halen')
-            session_id = response
+            logging.info('niet gelukt om data binnen te halen')
 
-            self.session_id = session_id
-
-        return session_id
+        return [session_id, cluster]
 
 
 def str_decoding(base64_str):
@@ -105,7 +115,7 @@ def get_metadata(module, param):
     '''
 
 
-    url ='https://c4.twinfield.com/webservices/processxml.asmx?wsdl'
+    url ='https://{}.twinfield.com/webservices/processxml.asmx?wsdl'.format(param.cluster)
     body = soap_bodies.soap_metadata(param, module = module)
 
     response = requests.post(url=url, headers=param.header, data=body)
@@ -183,7 +193,7 @@ def parse_response(response, param):
 def select_office(officecode, param):
     logging.info('selecting office: {}...'.format(officecode))
 
-    url = 'https://c4.twinfield.com/webservices/session.asmx?wsdl'
+    url = 'https://{}.twinfield.com/webservices/session.asmx?wsdl'.format(param.cluster)
 
     body = soap_bodies.soap_select_office(param , officecode = officecode )
 

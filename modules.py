@@ -11,7 +11,7 @@ from datetime import datetime
 
 def read_offices(param):
 
-    url = 'https://c4.twinfield.com/webservices/processxml.asmx?wsdl'
+    url = 'https://{}.twinfield.com/webservices/processxml.asmx?wsdl'.format(param.cluster)
     body = soap_bodies.soap_offices(param.session_id)
     response = requests.post(url=url, headers=param.header, data=body)
 
@@ -34,7 +34,7 @@ def read_030_1(param, jaar, periode):
 
     logging.info('start request {} periode van {} t/m {}'.format(jaar, periode['from'],periode['to'] ))
 
-    url = 'https://c4.twinfield.com/webservices/processxml.asmx?wsdl'
+    url = 'https://{}.twinfield.com/webservices/processxml.asmx?wsdl'.format(param.cluster)
     body = soap_bodies.soap_030_1(param.session_id, jaar, periode)
     response = requests.post(url=url, headers=param.header, data=body)
 
@@ -55,7 +55,7 @@ def read_164(param):
 
     logging.info('start request credit management')
 
-    url = 'https://c4.twinfield.com/webservices/processxml.asmx?wsdl'
+    url = 'https://.twinfield.com/webservices/processxml.asmx?wsdl'.format(param.cluster)
     body = soap_bodies.soap_164(param.session_id)
     response = requests.post(url=url, headers=param.header, data=body)
 

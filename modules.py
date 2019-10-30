@@ -3,11 +3,7 @@ import soap_bodies
 import functions
 import logging
 
-
 from datetime import datetime
-
-
-
 
 def read_offices(param):
 

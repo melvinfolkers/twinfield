@@ -10,7 +10,24 @@ from export import upload_data
 
 
 
-def pull_transactions(offices, jaar = 2019):
+def run_transactions(run_params,login, start, officecode = None, jaar = '2019', upload = True):
+
+    offices = read_offices(login)
+
+    if officecode != None:
+        offices = offices[offices.index == officecode]
+
+    trans = pull_transactions(offices, jaar, login)
+    agg = transform.maak_samenvatting(trans)
+
+    if upload:
+        upload_data(jaar, trans, start, run_params)
+        upload_data('sv_' + jaar, agg, start, run_params)
+
+    return trans
+
+
+def pull_transactions(offices, jaar, login):
 
     data = pd.DataFrame()
 
@@ -51,17 +68,3 @@ def request_period(login,jaar, periodes):
 
     return data
 
-
-def run_transactions(run_params,login, start, officecode = None, jaar = '2019', upload = True):
-
-    offices = read_offices(login)
-
-    if officecode != None:
-        offices = offices[offices.index == officecode]
-
-    trans = pull_transactions(offices, jaar)
-
-    if upload:
-        upload_data(jaar, trans, start, run_params)
-
-    return trans

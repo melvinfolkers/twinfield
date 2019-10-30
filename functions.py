@@ -1,12 +1,13 @@
+import codecs
+import logging
 import os
+import xml.etree.ElementTree as ET
 from datetime import datetime
 
 import pandas as pd
-import codecs
 import requests
-import xml.etree.ElementTree as ET
+
 import soap_bodies
-import logging
 
 
 class SessionParameters():
@@ -33,10 +34,9 @@ class SessionParameters():
               <organisation>{}</organisation>
             </Logon>
           </soap:Body>
-        </soap:Envelope>'''.format(user,str_decoding(pw),organisation  )
+        </soap:Envelope>'''.format(user, str_decoding(pw), organisation)
 
-        self.session_id,self.cluster = SessionParameters.get_session_info(self, self.url, self.header, self.body)
-
+        self.session_id, self.cluster = SessionParameters.get_session_info(self, self.url, self.header, self.body)
 
     def parse_session_id(self, root):
 
@@ -63,7 +63,7 @@ class SessionParameters():
             session_id = SessionParameters.parse_session_id(self,
                                                             root=ET.fromstring(response.text))  # lees de response uit
             cluster = SessionParameters.parse_cluster(self,
-                                                            root=ET.fromstring(response.text))  # lees de response uit
+                                                      root=ET.fromstring(response.text))  # lees de response uit
 
         else:
             logging.info('niet gelukt om data binnen te halen')
@@ -82,11 +82,11 @@ def str_encoding(str_input):
 
     return encoded
 
+
 # offices
 
 
 def parse_session_response(response, param):
-
     root = ET.fromstring(response.text)
 
     body = root.find('env:Body', param.ns)
@@ -114,9 +114,8 @@ def get_metadata(module, param):
     :return: metadata van de tabel
     '''
 
-
-    url ='https://{}.twinfield.com/webservices/processxml.asmx?wsdl'.format(param.cluster)
-    body = soap_bodies.soap_metadata(param, module = module)
+    url = 'https://{}.twinfield.com/webservices/processxml.asmx?wsdl'.format(param.cluster)
+    body = soap_bodies.soap_metadata(param, module=module)
 
     response = requests.post(url=url, headers=param.header, data=body)
 
@@ -132,12 +131,12 @@ def get_metadata(module, param):
 
     metadata.set_index('field', inplace=True)
 
-    #fieldmapping = metadata['label'].to_dict()
+    # fieldmapping = metadata['label'].to_dict()
 
     return metadata
 
-def parse_metadata_response(data):
 
+def parse_metadata_response(data):
     col = data.find('columns')
 
     rec = list()
@@ -156,7 +155,6 @@ def parse_metadata_response(data):
 
 
 def parse_response(response, param):
-
     root = ET.fromstring(response.text)
     body = root.find('env:Body', param.ns)
     try:
@@ -195,9 +193,9 @@ def select_office(officecode, param):
 
     url = 'https://{}.twinfield.com/webservices/session.asmx?wsdl'.format(param.cluster)
 
-    body = soap_bodies.soap_select_office(param , officecode = officecode )
+    body = soap_bodies.soap_select_office(param, officecode=officecode)
 
-    response = requests.post(url=url, headers= param.header, data=body)
+    response = requests.post(url=url, headers=param.header, data=body)
 
     root = ET.fromstring(response.text)
 
@@ -209,11 +207,11 @@ def select_office(officecode, param):
 
     logging.info(pass_fail)
 
-def period_groups(window = 'year'):
 
+def period_groups(window='year'):
     if window == 'year':
 
-        period = [{'from': '00', 'to':'55'}]
+        period = [{'from': '00', 'to': '55'}]
 
     elif window == 'half-year':
 
@@ -229,7 +227,7 @@ def period_groups(window = 'year'):
 
     elif window == 'two_months':
 
-        period = [{'from': '00', 'to':'02'},
+        period = [{'from': '00', 'to': '02'},
                   {'from': '03', 'to': '04'},
                   {'from': '05', 'to': '06'},
                   {'from': '07', 'to': '08'},
@@ -240,7 +238,7 @@ def period_groups(window = 'year'):
 
     elif window == 'month':
 
-        period = [{'from': '00', 'to':'00'},
+        period = [{'from': '00', 'to': '00'},
                   {'from': '01', 'to': '01'},
                   {'from': '02', 'to': '02'},
                   {'from': '03', 'to': '03'},
@@ -271,7 +269,7 @@ def soap_columns(metadata):
               <label>{}</label>
               <visible>{}</visible>
            </column>
-           '''.format(field,rows['label'],rows['visible'])
+           '''.format(field, rows['label'], rows['visible'])
 
         ttl = ttl + column_template
 
@@ -279,8 +277,6 @@ def soap_columns(metadata):
 
 
 def set_logging(run_params):
-
-
     start = datetime.now()
 
     logfilename = 'runlog_' + start.strftime(format='%Y%m%d_%H%M') + '.log'
@@ -290,7 +286,7 @@ def set_logging(run_params):
         logging.root.removeHandler(handler)
 
     logging.getLogger().setLevel(logging.INFO)
-    logging.basicConfig(filename=full_path, level=logging.INFO,format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
+    logging.basicConfig(filename=full_path, level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
 
     return start
 

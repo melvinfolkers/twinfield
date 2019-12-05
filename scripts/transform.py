@@ -35,7 +35,7 @@ def format_164(df):
 def maak_samenvatting(run_params):
     df = import_files(run_params, 'transactions')
 
-    aggcols = ['wm', 'head.year', 'head.period', 'head.status', 'line.dim1', 'line.dim2', 'line.dim2name']
+    aggcols = ['wm', 'head.year', 'head.period', 'head.status','head.relationname', 'line.dim1', 'line.dim2', 'line.dim2name']
     df.update(df[aggcols].fillna(''))
     agg = df.groupby(aggcols)['line.valuesigned'].sum().reset_index()
 

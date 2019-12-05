@@ -20,4 +20,4 @@ if __name__ == "__main__":
     jaren = ['2019']
 
     for jaar in jaren:
-        mainscript(run_params, jaar, refresh = False, upload = True)
+        mainscript(run_params, jaar, refresh = True, upload = True)

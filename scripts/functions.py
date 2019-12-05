@@ -7,7 +7,7 @@ from datetime import datetime
 import pandas as pd
 import requests
 
-import soap_bodies
+from scripts import soap_bodies
 
 
 class SessionParameters():
@@ -34,7 +34,7 @@ class SessionParameters():
               <organisation>{}</organisation>
             </Logon>
           </soap:Body>
-        </soap:Envelope>'''.format(user, str_decoding(pw), organisation)
+        </soap:Envelope>'''.format(user, pw, organisation)
 
         self.session_id, self.cluster = SessionParameters.get_session_info(self, self.url, self.header, self.body)
 
@@ -70,20 +70,19 @@ class SessionParameters():
 
         return [session_id, cluster]
 
-
-def str_decoding(base64_str):
-    decoded = codecs.decode(base64_str.encode(), 'base64').decode()
-
-    return decoded
-
-
-def str_encoding(str_input):
-    encoded = codecs.encode(str_input.encode(), 'base64')
-
-    return encoded
-
-
 # offices
+
+
+def import_files(run_params, patt):
+    ttl = pd.DataFrame()
+
+    files = os.listdir(os.path.join(run_params.pickledir))
+    files = [x for x in files if x.find(patt) != -1]
+    for file in files:
+        df = pd.read_pickle(os.path.join(run_params.pickledir, file))
+        ttl = pd.concat([ttl, df], axis=0, sort=False, ignore_index=True)
+
+    return ttl
 
 
 def parse_session_response(response, param):
@@ -279,7 +278,7 @@ def soap_columns(metadata):
 def set_logging(run_params):
     start = datetime.now()
 
-    logfilename = 'runlog_' + start.strftime(format='%Y%m%d_%H%M') + '.log'
+    logfilename = 'runlog_' + start.strftime(format='%Y%m%d') + '.log'
     full_path = os.path.join(run_params.logdir, logfilename)
 
     for handler in logging.root.handlers[:]:
@@ -287,6 +286,13 @@ def set_logging(run_params):
 
     logging.getLogger().setLevel(logging.INFO)
     logging.basicConfig(filename=full_path, level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
+
+
+    # define a Handler which writes INFO messages or higher to the sys.stderr
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    # add the handler to the root logger
+    logging.getLogger('').addHandler(console)
 
     return start
 
@@ -298,6 +304,7 @@ class RunParameters():
         self.projectdir = os.getcwd()
 
         self.logdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'log'))
+        self.pickledir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'pickles'))
         self.stagingdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'staging'))
 
     def create_dir(destination):

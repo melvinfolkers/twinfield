@@ -5,7 +5,7 @@ from azure.storage.blob import BlockBlobService
 import os
 import logging
 from datetime import datetime
-from mailing import send_mail
+from scripts.mailing import send_mail
 
 
 def auth_azure():

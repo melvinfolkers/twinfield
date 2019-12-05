@@ -1,6 +1,6 @@
-from functions import SessionParameters, set_logging, RunParameters
+from scripts.functions import SessionParameters, set_logging, RunParameters
 
-from pull_data import run_transactions
+from scripts.pull_data import import_all
 
 
 if __name__ == "__main__":
@@ -17,8 +17,8 @@ if __name__ == "__main__":
 
     for jaar in jaren:
 
-        data = run_transactions(run_params,
-                                login = login,
-                                start = start,
-                                jaar = jaar,
-                                upload = True)
+        data = import_all(run_params,
+                          login = login,
+                          start = start,
+                          jaar = jaar,
+                          upload = True)

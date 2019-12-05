@@ -314,7 +314,7 @@ def soap_164(session_id):
     <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
       <soap:Header>
     	 <Header xmlns="http://www.twinfield.com/">
-    	  <SessionID>{session_id}</SessionID>
+    	  <SessionID>{}</SessionID>
     	</Header>
       </soap:Header>
       <soap:Body>

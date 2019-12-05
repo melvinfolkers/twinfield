@@ -7,11 +7,10 @@ def mainscript(run_params, jaar, refresh, upload):
     start = set_logging(run_params)
 
     if refresh:
-        import_all(run_params, officecode='1060265_01', jaar=jaar)
+        import_all(run_params, jaar=jaar)
 
     if upload:
         upload_all(jaar, run_params, start)
-
 
 
 if __name__ == "__main__":

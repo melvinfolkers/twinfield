@@ -1,24 +1,23 @@
-from scripts.functions import SessionParameters, set_logging, RunParameters
-
+from scripts.functions import  set_logging, RunParameters
 from scripts.pull_data import import_all
+from scripts.upload import upload_all
+
+
+def mainscript(run_params, jaar, refresh, upload):
+    start = set_logging(run_params)
+
+    if refresh:
+        import_all(run_params, jaar=jaar)
+
+    if upload:
+        upload_all(jaar, run_params, start)
 
 
 if __name__ == "__main__":
 
     run_params = RunParameters()
 
-    start = set_logging(run_params)  # maakt een logbestand aan en bepaald starttijd
-
-    login = SessionParameters(user='Python',
-                              pw=r'U3RhZmZpbmcyMDE5IQ==\n',
-                              organisation='Associates')
-
     jaren = ['2018']
 
     for jaar in jaren:
-
-        data = import_all(run_params,
-                          login = login,
-                          start = start,
-                          jaar = jaar,
-                          upload = True)
+        mainscript(run_params, jaar, refresh = False, upload = True)

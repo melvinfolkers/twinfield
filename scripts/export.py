@@ -56,7 +56,7 @@ def upload_to_blob(df, tablename,stagingdir, container = 'staffing-twinfield'):
         logging.info('Uploading to Blob storage as blob {}'.format(tablename))
 
         # Upload the  file, use tablename for the blob name
-        block_blob_service.create_blob_from_path(container, tablename, full_path_to_file)
+        block_blob_service.create_blob_from_path(container, tablename + '/' + tablename, full_path_to_file)
 
         logging.info('Upload {} to blob done!'.format(tablename))
     except Exception as e:
@@ -76,7 +76,7 @@ def remove_special_chars(df):
 
 def upload_data(name, data,start,run_params):
 
-    tablename = 'twinfield_{}'.format(name) + '/' + 'twinfield_{}'.format(name)
+    tablename = 'twinfield_{}'.format(name)
 
     push_to_azure(data.head(n=0), tablename) # zorg dat het schema in met juiste veldeigenschappen klaarstaat in Azure (o regels)
     upload_to_blob(data, tablename, run_params.stagingdir)

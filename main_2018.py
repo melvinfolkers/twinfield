@@ -15,9 +15,8 @@ def mainscript(run_params, jaar, refresh, upload):
 
 if __name__ == "__main__":
 
-    run_params = RunParameters()
-
     jaren = ['2018']
 
     for jaar in jaren:
+        run_params = RunParameters(jaar)
         mainscript(run_params, jaar, refresh = True, upload = True)

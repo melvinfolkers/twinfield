@@ -297,15 +297,15 @@ def set_logging(run_params):
     return start
 
 
-class RunParameters():
+class RunParameters:
 
-    def __init__(self):
+    def __init__(self,jaar):
 
         self.projectdir = os.getcwd()
-
-        self.logdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'log'))
-        self.pickledir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'pickles'))
-        self.stagingdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'staging'))
+        self.jaar = jaar
+        self.logdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'log',self.jaar))
+        self.pickledir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'pickles',self.jaar))
+        self.stagingdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'staging', self.jaar))
 
     def create_dir(destination):
 

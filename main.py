@@ -19,4 +19,4 @@ if __name__ == "__main__":
 
     for jaar in jaren:
         run_params = RunParameters(jaar)
-        mainscript(run_params, jaar, refresh = True, upload = True)
+        mainscript(run_params, jaar, refresh = True, upload = False)

@@ -12,6 +12,7 @@ def read_offices(param):
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_session_response(response, param)
+    data.to_excel('offices.xlsx', index = False)
 
     return data
 

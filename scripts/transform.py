@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-from scripts.functions import import_files
+from .functions import import_files
 
 
 def format_030_1(df):

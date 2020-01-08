@@ -7,7 +7,11 @@ from datetime import datetime
 import pandas as pd
 import requests
 
-from scripts import soap_bodies
+from . import soap_bodies
+
+
+
+
 
 
 class SessionParameters():
@@ -275,11 +279,11 @@ def soap_columns(metadata):
     return ttl
 
 
-def set_logging(run_params):
+def set_logging(logdir):
     start = datetime.now()
 
     logfilename = 'runlog_' + start.strftime(format='%Y%m%d') + '.log'
-    full_path = os.path.join(run_params.logdir, logfilename)
+    full_path = os.path.join(logdir, logfilename)
 
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
@@ -294,7 +298,7 @@ def set_logging(run_params):
     # add the handler to the root logger
     logging.getLogger('').addHandler(console)
 
-    return start
+    return full_path
 
 
 class RunParameters:
@@ -306,6 +310,7 @@ class RunParameters:
         self.logdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'log',self.jaar))
         self.pickledir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'pickles',self.jaar))
         self.stagingdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'staging', self.jaar))
+        self.logfile =  set_logging(logfile)
 
     def create_dir(destination):
 

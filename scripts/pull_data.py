@@ -3,21 +3,23 @@ import os
 
 import pandas as pd
 
-from scripts import functions, modules, transform
-from scripts.transform import maak_samenvatting
-from scripts.functions import select_office
-from scripts.modules import read_offices
-from scripts.credentials import twinfield_login
+from . import functions, modules, transform
+from .transform import maak_samenvatting
+from .functions import select_office
+from .modules import read_offices
+from .credentials import twinfield_login
 
-def import_all(run_params, officecode=None, jaar='2019'):
+def import_all(run_params, jaar='2019', offices = None):
 
     login = twinfield_login()
-    offices = read_offices(login)
+    all_offices = read_offices(login)
 
-    if officecode != None:
-        offices = offices[offices.index == officecode]
-
-    pull_transactions(offices, jaar, run_params)
+    if offices:
+        print(offices)
+        print('voor' ,len(all_offices))
+        all_offices = all_offices[all_offices.name.isin(offices)]
+        print('na', len(all_offices))
+    pull_transactions(all_offices, jaar, run_params)
     maak_samenvatting(run_params)
 
 

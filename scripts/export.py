@@ -5,20 +5,10 @@ from azure.storage.blob import BlockBlobService
 import os
 import logging
 from datetime import datetime
-from scripts.mailing import send_mail
 
-
-def auth_azure():
-    uid = 'lavastormadmin'
-    password = 'cGFzc0B3b3JkMQ==\n'
-    server = 'sa-lavastorm.database.windows.net'
-    database = 'landing'
-    driver = 'ODBC Driver 13 for SQL Server'
-
-    connectionstring = 'mssql+pyodbc://{}:{}@{}:1433/{}?driver={}'.format(uid,str_decoding(password),server,database, driver)
-
-    return connectionstring
-
+from twinfield.scripts.credentials import auth_azure
+from .mailing import send_mail
+from twinfield.scripts.credentials import get_blob_credentials
 
 def str_decoding(base64_str):
     decoded = codecs.decode(base64_str.encode(), 'base64').decode()
@@ -39,7 +29,8 @@ def push_to_azure(df, tablename):
     result = 'push successful ({}):'.format(tablename), len(df), 'records pushed to Microsoft Azure','({} columns)'.format(numberofcolumns)
     logging.info(result)
 
-def upload_to_blob(df, tablename,stagingdir, container = 'staffing-twinfield'):
+def upload_to_blob(df, tablename,stagingdir):
+    container, account_name, account_key = get_blob_credentials()
 
     df = remove_special_chars(df)
 
@@ -48,8 +39,8 @@ def upload_to_blob(df, tablename,stagingdir, container = 'staffing-twinfield'):
 
     try:
         # Create the BlockBlockService that is used to call the Blob service for the storage account
-        block_blob_service = BlockBlobService(account_name='staffingeu2',
-                                              account_key='hRR5Mkf7i6JFGa18RC3gA5nClnzpnr0+74hTSMql2oHzcLmxyHyiAz7nljNDHyh0dUyCnUz+EE6BIGs6rpMLhw==')
+        block_blob_service = BlockBlobService(account_name=account_name,
+                                              account_key=account_key)
 
         block_blob_service.create_container(container)
 

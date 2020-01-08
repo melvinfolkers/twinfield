@@ -1,7 +1,7 @@
 
 import logging
-from scripts.functions import import_files
-from scripts.export import upload_data
+from .functions import import_files
+from .export import upload_data
 
 
 def upload_all(jaar, run_params, start):

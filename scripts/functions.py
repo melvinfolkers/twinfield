@@ -9,11 +9,6 @@ import requests
 
 from . import soap_bodies
 
-
-
-
-
-
 class SessionParameters():
 
     def __init__(self, user, pw, organisation):
@@ -307,16 +302,17 @@ class RunParameters:
 
         self.projectdir = os.getcwd()
         self.jaar = jaar
-        self.logdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'log',self.jaar))
-        self.pickledir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'pickles',self.jaar))
-        self.stagingdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'staging', self.jaar))
-        self.logfile =  set_logging(logfile)
+        self.logdir = create_dir(destination=os.path.join(self.projectdir, 'data', 'log',self.jaar))
+        self.pickledir = create_dir(destination=os.path.join(self.projectdir, 'data', 'pickles',self.jaar))
+        self.stagingdir = create_dir(destination=os.path.join(self.projectdir, 'data', 'staging', self.jaar))
+        self.logfile =  set_logging(self.logdir)
 
-    def create_dir(destination):
+def create_dir(destination):
 
-        try:
-            if not os.path.exists(destination):
-                os.makedirs(destination)
-        except OSError:
-            logging.warning('Error Creating directory. ' + destination)
-        return destination
+    try:
+        if not os.path.exists(destination):
+            os.makedirs(destination)
+    except OSError:
+        logging.warning('Error Creating directory. ' + destination)
+
+    return destination

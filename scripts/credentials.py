@@ -1,10 +1,26 @@
-from .functions import SessionParameters
-import pandas as pd
-from sqlalchemy import create_engine
 import logging
 
-def twinfield_login():
+import pandas as pd
+from sqlalchemy import create_engine
 
+from .functions import SessionParameters
+
+
+def twinfield_login_faheem():
+    user = 'Baksif'
+    password = 'staffing420'
+    organisation = 'Associates'
+
+    login = SessionParameters(user=user,
+                              pw=password,
+                              organisation=organisation)
+
+    logging.info('ingelogd met gebruiker {}'.format(user))
+
+    return login
+
+
+def twinfield_login():
     engine = create_engine('sqlite:////Users/melvinfolkers/Documents/github/twinfield_flask/twinfield.db')
     df = pd.read_sql_table(table_name='tw_settings', con=engine).loc[0]
 
@@ -14,7 +30,7 @@ def twinfield_login():
 
     login = SessionParameters(user=user,
                               pw=password,
-                              organisation= organisation)
+                              organisation=organisation)
 
     logging.info('ingelogd met gebruiker {}'.format(df.username))
 
@@ -29,9 +45,9 @@ def auth_azure():
     password = df.password
     server = df.server
     database = df.database
-    driver = 'ODBC Driver 13 for SQL Server'
+    driver = 'ODBC Driver 17 for SQL Server'
 
-    connectionstring = 'mssql+pyodbc://{}:{}@{}:1433/{}?driver={}'.format(uid,password,server,database, driver)
+    connectionstring = 'mssql+pyodbc://{}:{}@{}:1433/{}?driver={}'.format(uid, password, server, database, driver)
     logging.info('ingelogd met gebruiker {}'.format(df.username))
 
     return connectionstring

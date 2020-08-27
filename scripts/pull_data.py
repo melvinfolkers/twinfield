@@ -20,7 +20,21 @@ def import_all(run_params, jaar='2019', offices = None):
         all_offices = all_offices[all_offices.name.isin(offices)]
         print('na', len(all_offices))
     pull_transactions(all_offices, jaar, run_params)
+
+
+    # andere modules
+
+
     maak_samenvatting(run_params)
+
+
+def add_metadata(df, office, rows):
+
+    df['administratienaam'] = rows['name']
+    df['administratienummer'] = office
+    df['wm'] = rows['shortname']
+
+    return df
 
 
 def pull_transactions(offices, jaar, run_params):
@@ -37,9 +51,7 @@ def pull_transactions(offices, jaar, run_params):
 
         period = request_period(login, jaar, periodes)
 
-        period['administratienaam'] = rows['name']
-        period['administratienummer'] = office
-        period['wm'] = rows['shortname']
+        period = add_metadata(period ,office, rows)
 
         period.to_pickle(os.path.join(run_params.pickledir, '{}_transactions.pkl'.format(office)))
 

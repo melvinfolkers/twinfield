@@ -1,10 +1,12 @@
-from scripts.functions import  set_logging, RunParameters
+from scripts import ljp
+from scripts.functions import set_logging, RunParameters
 from scripts.pull_data import import_all
-from scripts.upload import upload_all
-
+from scripts.upload import  upload_all
 
 def mainscript(run_params, jaar, refresh, upload):
-    start = set_logging(run_params)
+    start = set_logging(run_params.logdir)
+
+    #ljp.run()
 
     if refresh:
         import_all(run_params, jaar=jaar)
@@ -19,4 +21,4 @@ if __name__ == "__main__":
 
     for jaar in jaren:
         run_params = RunParameters(jaar)
-        mainscript(run_params, jaar, refresh = True, upload = True)
+        mainscript(run_params, jaar, refresh=True, upload=False)

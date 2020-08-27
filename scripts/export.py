@@ -6,9 +6,14 @@ import os
 import logging
 from datetime import datetime
 
-from twinfield.scripts.credentials import auth_azure
+from scripts.credentials import auth_azure
 from .mailing import send_mail
-from twinfield.scripts.credentials import get_blob_credentials
+from scripts.credentials import get_blob_credentials
+
+import pandas_gbq as gbq
+
+
+
 
 def str_decoding(base64_str):
     decoded = codecs.decode(base64_str.encode(), 'base64').decode()
@@ -73,7 +78,23 @@ def upload_data(name, data,start,run_params):
     upload_to_blob(data, tablename, run_params.stagingdir)
 
     send_mail(subject='ADF: Twinfield data {} geupload'.format(name),
-                  message='uploaddtijd: {} \naantal transacties: {}'.format(datetime.now() - start,len(data) ))
+                  message='uploaddtijd: {} \naantal transacties: {}'.format(str(datetime.now() - start,len(data) )))
 
 
     logging.info('Finished in {} \n number of transactions: {}'.format(datetime.now() - start,len(data) ))
+
+
+
+
+def push_bigquery(df, containername, foldername ,tablename):
+
+
+    df['transactie_omschrijving'] = df.transactie_omschrijving.str.replace('\W+',' ')
+    starttime = datetime.now()
+    logging.info(f'aantal rijen: {len(df)} aantal kolommen: {len(df.columns)}')
+    logging.info(f'start met uploaden van {len(df)} records naar google bigquery... ({containername} - {foldername} - {tablename})')
+    gbq.to_gbq(df, f'{foldername}.{tablename}', containername, if_exists ='replace')
+
+    logging.info('cloud upload success! tijd: {}'.format(str(datetime.now() - starttime)))
+
+

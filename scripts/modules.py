@@ -16,13 +16,13 @@ def read_offices(param):
     return data
 
 
-def read_030_1(param, jaar, periode):
+def read_030_1(param, run_params, periode):
     start = datetime.now()
 
-    logging.info('start request {} periode van {} t/m {}'.format(jaar, periode['from'], periode['to']))
+    logging.info('start request {} periode van {} t/m {}'.format(run_params.jaar, periode['from'], periode['to']))
 
     url = 'https://{}.twinfield.com/webservices/processxml.asmx?wsdl'.format(param.cluster)
-    body = soap_bodies.soap_030_1(param.session_id, jaar, periode)
+    body = soap_bodies.soap_030_1(param.session_id, run_params, periode)
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)

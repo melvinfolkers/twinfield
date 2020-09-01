@@ -9,11 +9,6 @@ import requests
 
 from . import soap_bodies
 
-
-
-
-
-
 class SessionParameters():
 
     def __init__(self, user, pw, organisation):
@@ -278,7 +273,6 @@ def soap_columns(metadata):
 
     return ttl
 
-
 def set_logging(logdir):
     start = datetime.now()
 
@@ -291,32 +285,34 @@ def set_logging(logdir):
     logging.getLogger().setLevel(logging.INFO)
     logging.basicConfig(filename=full_path, level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
 
-
     # define a Handler which writes INFO messages or higher to the sys.stderr
     console = logging.StreamHandler()
     console.setLevel(logging.INFO)
     # add the handler to the root logger
     logging.getLogger('').addHandler(console)
 
-    return full_path
+    return start
 
 
 class RunParameters:
 
-    def __init__(self,jaar):
+    def __init__(self,jaar, refresh, upload):
 
         self.projectdir = os.getcwd()
-        self.jaar = jaar
-        self.logdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'log',self.jaar))
-        self.pickledir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'pickles',self.jaar))
-        self.stagingdir = RunParameters.create_dir(destination=os.path.join(self.projectdir, 'data', 'staging', self.jaar))
-        self.logfile =  set_logging(logfile)
+        self.jaar = str(jaar)
+        self.refresh = refresh
+        self.upload = upload
+        self.logdir = create_dir(destination=os.path.join(self.projectdir, 'data', 'log',self.jaar))
+        self.pickledir = create_dir(destination=os.path.join(self.projectdir, 'data', 'pickles',self.jaar))
+        self.stagingdir = create_dir(destination=os.path.join(self.projectdir, 'data', 'staging', self.jaar))
+        self.logfile =  set_logging(self.logdir)
 
-    def create_dir(destination):
+def create_dir(destination):
 
-        try:
-            if not os.path.exists(destination):
-                os.makedirs(destination)
-        except OSError:
-            logging.warning('Error Creating directory. ' + destination)
-        return destination
+    try:
+        if not os.path.exists(destination):
+            os.makedirs(destination)
+    except OSError:
+        logging.warning('Error Creating directory. ' + destination)
+
+    return destination

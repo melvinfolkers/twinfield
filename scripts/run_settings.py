@@ -33,9 +33,7 @@ def get_run_settings(yml_file):
     shell_vars = check_shell_variables()
 
     if shell_vars:
-        logging.info(
-            f"using shell vars!, the name of the yml file is presumed to be: {sys.argv[1]}"
-        )
+        logging.info(f"using shell vars!, the name of the yml file is presumed to be: {sys.argv[1]}")
         settings = get_settings(sys.argv[1])
     else:
         settings = get_settings(yml_file)
@@ -53,22 +51,20 @@ def get_twinfield_settings():
     PASSWORD = client_settings["password"]
     ORGANISATION = client_settings["organisation"]
 
-    login = SessionParameters(user=USER,
-                              pw=PASSWORD,
-                              organisation=ORGANISATION)
+    login = SessionParameters(user=USER, pw=PASSWORD, organisation=ORGANISATION)
 
-    logging.info('ingelogd met gebruiker {}'.format(USER))
+    logging.info("ingelogd met gebruiker {}".format(USER))
 
     return login
+
 
 def get_blob_settings():
 
     yml = get_settings("yml/custom/blob.yml")
     CONNECTION_STRING = yml["connection_string"]
-    CONTAINER_NAME = yml['container_name']
+    CONTAINER_NAME = yml["container_name"]
 
     return CONNECTION_STRING, CONTAINER_NAME
-
 
 
 def set_run_parameters(yml_file):
@@ -76,10 +72,9 @@ def set_run_parameters(yml_file):
     settings = get_run_settings(yml_file)
 
     JAAR = settings["jaar"]
-    REFRESH = settings['refresh']
-    UPLOAD = settings['upload']
+    REFRESH = settings["refresh"]
+    UPLOAD = settings["upload"]
 
-    run_params = RunParameters(jaar = JAAR, refresh = REFRESH, upload = UPLOAD)
+    run_params = RunParameters(jaar=JAAR, refresh=REFRESH, upload=UPLOAD)
 
     return run_params
-

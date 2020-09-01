@@ -19,17 +19,14 @@ def twinfield_login_faheem():
     return login
 
 def auth_azure():
-    engine = create_engine('sqlite:////Users/melvinfolkers/Documents/github/twinfield_flask/twinfield.db')
-    df = pd.read_sql_table(table_name='db_settings', con=engine).loc[0]
 
-    uid = df.username
-    password = df.password
-    server = df.server
-    database = df.database
+    uid = os.environ.get('SQL_USER_1')
+    password = os.environ.get('SQL_PW_1')
+    server = os.environ.get('SQL_SERVER_1')
+    database = 'landing'
     driver = 'ODBC Driver 17 for SQL Server'
 
-    connectionstring = 'mssql+pyodbc://{}:{}@{}:1433/{}?driver={}'.format(uid, password, server, database, driver)
-    logging.info('ingelogd met gebruiker {}'.format(df.username))
+    connectionstring = f'mssql+pyodbc://{uid}:{password}@{server}:1433/{database}?driver={driver}'
 
     return connectionstring
 

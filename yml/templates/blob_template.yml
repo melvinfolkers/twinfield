@@ -1,0 +1,2 @@
+connection_string: "DefaultEndpointsProtocol=https;AccountName=staffingeu2;AccountKey=hRR5Mkf7i6JFGa18RC3gA5nClnzpnr0+74hTSMql2oHzcLmxyHyiAz7nljNDHyh0dUyCnUz+EE6BIGs6rpMLhw==;EndpointSuffix=core.windows.net"
+container_name: "test"

@@ -2,7 +2,7 @@ import logging
 import sys
 import yaml
 from scripts.functions import RunParameters, SessionParameters
-
+import os
 import sentry_sdk
 
 ## staffing-twinfield sentry url

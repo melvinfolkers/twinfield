@@ -38,9 +38,7 @@ class SessionParameters:
             user, pw, organisation
         )
 
-        self.session_id, self.cluster = SessionParameters.get_session_info(
-            self, self.url, self.header, self.body
-        )
+        self.session_id, self.cluster = SessionParameters.get_session_info(self, self.url, self.header, self.body)
 
     def parse_session_id(self, root):
 
@@ -67,9 +65,7 @@ class SessionParameters:
             session_id = SessionParameters.parse_session_id(
                 self, root=ET.fromstring(response.text)
             )  # lees de response uit
-            cluster = SessionParameters.parse_cluster(
-                self, root=ET.fromstring(response.text)
-            )  # lees de response uit
+            cluster = SessionParameters.parse_cluster(self, root=ET.fromstring(response.text))  # lees de response uit
 
         else:
             logging.info("niet gelukt om data binnen te halen")
@@ -121,9 +117,7 @@ def get_metadata(module, param):
     :return: metadata van de tabel
     """
 
-    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(
-        param.cluster
-    )
+    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
     body = soap_bodies.soap_metadata(param, module=module)
 
     response = requests.post(url=url, headers=param.header, data=body)
@@ -167,9 +161,7 @@ def parse_response(response, param):
     root = ET.fromstring(response.text)
     body = root.find("env:Body", param.ns)
     try:
-        data = body.find(
-            "tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", param.ns
-        )
+        data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", param.ns)
     except:
         return pd.DataFrame()
 
@@ -326,15 +318,9 @@ class RunParameters:
         self.jaar = str(jaar)
         self.refresh = refresh
         self.upload = upload
-        self.logdir = create_dir(
-            destination=os.path.join(self.projectdir, "data", "log", self.jaar)
-        )
-        self.pickledir = create_dir(
-            destination=os.path.join(self.projectdir, "data", "pickles", self.jaar)
-        )
-        self.stagingdir = create_dir(
-            destination=os.path.join(self.projectdir, "data", "staging", self.jaar)
-        )
+        self.logdir = create_dir(destination=os.path.join(self.projectdir, "data", "log", self.jaar))
+        self.pickledir = create_dir(destination=os.path.join(self.projectdir, "data", "pickles", self.jaar))
+        self.stagingdir = create_dir(destination=os.path.join(self.projectdir, "data", "staging", self.jaar))
         self.logfile = set_logging(self.logdir)
 
 

@@ -7,7 +7,9 @@ from . import functions, soap_bodies
 
 
 def read_offices(param):
-    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
+    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(
+        param.cluster
+    )
     body = soap_bodies.soap_offices(param.session_id)
     response = requests.post(url=url, headers=param.header, data=body)
 
@@ -19,9 +21,15 @@ def read_offices(param):
 def read_030_1(param, run_params, periode):
     start = datetime.now()
 
-    logging.info("start request {} periode van {} t/m {}".format(run_params.jaar, periode["from"], periode["to"]))
+    logging.info(
+        "start request {} periode van {} t/m {}".format(
+            run_params.jaar, periode["from"], periode["to"]
+        )
+    )
 
-    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
+    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(
+        param.cluster
+    )
     body = soap_bodies.soap_030_1(param.session_id, run_params, periode)
     response = requests.post(url=url, headers=param.header, data=body)
 
@@ -44,7 +52,9 @@ def read_164(param):
 
     logging.info("start request credit management")
 
-    url = "https://.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
+    url = "https://.twinfield.com/webservices/processxml.asmx?wsdl".format(
+        param.cluster
+    )
     body = soap_bodies.soap_164(param.session_id)
     response = requests.post(url=url, headers=param.header, data=body)
 

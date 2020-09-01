@@ -1,14 +1,10 @@
 from sqlalchemy import create_engine
 import pandas as pd
-import numpy as np
-import os
-import logging
+import json
 
 from scripts.export import push_bigquery
 
 from credentials import auth_azure
-
-os.chdir(currentdir)
 
 
 def run_twinfield_upload():
@@ -18,13 +14,20 @@ def run_twinfield_upload():
     twin = import_twinfield_2019(engn)
     data = prepare_twinfield(twin)
 
-    push_bigquery(df=data, containername="yellowstacks-217623", foldername="Yellowstacks", tablename="HappyNurse")
+    push_bigquery(
+        df=data,
+        containername="yellowstacks-217623",
+        foldername="Yellowstacks",
+        tablename="HappyNurse",
+    )
 
     return data
 
 
 def import_twinfield_2019(engn):
-    twin19 = pd.read_sql_query("SELECT * FROM bc.twin19 WHERE Werkmaatschappij = 'HNT'", con=engn)  # read data
+    twin19 = pd.read_sql_query(
+        "SELECT * FROM bc.twin19 WHERE Werkmaatschappij = 'HNT'", con=engn
+    )  # read data
     twin = twin19.loc[twin19.Status != "draft"]
 
     return twin
@@ -73,7 +76,8 @@ def prepare_twinfield(twin):
     twin["grootboek"] = twin["Grootboekrek."] + " - " + twin["Grootboekrek.naam"]
 
     data = transform_fieldnames(
-        twin, mapfile="/Users/melvinfolkers/Documents/github/py_auditfiles/scripts/mapping/twinfield/twinfield.json"
+        twin,
+        mapfile="/Users/melvinfolkers/Documents/github/py_auditfiles/scripts/mapping/twinfield/twinfield.json",
     )
 
     return data

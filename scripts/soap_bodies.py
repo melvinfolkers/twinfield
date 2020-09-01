@@ -1,16 +1,18 @@
-
 import logging
+
 
 def soap_metadata(param, module):
 
     #   <office>{office}</office>
 
-    xml = '''<read>
+    xml = """<read>
     <type>browse</type>
     <code>{}</code>
-    </read>'''.format(module)
+    </read>""".format(
+        module
+    )
 
-    body = '''<?xml version="1.0" encoding="utf-8"?>
+    body = """<?xml version="1.0" encoding="utf-8"?>
            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:twin="http://www.twinfield.com/">
            <soapenv:Header>
                <twin:Header>
@@ -22,18 +24,21 @@ def soap_metadata(param, module):
                     <twin:xmlRequest><![CDATA[{}]]></twin:xmlRequest>
                  </twin:ProcessXmlString>
               </soapenv:Body>
-           </soapenv:Envelope>'''.format(param.session_id,xml)
+           </soapenv:Envelope>""".format(
+        param.session_id, xml
+    )
 
     return body
 
+
 def soap_offices(session_id):
-    '''
+    """
 
     :param session_id:  session id code
     :return: soap body voor de request van offices
-    '''
+    """
 
-    body = '''<?xml version="1.0" encoding="utf-8"?>
+    body = """<?xml version="1.0" encoding="utf-8"?>
         <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:twin="http://www.twinfield.com/">
         <soapenv:Header>
             <twin:Header>
@@ -45,19 +50,21 @@ def soap_offices(session_id):
                  <twin:xmlRequest><![CDATA[<list><type>offices</type></list>]]></twin:xmlRequest>
               </twin:ProcessXmlString>
            </soapenv:Body>
-        </soapenv:Envelope>'''.format(session_id)
+        </soapenv:Envelope>""".format(
+        session_id
+    )
 
     return body
 
 
 def soap_select_office(param, officecode):
-    '''
+    """
 
     :param session_id:  session id code
     :return: soap body voor de request van offices
-    '''
+    """
 
-    body = '''<?xml version="1.0" encoding="utf-8"?>
+    body = """<?xml version="1.0" encoding="utf-8"?>
      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
          <soap:Header>
              <Header xmlns="http://www.twinfield.com/">
@@ -69,15 +76,16 @@ def soap_select_office(param, officecode):
                  <company>{}</company>
              </SelectCompany>
          </soap:Body>
-     </soap:Envelope>'''.format(param.session_id,officecode)
+     </soap:Envelope>""".format(
+        param.session_id, officecode
+    )
 
     return body
 
 
-
 def soap_030_1(session_id, run_params, periode):
 
-    body = '''<?xml version="1.0" encoding="utf-16"?>
+    body = """<?xml version="1.0" encoding="utf-16"?>
     <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
       <soap:Header>
     	 <Header xmlns="http://www.twinfield.com/">
@@ -302,15 +310,18 @@ def soap_030_1(session_id, run_params, periode):
     		</xmlRequest>
     	</ProcessXmlDocument>
       </soap:Body>
-    </soap:Envelope>'''.format(session_id, run_params.jaar, periode['from'], run_params.jaar, periode['to'])
+    </soap:Envelope>""".format(
+        session_id, run_params.jaar, periode["from"], run_params.jaar, periode["to"]
+    )
 
     logging.debug(body)
 
     return body
 
+
 def soap_164(session_id):
 
-    body = '''<?xml version="1.0" encoding="utf-16"?>
+    body = """<?xml version="1.0" encoding="utf-16"?>
     <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
       <soap:Header>
     	 <Header xmlns="http://www.twinfield.com/">
@@ -420,15 +431,18 @@ def soap_164(session_id):
     		</xmlRequest>
     	</ProcessXmlDocument>
       </soap:Body>
-    </soap:Envelope>'''.format(session_id)
+    </soap:Envelope>""".format(
+        session_id
+    )
 
     logging.debug(body)
 
     return body
 
+
 def soap_050_1(session_id):
 
-    body = '''<?xml version="1.0" encoding="utf-16"?>
+    body = """<?xml version="1.0" encoding="utf-16"?>
     <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
       <soap:Header>
     	 <Header xmlns="http://www.twinfield.com/">
@@ -444,7 +458,8 @@ def soap_050_1(session_id):
     		</xmlRequest>
     	</ProcessXmlDocument>
       </soap:Body>
-    </soap:Envelope>'''.format(session_id)
+    </soap:Envelope>""".format(
+        session_id
+    )
 
     return body
-

@@ -5,24 +5,24 @@ from email.utils import formatdate
 
 
 def send_mail(subject, message):
-    recipients = ['melvin@yellowstacks.nl']
+    recipients = ["melvin@yellowstacks.nl"]
 
     for recipient in recipients:
 
-        send_from = 'melvin@yellowstacks.nl'
+        send_from = "melvin@yellowstacks.nl"
         send_to = recipient
 
         server = "smtp.office365.com"
         port = 587
-        username = 'melvin@yellowstacks.nl'
-        password = '@bq4BE2kNqbl'
+        username = "melvin@yellowstacks.nl"
+        password = "@bq4BE2kNqbl"
         use_tls = True
 
         msg = MIMEMultipart()
-        msg['From'] = send_from
-        msg['To'] = send_to
-        msg['Date'] = formatdate(localtime=True)
-        msg['Subject'] = subject
+        msg["From"] = send_from
+        msg["To"] = send_to
+        msg["Date"] = formatdate(localtime=True)
+        msg["Subject"] = subject
 
         msg.attach(MIMEText(message))
 
@@ -33,5 +33,4 @@ def send_mail(subject, message):
         smtp.sendmail(send_from, send_to, msg.as_string())
         smtp.quit()
 
-    return ('mail verzonden!')
-
+    return "mail verzonden!"

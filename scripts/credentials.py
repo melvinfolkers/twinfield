@@ -5,7 +5,6 @@ from sqlalchemy import create_engine
 
 from .functions import SessionParameters
 
-
 def twinfield_login_faheem():
     user = 'Baksif'
     password = 'staffing420'
@@ -18,24 +17,6 @@ def twinfield_login_faheem():
     logging.info('ingelogd met gebruiker {}'.format(user))
 
     return login
-
-
-def twinfield_login():
-    engine = create_engine('sqlite:////Users/melvinfolkers/Documents/github/twinfield_flask/twinfield.db')
-    df = pd.read_sql_table(table_name='tw_settings', con=engine).loc[0]
-
-    user = df.username
-    password = df.password
-    organisation = df.organisation
-
-    login = SessionParameters(user=user,
-                              pw=password,
-                              organisation=organisation)
-
-    logging.info('ingelogd met gebruiker {}'.format(df.username))
-
-    return login
-
 
 def auth_azure():
     engine = create_engine('sqlite:////Users/melvinfolkers/Documents/github/twinfield_flask/twinfield.db')

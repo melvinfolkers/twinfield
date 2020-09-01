@@ -75,7 +75,7 @@ def soap_select_office(param, officecode):
 
 
 
-def soap_030_1(session_id, jaar, periode):
+def soap_030_1(session_id, run_params, periode):
 
     body = '''<?xml version="1.0" encoding="utf-16"?>
     <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -302,7 +302,7 @@ def soap_030_1(session_id, jaar, periode):
     		</xmlRequest>
     	</ProcessXmlDocument>
       </soap:Body>
-    </soap:Envelope>'''.format(session_id, jaar, periode['from'], jaar, periode['to'])
+    </soap:Envelope>'''.format(session_id, run_params.jaar, periode['from'], run_params.jaar, periode['to'])
 
     logging.debug(body)
 

@@ -20,7 +20,10 @@ class SessionParameters:
         self.url = "https://login.twinfield.com/webservices/session.asmx"
         self.header = {"Content-Type": "text/xml", "Accept-Charset": "utf-8"}
 
-        self.ns = {"env": "http://schemas.xmlsoap.org/soap/envelope/", "tw": "http://www.twinfield.com/"}
+        self.ns = {
+            "env": "http://schemas.xmlsoap.org/soap/envelope/",
+            "tw": "http://www.twinfield.com/",
+        }
 
         self.body = """<?xml version="1.0" encoding="utf-8"?>
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XmlSchema-instance" xmlns:xsd="http://www.w3.org/2001/XmlSchema">
@@ -35,7 +38,9 @@ class SessionParameters:
             user, pw, organisation
         )
 
-        self.session_id, self.cluster = SessionParameters.get_session_info(self, self.url, self.header, self.body)
+        self.session_id, self.cluster = SessionParameters.get_session_info(
+            self, self.url, self.header, self.body
+        )
 
     def parse_session_id(self, root):
 
@@ -62,7 +67,9 @@ class SessionParameters:
             session_id = SessionParameters.parse_session_id(
                 self, root=ET.fromstring(response.text)
             )  # lees de response uit
-            cluster = SessionParameters.parse_cluster(self, root=ET.fromstring(response.text))  # lees de response uit
+            cluster = SessionParameters.parse_cluster(
+                self, root=ET.fromstring(response.text)
+            )  # lees de response uit
 
         else:
             logging.info("niet gelukt om data binnen te halen")
@@ -114,7 +121,9 @@ def get_metadata(module, param):
     :return: metadata van de tabel
     """
 
-    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
+    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(
+        param.cluster
+    )
     body = soap_bodies.soap_metadata(param, module=module)
 
     response = requests.post(url=url, headers=param.header, data=body)
@@ -158,7 +167,9 @@ def parse_response(response, param):
     root = ET.fromstring(response.text)
     body = root.find("env:Body", param.ns)
     try:
-        data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", param.ns)
+        data = body.find(
+            "tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", param.ns
+        )
     except:
         return pd.DataFrame()
 
@@ -259,8 +270,8 @@ def period_groups(window="year"):
         ]
 
     else:
-        info.error("geen periode kunnen toewijzen")
-
+        logging.info("geen periode kunnen toewijzen")
+        period = [{"from": "00", "to": "55"}]
     return period
 
 
@@ -292,7 +303,12 @@ def set_logging(logdir):
         logging.root.removeHandler(handler)
 
     logging.getLogger().setLevel(logging.INFO)
-    logging.basicConfig(filename=full_path, level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
+    logging.basicConfig(
+        filename=full_path,
+        level=logging.INFO,
+        format="%(asctime)s %(message)s",
+        datefmt="%H:%M:%S",
+    )
 
     # define a Handler which writes INFO messages or higher to the sys.stderr
     console = logging.StreamHandler()
@@ -310,9 +326,15 @@ class RunParameters:
         self.jaar = str(jaar)
         self.refresh = refresh
         self.upload = upload
-        self.logdir = create_dir(destination=os.path.join(self.projectdir, "data", "log", self.jaar))
-        self.pickledir = create_dir(destination=os.path.join(self.projectdir, "data", "pickles", self.jaar))
-        self.stagingdir = create_dir(destination=os.path.join(self.projectdir, "data", "staging", self.jaar))
+        self.logdir = create_dir(
+            destination=os.path.join(self.projectdir, "data", "log", self.jaar)
+        )
+        self.pickledir = create_dir(
+            destination=os.path.join(self.projectdir, "data", "pickles", self.jaar)
+        )
+        self.stagingdir = create_dir(
+            destination=os.path.join(self.projectdir, "data", "staging", self.jaar)
+        )
         self.logfile = set_logging(self.logdir)
 
 

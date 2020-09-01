@@ -25,9 +25,7 @@ def run_twinfield_upload():
 
 
 def import_twinfield_2019(engn):
-    twin19 = pd.read_sql_query(
-        "SELECT * FROM bc.twin19 WHERE Werkmaatschappij = 'HNT'", con=engn
-    )  # read data
+    twin19 = pd.read_sql_query("SELECT * FROM bc.twin19 WHERE Werkmaatschappij = 'HNT'", con=engn)  # read data
     twin = twin19.loc[twin19.Status != "draft"]
 
     return twin

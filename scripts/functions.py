@@ -77,15 +77,17 @@ class SessionParameters:
 
 
 def import_files(run_params, patt):
-    ttl = pd.DataFrame()
+    ttl = list()
 
     files = os.listdir(os.path.join(run_params.pickledir))
     files = [x for x in files if x.find(patt) != -1]
     for file in files:
         df = pd.read_pickle(os.path.join(run_params.pickledir, file))
-        ttl = pd.concat([ttl, df], axis=0, sort=False, ignore_index=True)
+        ttl.append(df)
 
-    return ttl
+    data = pd.concat(ttl, axis=0, sort=False, ignore_index=True)
+
+    return data
 
 
 def parse_session_response(response, param):

@@ -47,7 +47,9 @@ def pull_transactions(offices, run_params):
 
         period = add_metadata(period, office, rows)
 
-        period.to_pickle(os.path.join(run_params.pickledir, "{}_transactions.pkl".format(office)))
+        period.to_pickle(
+            os.path.join(run_params.pickledir, "{}_transactions.pkl".format(office))
+        )
 
 
 def request_period(login, run_params, periodes):

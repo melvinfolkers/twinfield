@@ -35,7 +35,9 @@ def create_blob_client(tablename):
     except:
         logging.info("Container already exists.")
 
-    blob_client = blob_service_client.get_blob_client(container=container_name, blob=f"{tablename}/{tablename}")
+    blob_client = blob_service_client.get_blob_client(
+        container=container_name, blob=f"{tablename}/{tablename}"
+    )
 
     return blob_client
 
@@ -56,7 +58,9 @@ def upload_to_blob(df, tablename, stagingdir):
 
 def remove_special_chars(df):
     oldlist = df.columns
-    newlist = [(x.replace("/", "_").replace("-", "_").replace(" ", "_")) for x in oldlist]
+    newlist = [
+        (x.replace("/", "_").replace("-", "_").replace(" ", "_")) for x in oldlist
+    ]
     df.columns = newlist
 
     # df = df.apply(lambda x: x.str.replace(r'\n', ''), axis=0)
@@ -70,7 +74,11 @@ def upload_data(name, data, start, run_params):
     push_to_azure(data.head(n=0), tablename)
     upload_to_blob(data, tablename, run_params.stagingdir)
 
-    logging.info("Finished in {} \n number of transactions: {}".format(datetime.now() - start, len(data)))
+    logging.info(
+        "Finished in {} \n number of transactions: {}".format(
+            datetime.now() - start, len(data)
+        )
+    )
 
 
 def push_bigquery(df, containername, foldername, tablename):
@@ -82,4 +90,6 @@ def push_bigquery(df, containername, foldername, tablename):
     )
     gbq.to_gbq(df, f"{foldername}.{tablename}", containername, if_exists="replace")
 
-    logging.info("cloud upload success! tijd: {}".format(str(datetime.now() - starttime)))
+    logging.info(
+        "cloud upload success! tijd: {}".format(str(datetime.now() - starttime))
+    )

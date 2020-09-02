@@ -4,6 +4,7 @@ from scripts.upload import upload_all
 from scripts.run_settings import set_run_parameters
 from scripts.transform import maak_samenvatting
 
+
 def mainscript():
 
     run_params = set_run_parameters("yml/custom/run_settings.yml")

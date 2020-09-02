@@ -45,6 +45,7 @@ def maak_samenvatting(run_params):
 
     aggcols = [
         "wm",
+        "administratienummer",
         "head.year",
         "head.period",
         "head.status",

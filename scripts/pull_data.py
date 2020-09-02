@@ -4,7 +4,6 @@ import os
 import pandas as pd
 from .run_settings import get_twinfield_settings
 from . import functions, modules, transform
-from .transform import maak_samenvatting
 from .functions import select_office
 from .modules import read_offices
 
@@ -21,10 +20,6 @@ def import_all(run_params, offices=None):
         logging.info("{} administraties geselecteerd".format(len(all_offices)))
 
     pull_transactions(all_offices, run_params)
-
-    # andere modules
-
-    maak_samenvatting(run_params)
 
 
 def add_metadata(df, office, rows):
@@ -52,7 +47,9 @@ def pull_transactions(offices, run_params):
 
         period = add_metadata(period, office, rows)
 
-        period.to_pickle(os.path.join(run_params.pickledir, "{}_transactions.pkl".format(office)))
+        period.to_pickle(
+            os.path.join(run_params.pickledir, "{}_transactions.pkl".format(office))
+        )
 
 
 def request_period(login, run_params, periodes):

@@ -6,9 +6,7 @@ import os
 import sentry_sdk
 
 ## staffing-twinfield sentry url
-sentry_sdk.init(
-    "https://0bb6ff7cb1f54bff82475d8c91c67c4b@o408709.ingest.sentry.io/5407767"
-)
+sentry_sdk.init("https://0bb6ff7cb1f54bff82475d8c91c67c4b@o408709.ingest.sentry.io/5407767")
 
 
 def get_settings(file_name):
@@ -35,9 +33,7 @@ def get_run_settings(yml_file):
     shell_vars = check_shell_variables()
 
     if shell_vars:
-        logging.info(
-            f"using shell vars!, the name of the yml file is presumed to be: {sys.argv[1]}"
-        )
+        logging.info(f"using shell vars!, the name of the yml file is presumed to be: {sys.argv[1]}")
         settings = get_settings(sys.argv[1])
     else:
         settings = get_settings(yml_file)
@@ -92,8 +88,6 @@ def auth_azure():
     database = "landing"
     driver = "ODBC Driver 17 for SQL Server"
 
-    connectionstring = (
-        f"mssql+pyodbc://{uid}:{password}@{server}:1433/{database}?driver={driver}"
-    )
+    connectionstring = f"mssql+pyodbc://{uid}:{password}@{server}:1433/{database}?driver={driver}"
 
     return connectionstring

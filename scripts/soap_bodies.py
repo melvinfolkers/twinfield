@@ -1,4 +1,24 @@
 import logging
+import os
+
+
+def soap_template(run_params):
+    filename = os.path.join(run_params.projectdir, "soap", "template.xml")
+
+    file = open(filename, "r", encoding="utf-16")
+    template = file.read()
+
+    return template
+
+
+def soap_040_1(session_id, run_params, periode):
+    filename = os.path.join(run_params.projectdir, "soap", "040_1.xml")
+    file = open(filename, "r", encoding="utf-16")
+    template = file.read()
+
+    body = template.format(session_id, run_params.jaar, periode["from"], run_params.jaar, periode["to"])
+
+    return body
 
 
 def soap_metadata(param, module):

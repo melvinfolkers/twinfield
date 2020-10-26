@@ -2,7 +2,22 @@ import os
 
 import pandas as pd
 
-from .functions import import_files
+from .functions import import_files, get_metadata
+from .run_settings import get_twinfield_settings
+
+
+def format_040_1(df):
+    login = get_twinfield_settings()
+    fields = get_metadata("040_1", login)
+    df.rename(columns=fields["label"], inplace=True)
+
+    # format numbers
+    numbers = []
+    for column in numbers:
+        if column in df.columns:
+            df[column] = df[column].astype(float)
+
+    return df
 
 
 def format_030_1(df):

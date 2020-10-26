@@ -1,0 +1,3 @@
+[submodule "df_to_azure"]
+	path = df_to_azure
+	url = git@github.com:melvinfolkers/df_to_azure.git

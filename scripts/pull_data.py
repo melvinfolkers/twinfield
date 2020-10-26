@@ -46,7 +46,7 @@ def pull_consolidatie(offices, run_params):
 
         select_office(office, param=login)
 
-        periodes = functions.period_groups(window="half-year")
+        periodes = functions.period_groups(window="year")
 
         period = request_consolidatie_data(login, run_params, periodes)
 

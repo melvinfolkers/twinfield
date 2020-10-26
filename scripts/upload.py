@@ -18,5 +18,14 @@ def upload_all(run_params, start):
     if "040_1" in run_params.modules:
         data = import_files(run_params, "consolidatie")
         data = transform.format_040_1(data)
-        upload_data(f"consolidatie_{run_params.jaar}", data, start, run_params)
         df_to_azure(data, f"consolidatie_{run_params.jaar}", schema="twinfield")
+
+    if "100" in run_params.modules:
+        data = import_files(run_params, "openstaande_debiteuren")
+        data = transform.format_100(data)
+        df_to_azure(data, f"openstaande_debiteuren", schema="twinfield")
+
+    if "200" in run_params.modules:
+        data = import_files(run_params, "openstaande_crediteuren")
+        data = transform.format_200(data)
+        df_to_azure(data, f"openstaande_crediteuren", schema="twinfield")

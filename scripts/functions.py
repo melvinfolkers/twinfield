@@ -314,12 +314,13 @@ def set_logging(logdir):
 
 
 class RunParameters:
-    def __init__(self, jaar, refresh, upload):
+    def __init__(self, jaar, refresh, upload, modules):
 
         self.projectdir = os.getcwd()
         self.jaar = str(jaar)
         self.refresh = refresh
         self.upload = upload
+        self.modules = modules
         self.logdir = create_dir(destination=os.path.join(self.projectdir, "data", "log", self.jaar))
         self.pickledir = create_dir(destination=os.path.join(self.projectdir, "data", "pickles", self.jaar))
         self.stagingdir = create_dir(destination=os.path.join(self.projectdir, "data", "staging", self.jaar))

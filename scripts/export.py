@@ -65,7 +65,7 @@ def remove_special_chars(df):
 
 
 def upload_data(name, data, start, run_params):
-    tablename = "twinfield_{}".format(name)
+    tablename = "{}".format(name)
 
     push_to_azure(data.head(n=0), tablename)
     upload_to_blob(data, tablename, run_params.stagingdir)

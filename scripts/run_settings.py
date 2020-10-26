@@ -74,8 +74,8 @@ def set_run_parameters(yml_file):
     JAAR = settings["jaar"]
     REFRESH = settings["refresh"]
     UPLOAD = settings["upload"]
-
-    run_params = RunParameters(jaar=JAAR, refresh=REFRESH, upload=UPLOAD)
+    MODULES = UPLOAD = settings["modules"]
+    run_params = RunParameters(jaar=JAAR, refresh=REFRESH, upload=UPLOAD, modules=MODULES)
 
     return run_params
 

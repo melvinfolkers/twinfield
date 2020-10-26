@@ -111,7 +111,7 @@ def parse_session_response(response, param):
 # metadata
 
 
-def get_metadata(module, param):
+def get_metadata(module, login):
     """
 
     :param param: session parameters
@@ -119,16 +119,16 @@ def get_metadata(module, param):
     :return: metadata van de tabel
     """
 
-    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = soap_bodies.soap_metadata(param, module=module)
+    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(login.cluster)
+    body = soap_bodies.soap_metadata(login, module=module)
 
-    response = requests.post(url=url, headers=param.header, data=body)
+    response = requests.post(url=url, headers=login.header, data=body)
 
     root = ET.fromstring(response.text)
 
-    body = root.find("env:Body", param.ns)
+    body = root.find("env:Body", login.ns)
 
-    data = body.find("tw:ProcessXmlStringResponse/tw:ProcessXmlStringResult", param.ns)
+    data = body.find("tw:ProcessXmlStringResponse/tw:ProcessXmlStringResult", login.ns)
 
     data = ET.fromstring(data.text)
 

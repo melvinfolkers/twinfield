@@ -3,10 +3,11 @@ import os
 import pandas as pd
 
 from .functions import import_files, get_metadata
+from .run_settings import get_twinfield_settings
 
 
 def format_040_1(df):
-
+    login = get_twinfield_settings()
     fields = get_metadata("040_1", login)
     df.rename(columns=fields["label"], inplace=True)
 

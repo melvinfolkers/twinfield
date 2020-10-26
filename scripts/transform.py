@@ -5,6 +5,7 @@ import pandas as pd
 from .functions import import_files, get_metadata
 from .run_settings import get_twinfield_settings
 
+
 def format_100(df):
     login = get_twinfield_settings()
     fields = get_metadata("100", login)
@@ -17,6 +18,7 @@ def format_100(df):
             df[column] = df[column].astype(float)
 
     return df
+
 
 def format_200(df):
     login = get_twinfield_settings()

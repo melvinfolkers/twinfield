@@ -31,6 +31,7 @@ def import_all(run_params, offices=None):
     if "200" in run_params.modules:
         pull_openstaande_crediteuren(all_offices, run_params)
 
+
 def add_metadata(df, office, rows):
 
     df["administratienaam"] = rows["name"]
@@ -38,6 +39,7 @@ def add_metadata(df, office, rows):
     df["wm"] = rows["shortname"]
 
     return df
+
 
 def pull_openstaande_debiteuren(offices, run_params):
 
@@ -51,6 +53,7 @@ def pull_openstaande_debiteuren(offices, run_params):
         period = request_openstaande_debiteuren_data(login, run_params, periodes)
         period = add_metadata(period, office, rows)
         period.to_pickle(os.path.join(run_params.pickledir, "{}_openstaande_debiteuren.pkl".format(office)))
+
 
 def pull_openstaande_crediteuren(offices, run_params):
 
@@ -119,6 +122,7 @@ def request_consolidatie_data(login, run_params, periodes):
 
     return data
 
+
 def request_openstaande_debiteuren_data(login, run_params, periodes):
     data = pd.DataFrame()
 
@@ -127,6 +131,7 @@ def request_openstaande_debiteuren_data(login, run_params, periodes):
         data = pd.concat([data, batch], axis=0, ignore_index=True, sort=False)
 
     return data
+
 
 def request_openstaande_crediteuren_data(login, run_params, periodes):
     data = pd.DataFrame()

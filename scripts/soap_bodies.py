@@ -10,6 +10,7 @@ def soap_template(run_params):
 
     return template
 
+
 def soap_100(session_id, run_params, periode):
     filename = os.path.join(run_params.projectdir, "soap", "100.xml")
     file = open(filename, "r", encoding="utf-16")
@@ -18,6 +19,7 @@ def soap_100(session_id, run_params, periode):
     body = template.format(session_id, run_params.jaar, periode["from"], run_params.jaar, periode["to"])
 
     return body
+
 
 def soap_200(session_id, run_params, periode):
     filename = os.path.join(run_params.projectdir, "soap", "200.xml")

@@ -13,8 +13,6 @@ def read_offices(param):
 
     data = functions.parse_session_response(response, param)
 
-
-
     return data
 
 
@@ -32,6 +30,7 @@ def read_100(param, run_params, periode):
 
     return data
 
+
 def read_200(param, run_params, periode):
     start = datetime.now()
 
@@ -45,7 +44,6 @@ def read_200(param, run_params, periode):
     logging.info("{} records in {}".format(len(data), datetime.now() - start))
 
     return data
-
 
 
 def read_040_1(param, run_params, periode):

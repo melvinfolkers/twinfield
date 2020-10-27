@@ -45,11 +45,9 @@ def get_run_settings(yml_file):
 
 def get_twinfield_settings():
 
-    client_settings = get_settings("yml/custom/twinfield_settings.yml")
-
-    USER = client_settings["user"]
-    PASSWORD = client_settings["password"]
-    ORGANISATION = client_settings["organisation"]
+    USER = os.environ.get("TW_USER_LS")
+    PASSWORD = os.environ.get("TW_PW_LS")
+    ORGANISATION = os.environ.get("TW_ORG_LS")
 
     login = SessionParameters(user=USER, pw=PASSWORD, organisation=ORGANISATION)
 
@@ -60,7 +58,7 @@ def get_twinfield_settings():
 
 def get_blob_settings():
 
-    yml = get_settings("yml/custom/blob.yml")
+    yml = get_settings("yml/blob.yml")
     CONNECTION_STRING = yml["connection_string"]
     CONTAINER_NAME = yml["container_name"]
 
@@ -75,7 +73,8 @@ def set_run_parameters(yml_file):
     REFRESH = settings["refresh"]
     UPLOAD = settings["upload"]
     MODULES = settings["modules"]
-    run_params = RunParameters(jaar=JAAR, refresh=REFRESH, upload=UPLOAD, modules=MODULES)
+    OFFICES = settings["offices"]
+    run_params = RunParameters(jaar=JAAR, refresh=REFRESH, upload=UPLOAD, modules=MODULES, offices=OFFICES)
 
     return run_params
 

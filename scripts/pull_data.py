@@ -9,27 +9,37 @@ from .modules import read_offices
 from .transform import maak_samenvatting
 
 
-def import_all(run_params, offices=None):
-
+def scoping_offices(offices):
     login = get_twinfield_settings()
     all_offices = read_offices(login)
 
-    if offices:
+    if len(offices):
         logging.info("{} administraties beschikbaar".format(len(all_offices)))
-        all_offices = all_offices[all_offices.name.isin(offices)]
-        logging.info("{} administraties geselecteerd".format(len(all_offices)))
+        scoping = all_offices[all_offices.name.isin(offices)]
+        logging.info("{} administraties geselecteerd".format(len(scoping)))
+    else:
+        logging.info(f"alle {len(all_offices)} administraties in scope.")
+        scoping = all_offices
+
+    return scoping
+
+
+def import_all(run_params):
+
+    offices = scoping_offices(run_params.offices)
+
     if "030_1" in run_params.modules:
-        pull_transactions(all_offices, run_params)
+        pull_transactions(offices, run_params)
         maak_samenvatting(run_params)
 
     if "040_1" in run_params.modules:
-        pull_consolidatie(all_offices, run_params)
+        pull_consolidatie(offices, run_params)
 
     if "100" in run_params.modules:
-        pull_openstaande_debiteuren(all_offices, run_params)
+        pull_openstaande_debiteuren(offices, run_params)
 
     if "200" in run_params.modules:
-        pull_openstaande_crediteuren(all_offices, run_params)
+        pull_openstaande_crediteuren(offices, run_params)
 
 
 def add_metadata(df, office, rows):

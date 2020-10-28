@@ -16,7 +16,7 @@ def soap_100(session_id, run_params, periode):
     file = open(filename, "r", encoding="utf-16")
     template = file.read()
 
-    body = template.format(session_id, run_params.jaar, periode["from"], run_params.jaar, periode["to"])
+    body = template.format(session_id, periode["from"], periode["to"])
 
     return body
 
@@ -26,7 +26,7 @@ def soap_200(session_id, run_params, periode):
     file = open(filename, "r", encoding="utf-16")
     template = file.read()
 
-    body = template.format(session_id, run_params.jaar, periode["from"], run_params.jaar, periode["to"])
+    body = template.format(session_id, periode["from"], periode["to"])
 
     return body
 

@@ -19,14 +19,14 @@ def read_offices(param):
 def read_100(param, run_params, periode):
     start = datetime.now()
 
-    logging.info("start request {} periode van {} t/m {}".format(run_params.jaar, periode["from"], periode["to"]))
+    logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
     body = soap_bodies.soap_100(param.session_id, run_params, periode)
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)
-    logging.info("{} records in {}".format(len(data), datetime.now() - start))
+    logging.debug("{} records in {}".format(len(data), datetime.now() - start))
 
     return data
 
@@ -34,14 +34,14 @@ def read_100(param, run_params, periode):
 def read_200(param, run_params, periode):
     start = datetime.now()
 
-    logging.info("start request {} periode van {} t/m {}".format(run_params.jaar, periode["from"], periode["to"]))
+    logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
     body = soap_bodies.soap_200(param.session_id, run_params, periode)
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)
-    logging.info("{} records in {}".format(len(data), datetime.now() - start))
+    logging.debug("{} records in {}".format(len(data), datetime.now() - start))
 
     return data
 

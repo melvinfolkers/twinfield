@@ -7,29 +7,32 @@ from .run_settings import get_twinfield_settings
 
 
 def format_100(df):
-    login = get_twinfield_settings()
-    fields = get_metadata("100", login)
-    df.rename(columns=fields["label"], inplace=True)
-
-    # format numbers
-    numbers = []
-    for column in numbers:
-        if column in df.columns:
-            df[column] = df[column].astype(float)
+    df.columns = [x.replace("fin.trs.", "") for x in df.columns]
+    # login = get_twinfield_settings()
+    # fields = get_metadata("100", login)
+    # df.rename(columns=fields["label"], inplace=True)
+    #
+    # # format numbers
+    # numbers = []
+    # for column in numbers:
+    #     if column in df.columns:
+    #         df[column] = df[column].astype(float)
 
     return df
 
 
 def format_200(df):
-    login = get_twinfield_settings()
-    fields = get_metadata("200", login)
-    df.rename(columns=fields["label"], inplace=True)
 
-    # format numbers
-    numbers = []
-    for column in numbers:
-        if column in df.columns:
-            df[column] = df[column].astype(float)
+    df.columns = [x.replace("fin.trs.", "") for x in df.columns]
+    # login = get_twinfield_settings()
+    # fields = get_metadata("200", login)
+    # df.rename(columns=fields["label"], inplace=True)
+    #
+    # # format numbers
+    # numbers = []
+    # for column in numbers:
+    #     if column in df.columns:
+    #         df[column] = df[column].astype(float)
 
     return df
 

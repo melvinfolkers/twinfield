@@ -25,6 +25,8 @@ class SessionParameters:
             "tw": "http://www.twinfield.com/",
         }
 
+        self.ns_txt = {k: "{" + v + "}" for k, v in self.ns.items()}
+
         self.body = """<?xml version="1.0" encoding="utf-8"?>
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XmlSchema-instance" xmlns:xsd="http://www.w3.org/2001/XmlSchema">
           <soap:Body>
@@ -44,7 +46,7 @@ class SessionParameters:
 
         header = root.find("env:Header/tw:Header", self.ns)
         session_id = header.find("tw:SessionID", self.ns).text
-        logging.info("session id: {}".format(session_id))
+        logging.debug("session id: {}".format(session_id))
 
         return session_id
 
@@ -53,7 +55,7 @@ class SessionParameters:
         header = root.find("env:Body/tw:LogonResponse", self.ns)
         cluster = header.find("tw:cluster", self.ns).text
         cluster = cluster.split("//")[1].split(".")[0]
-        logging.info("cluster: {}".format(cluster))
+        logging.debug("cluster: {}".format(cluster))
 
         return cluster
 
@@ -128,17 +130,37 @@ def get_metadata(module, login):
 
     body = root.find("env:Body", login.ns)
 
+    if body.find("env:Fault", login.ns):
+        error = parse_soap_error(body, login)
+        return error
+
     data = body.find("tw:ProcessXmlStringResponse/tw:ProcessXmlStringResult", login.ns)
 
     data = ET.fromstring(data.text)
 
     metadata = parse_metadata_response(data)
+    metadata.loc[metadata.label.isna(), "label"] = metadata.field
 
     metadata.set_index("field", inplace=True)
 
-    # fieldmapping = metadata['label'].to_dict()
-
     return metadata
+
+
+def parse_soap_error(body, login):
+    fault = body.find("env:Fault", login.ns)
+    d = dict()
+    d["faultcode"] = fault.find("faultcode").text
+    d["faultstring"] = fault.find("faultcode").text
+    d["faultactor"] = fault.find("faultactor").text
+
+    detail = fault.find("detail")
+    d["message"] = detail.find("message").text
+    d["code"] = detail.find("code").text
+    d["source"] = detail.find("source").text
+
+    logging.info(d)
+
+    return pd.DataFrame([d])
 
 
 def parse_metadata_response(data):
@@ -162,6 +184,11 @@ def parse_metadata_response(data):
 def parse_response(response, param):
     root = ET.fromstring(response.text)
     body = root.find("env:Body", param.ns)
+
+    if body.find("env:Fault", param.ns):
+        error = parse_soap_error(body, param)
+        return error
+
     try:
         data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", param.ns)
     except:
@@ -194,7 +221,7 @@ def parse_response(response, param):
 
 
 def select_office(officecode, param):
-    logging.info("selecting office: {}...".format(officecode))
+    logging.debug("selecting office: {}...".format(officecode))
 
     url = "https://{}.twinfield.com/webservices/session.asmx?wsdl".format(param.cluster)
 
@@ -210,7 +237,38 @@ def select_office(officecode, param):
 
     pass_fail = data.text
 
-    logging.info(pass_fail)
+    logging.debug(pass_fail)
+
+
+def periods_from_start(run_params):
+    # all the records from 2015
+    periodlist = [
+        {"from": "2015/00", "to": f"{datetime.now().year -1}/55"},
+        {"from": f"{datetime.now().year}/00", "to": f"{datetime.now().year}/55"},
+    ]
+
+    if run_params.rerun:
+        periodlist = []
+        years = range(datetime.now().year + 1)[-6:]
+        periods = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "55"]
+
+        for year in years:
+            for period in periods:
+                period = {"from": f"{year}/{period}", "to": f"{year}/{period}"}
+                periodlist.append(period.copy())
+
+    return periodlist
+
+
+def periods_last_n_years(n):
+    # last 10 years
+    years = range(datetime.now().year + 1)[-n:]
+    periods = list()
+    for year in years:
+        period = {"from": f"{year-1}/00", "to": f"{year}/55"}
+        periods.append(period.copy())
+
+    return periods
 
 
 def period_groups(window="year"):
@@ -314,11 +372,12 @@ def set_logging(logdir):
 
 
 class RunParameters:
-    def __init__(self, jaar, refresh, upload, modules, offices):
+    def __init__(self, jaar, refresh, upload, modules, offices, rerun):
 
         self.projectdir = os.getcwd()
         self.jaar = str(jaar)
         self.refresh = refresh
+        self.rerun = rerun
         self.upload = upload
         self.modules = modules
         self.offices = offices

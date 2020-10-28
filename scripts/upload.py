@@ -3,6 +3,7 @@ from .functions import import_files
 from .export import upload_data
 from df_to_azure.main import run as df_to_azure
 from . import transform
+from .mailing import send_mail
 
 
 def upload_all(run_params, start):
@@ -24,8 +25,10 @@ def upload_all(run_params, start):
         data = import_files(run_params, "openstaande_debiteuren")
         data = transform.format_100(data)
         df_to_azure(data, f"openstaande_debiteuren", schema="twinfield")
+        send_mail("Twinfield openstaande debiteuren", message=f"{len(data)} records geüpload naar Azure")
 
     if "200" in run_params.modules:
         data = import_files(run_params, "openstaande_crediteuren")
         data = transform.format_200(data)
         df_to_azure(data, f"openstaande_crediteuren", schema="twinfield")
+        send_mail("Twinfield openstaande crediteuren", message=f"{len(data)} records geüpload naar Azure")

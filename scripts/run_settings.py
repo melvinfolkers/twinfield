@@ -51,7 +51,7 @@ def get_twinfield_settings():
 
     login = SessionParameters(user=USER, pw=PASSWORD, organisation=ORGANISATION)
 
-    logging.info("ingelogd met gebruiker {}".format(USER))
+    logging.debug("ingelogd met gebruiker {}".format(USER))
 
     return login
 
@@ -74,7 +74,8 @@ def set_run_parameters(yml_file):
     UPLOAD = settings["upload"]
     MODULES = settings["modules"]
     OFFICES = settings["offices"]
-    run_params = RunParameters(jaar=JAAR, refresh=REFRESH, upload=UPLOAD, modules=MODULES, offices=OFFICES)
+    RERUN = settings["rerun"]
+    run_params = RunParameters(jaar=JAAR, refresh=REFRESH, upload=UPLOAD, modules=MODULES, offices=OFFICES, rerun=RERUN)
 
     return run_params
 

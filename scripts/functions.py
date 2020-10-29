@@ -6,6 +6,7 @@ from datetime import datetime
 
 import pandas as pd
 import requests
+import json
 
 from . import soap_bodies
 
@@ -189,10 +190,8 @@ def parse_response(response, param):
         error = parse_soap_error(body, param)
         return error
 
-    try:
-        data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", param.ns)
-    except:
-        return pd.DataFrame()
+
+    data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", param.ns)
 
     browse = data.find("browse")
 
@@ -357,7 +356,7 @@ def set_logging(logdir):
     logging.getLogger().setLevel(logging.INFO)
     logging.basicConfig(
         filename=full_path,
-        level=logging.INFO,
+        level=logging.DEBUG,
         format="%(asctime)s %(message)s",
         datefmt="%H:%M:%S",
     )
@@ -380,6 +379,7 @@ class RunParameters:
         self.rerun = rerun
         self.upload = upload
         self.modules = modules
+        self.module_names = get_modules()
         self.offices = offices
         self.logdir = create_dir(destination=os.path.join(self.projectdir, "data", "log", self.jaar))
         self.pickledir = create_dir(destination=os.path.join(self.projectdir, "data", "pickles", self.jaar))
@@ -396,3 +396,10 @@ def create_dir(destination):
         logging.warning("Error Creating directory. " + destination)
 
     return destination
+
+def get_modules():
+
+    file = open('static/modules.json').read()
+    modules = json.loads(file)
+
+    return modules

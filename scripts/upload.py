@@ -17,9 +17,12 @@ def upload_all(run_params, start):
         upload_data("sv_" + run_params.jaar, sv, start, run_params)
 
     if "040_1" in run_params.modules:
+        tablename = f"consolidatie_{run_params.jaar}"
         data = import_files(run_params, "consolidatie")
         data = transform.format_040_1(data)
-        df_to_azure(data, f"consolidatie_{run_params.jaar}", schema="twinfield")
+        df_to_azure(data, tablename, schema="twinfield")
+        send_mail(f"Twinfield {tablename}",
+              message=f"{len(data)} records geüpload naar Azure")
 
     if "100" in run_params.modules:
         data = import_files(run_params, "openstaande_debiteuren")

@@ -38,3 +38,23 @@ in order to get the API running, the templates from `yml/default` should be copi
 The connection with the azure database is made with pyodbc. this library requires ODBC drivers `'ODBC Driver 17 for SQL Server'`<br>
 download link: https://docs.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver15
 
+# Uitleg van de parameters
+
+<h4>refresh</h4>
+wanneer je refresh op `True` zet, gaat de adapter nieuwe records uitvragen.
+
+<h4>upload</h4>
+wanneer je upload op `True` zet, gaat de adapter de opgeslagen records uploaden naar Azure.
+
+<h4>jaar</h4>
+Het jaar staat standaard op 2020. Als je bijvoorbeeld transacties van oudere jaren wilt ophalen kan je in een lijst de jaren zetten die je wil uitvragen. Voor het opvragen van openstaande debiteuren en crediteuren kan je de parameter standaard op `['2020']` laten staan. 
+
+<h4>modules</h4>
+keuze uit 
+```
+
+``` 
+
+
+<h4>rerun</h4>
+wanneer je rerun op `True` zet, gaat de adapter alleen de data ophalen van de geselecteerde offices. deze optie zorgt er ook voor dat de periodes worden opgeknipt in kleinere stukken bij het uitvragen. Dat heeft als voordeel dat de kans op een server error door een timeout verkleint wordt.

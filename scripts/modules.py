@@ -1,12 +1,23 @@
 import logging
 from datetime import datetime
-
+import pandas as pd
 import requests
 
 from . import functions, soap_bodies
 
 
-def read_offices(param):
+def read_offices(param) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    param: login class with twinfield credentials
+
+    Returns: dataframe containing a list of offices available
+    -------
+
+    """
+
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
     body = soap_bodies.soap_offices(param.session_id)
     response = requests.post(url=url, headers=param.header, data=body)
@@ -16,7 +27,20 @@ def read_offices(param):
     return data
 
 
-def read_100(param, run_params, periode):
+def read_100(param, run_params, periode) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    param: login class with twinfield credentials
+    run_params: run settings from run_settings.yml file
+    periode: scope of period in request.
+
+    Returns: dataframe containing data from browse code 100
+    -------
+
+    """
+
     start = datetime.now()
 
     logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
@@ -31,7 +55,19 @@ def read_100(param, run_params, periode):
     return data
 
 
-def read_200(param, run_params, periode):
+def read_200(param, run_params, periode) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    param: login class with twinfield credentials
+    run_params: run settings from run_settings.yml file
+    periode: scope of period in request.
+
+    Returns: dataframe containing data from browse code 200
+    -------
+
+    """
     start = datetime.now()
 
     logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
@@ -46,10 +82,26 @@ def read_200(param, run_params, periode):
     return data
 
 
-def read_040_1(param, run_params, periode):
+def read_040_1(param, run_params, periode) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    param: login class with twinfield credentials
+    run_params: run settings from run_settings.yml file
+    periode: scope of period in request.
+
+    Returns: dataframe containing data from browse code 040_1
+    -------
+
+    """
     start = datetime.now()
 
-    logging.debug("start request {} periode van {} t/m {}".format(run_params.jaar, periode["from"], periode["to"]))
+    logging.debug(
+        "start request {} periode van {} t/m {}".format(
+            run_params.jaar, periode["from"], periode["to"]
+        )
+    )
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
     body = soap_bodies.soap_040_1(param.session_id, run_params, periode)
@@ -61,10 +113,26 @@ def read_040_1(param, run_params, periode):
     return data
 
 
-def read_030_1(param, run_params, periode):
+def read_030_1(param, run_params, periode) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    param: login class with twinfield credentials
+    run_params: run settings from run_settings.yml file
+    periode: scope of period in request.
+
+    Returns: dataframe containing data from browse code 030_1
+    -------
+
+    """
     start = datetime.now()
 
-    logging.info("start request {} periode van {} t/m {}".format(run_params.jaar, periode["from"], periode["to"]))
+    logging.info(
+        "start request {} periode van {} t/m {}".format(
+            run_params.jaar, periode["from"], periode["to"]
+        )
+    )
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
     body = soap_bodies.soap_030_1(param.session_id, run_params, periode)
@@ -77,15 +145,36 @@ def read_030_1(param, run_params, periode):
     return data
 
 
-def read_metadata(module, param):
+def read_metadata(module, param) -> dict:
+    """
 
-    metadata = functions.get_metadata(module=module, param=param)
+    Parameters
+    ----------
+    module: twinfield browse_code
+    param: login class of twinfield credentials
+
+    Returns dictionary of column names and labels
+    -------
+
+    """
+
+    metadata = functions.get_metadata(module=module, login=param)
     fieldmapping = metadata["label"].to_dict()
 
     return fieldmapping
 
 
-def read_164(param):
+def read_164(param) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    param: login class with twinfield credentials
+    Returns: dataframe containing data from browse code 164
+    -------
+
+    """
+
     start = datetime.now()
 
     logging.info("start request credit management")

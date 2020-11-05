@@ -35,7 +35,9 @@ def create_blob_client(tablename):
     except:
         logging.info("Container already exists.")
 
-    blob_client = blob_service_client.get_blob_client(container=container_name, blob=f"{tablename}/{tablename}")
+    blob_client = blob_service_client.get_blob_client(
+        container=container_name, blob=f"{tablename}/{tablename}"
+    )
 
     return blob_client
 
@@ -70,7 +72,9 @@ def upload_data(name, data, start, run_params):
     push_to_azure(data.head(n=0), tablename)
     upload_to_blob(data, tablename, run_params.stagingdir)
 
-    logging.info("Finished in {} \n number of transactions: {}".format(datetime.now() - start, len(data)))
+    logging.info(
+        "Finished in {} \n number of transactions: {}".format(datetime.now() - start, len(data))
+    )
 
 
 def push_bigquery(df, containername, foldername, tablename):

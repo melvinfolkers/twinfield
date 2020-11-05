@@ -10,7 +10,7 @@ from .transform import maak_samenvatting
 from tqdm import tqdm
 
 
-def scoping_offices(offices):
+def scoping_offices(offices) -> pd.DataFrame:
     login = get_twinfield_settings()
     all_offices = read_offices(login)
 
@@ -24,6 +24,7 @@ def scoping_offices(offices):
 
     return scoping
 
+
 def set_update(run_params, offices, module):
 
     df = functions.import_files(run_params, module)
@@ -33,6 +34,7 @@ def set_update(run_params, offices, module):
     offices = offices[~offices.name.isin(succes)]
 
     return offices
+
 
 def set_rerun(run_params, module):
 
@@ -70,7 +72,7 @@ def import_all(run_params):
         if run_params.rerun:
             offices = set_rerun(run_params, run_params.module_names.get("100"))
             pull_openstaande_debiteuren(offices, run_params)
-            return logging.info('rerun afgerond!')
+            return logging.info("rerun afgerond!")
         else:
             offices = set_update(run_params, offices, run_params.module_names.get("100"))
 
@@ -78,20 +80,20 @@ def import_all(run_params):
         offices = set_rerun(run_params, run_params.module_names.get("100"))
         pull_openstaande_debiteuren(offices, run_params)
 
-
     if "200" in run_params.modules:
         offices = scoping_offices(run_params.offices)
 
         if run_params.rerun:
             offices = set_rerun(run_params, "openstaande_crediteuren")
             pull_openstaande_crediteuren(offices, run_params)
-            return logging.info('rerun afgerond!')
+            return logging.info("rerun afgerond!")
         else:
             offices = set_update(run_params, offices, run_params.module_names.get("200"))
 
         pull_openstaande_crediteuren(offices, run_params)
         offices = set_rerun(run_params, run_params.module_names.get("200"))
         pull_openstaande_crediteuren(offices, run_params)
+
 
 def add_metadata(df, office, rows):
 
@@ -105,7 +107,7 @@ def add_metadata(df, office, rows):
 def pull_openstaande_debiteuren(offices, run_params):
     logging.info("\t" + 3 * "-" + "openstaande debiteuren" + 3 * "-")
     for office, rows in tqdm(offices.iterrows(), desc="administraties", total=offices.shape[0]):
-        #logging.info("\t" + 3 * "-" + str(rows["shortname"]) + 3 * "-")
+        # logging.info("\t" + 3 * "-" + str(rows["shortname"]) + 3 * "-")
         # refresh login (session id) for every run
 
         login = get_twinfield_settings()
@@ -113,7 +115,9 @@ def pull_openstaande_debiteuren(offices, run_params):
         periodes = functions.periods_from_start(run_params)
         period = request_openstaande_debiteuren_data(login, run_params, periodes)
         period = add_metadata(period, office, rows)
-        period.to_pickle(os.path.join(run_params.pickledir, "{}_openstaande_debiteuren.pkl".format(office)))
+        period.to_pickle(
+            os.path.join(run_params.pickledir, "{}_openstaande_debiteuren.pkl".format(office))
+        )
 
 
 def pull_openstaande_crediteuren(offices, run_params):
@@ -128,7 +132,9 @@ def pull_openstaande_crediteuren(offices, run_params):
         periodes = functions.periods_from_start(run_params)
         period = request_openstaande_crediteuren_data(login, run_params, periodes)
         period = add_metadata(period, office, rows)
-        period.to_pickle(os.path.join(run_params.pickledir, "{}_openstaande_crediteuren.pkl".format(office)))
+        period.to_pickle(
+            os.path.join(run_params.pickledir, "{}_openstaande_crediteuren.pkl".format(office))
+        )
 
 
 def pull_consolidatie(offices, run_params):
@@ -185,7 +191,7 @@ def request_consolidatie_data(login, run_params, periodes):
     return data
 
 
-def request_openstaande_debiteuren_data(login,run_params, periodes):
+def request_openstaande_debiteuren_data(login, run_params, periodes):
     data = pd.DataFrame()
 
     for periode in periodes:

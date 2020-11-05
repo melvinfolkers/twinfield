@@ -33,7 +33,9 @@ def get_run_settings(yml_file):
     shell_vars = check_shell_variables()
 
     if shell_vars:
-        logging.info(f"using shell vars!, the name of the yml file is presumed to be: {sys.argv[1]}")
+        logging.info(
+            f"using shell vars!, the name of the yml file is presumed to be: {sys.argv[1]}"
+        )
         settings = get_settings(sys.argv[1])
     else:
         settings = get_settings(yml_file)
@@ -75,7 +77,9 @@ def set_run_parameters(yml_file):
     MODULES = settings["modules"]
     OFFICES = settings["offices"]
     RERUN = settings["rerun"]
-    run_params = RunParameters(jaar=JAAR, refresh=REFRESH, upload=UPLOAD, modules=MODULES, offices=OFFICES, rerun=RERUN)
+    run_params = RunParameters(
+        jaar=JAAR, refresh=REFRESH, upload=UPLOAD, modules=MODULES, offices=OFFICES, rerun=RERUN
+    )
 
     return run_params
 

@@ -41,7 +41,9 @@ class SessionParameters:
             user, pw, organisation
         )
 
-        self.session_id, self.cluster = SessionParameters.get_session_info(self, self.url, self.header, self.body)
+        self.session_id, self.cluster = SessionParameters.get_session_info(
+            self, self.url, self.header, self.body
+        )
 
     def parse_session_id(self, root):
 
@@ -68,7 +70,9 @@ class SessionParameters:
             session_id = SessionParameters.parse_session_id(
                 self, root=ET.fromstring(response.text)
             )  # lees de response uit
-            cluster = SessionParameters.parse_cluster(self, root=ET.fromstring(response.text))  # lees de response uit
+            cluster = SessionParameters.parse_cluster(
+                self, root=ET.fromstring(response.text)
+            )  # lees de response uit
 
         else:
             logging.info("niet gelukt om data binnen te halen")
@@ -79,11 +83,13 @@ class SessionParameters:
 # offices
 
 
-def import_files(run_params, patt):
+def import_files(run_params, patt) -> pd.DataFrame():
     ttl = list()
 
     files = os.listdir(os.path.join(run_params.pickledir))
     files = [x for x in files if x.find(patt) != -1]
+    if not files:
+        return pd.DataFrame()
     for file in files:
         df = pd.read_pickle(os.path.join(run_params.pickledir, file))
         ttl.append(df)
@@ -190,7 +196,6 @@ def parse_response(response, param):
         error = parse_soap_error(body, param)
         return error
 
-
     data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", param.ns)
 
     browse = data.find("browse")
@@ -249,7 +254,23 @@ def periods_from_start(run_params):
     if run_params.rerun:
         periodlist = []
         years = range(datetime.now().year + 1)[-6:]
-        periods = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "55"]
+        periods = [
+            "00",
+            "01",
+            "02",
+            "03",
+            "04",
+            "05",
+            "06",
+            "07",
+            "08",
+            "09",
+            "10",
+            "11",
+            "12",
+            "13",
+            "55",
+        ]
 
         for year in years:
             for period in periods:
@@ -381,9 +402,9 @@ class RunParameters:
         self.modules = modules
         self.module_names = get_modules()
         self.offices = offices
-        self.logdir = create_dir(destination=os.path.join(self.projectdir, "data", "log", self.jaar))
-        self.pickledir = create_dir(destination=os.path.join(self.projectdir, "data", "pickles", self.jaar))
-        self.stagingdir = create_dir(destination=os.path.join(self.projectdir, "data", "staging", self.jaar))
+        self.logdir = create_dir(destination=os.path.join(self.projectdir, "data", "log"))
+        self.pickledir = create_dir(destination=os.path.join(self.projectdir, "data", "pickles"))
+        self.stagingdir = create_dir(destination=os.path.join(self.projectdir, "data", "staging"))
         self.logfile = set_logging(self.logdir)
 
 
@@ -397,9 +418,10 @@ def create_dir(destination):
 
     return destination
 
+
 def get_modules():
 
-    file = open('static/modules.json').read()
+    file = open("static/modules.json").read()
     modules = json.loads(file)
 
     return modules

@@ -39,7 +39,9 @@ def send_mail(subject, message, files=None):
             with open(path, "rb") as file:
                 part.set_payload(file.read())
             encoders.encode_base64(part)
-            part.add_header("Content-Disposition", 'attachment; filename="{}"'.format(op.basename(path)))
+            part.add_header(
+                "Content-Disposition", 'attachment; filename="{}"'.format(op.basename(path))
+            )
             msg.attach(part)
 
         smtp = smtplib.SMTP(server, port)

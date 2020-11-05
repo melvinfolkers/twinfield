@@ -27,6 +27,8 @@ def scoping_offices(offices):
 def set_update(run_params, offices, module):
 
     df = functions.import_files(run_params, module)
+    if not len(df):
+        return offices
     succes = df["administratienaam"].unique().tolist()
     offices = offices[~offices.name.isin(succes)]
 
@@ -64,11 +66,13 @@ def import_all(run_params):
         pull_consolidatie(offices, run_params)
 
     if "100" in run_params.modules:
-        #
-        # if run_params.rerun:
-        #     offices = set_rerun(run_params, run_params.module_names.get("100"))
-        # else:
-        #     offices = set_update(run_params, offices, run_params.module_names.get("100"))
+        offices = scoping_offices(run_params.offices)
+        if run_params.rerun:
+            offices = set_rerun(run_params, run_params.module_names.get("100"))
+            pull_openstaande_debiteuren(offices, run_params)
+            return logging.info('rerun afgerond!')
+        else:
+            offices = set_update(run_params, offices, run_params.module_names.get("100"))
 
         pull_openstaande_debiteuren(offices, run_params)
         offices = set_rerun(run_params, run_params.module_names.get("100"))
@@ -77,17 +81,17 @@ def import_all(run_params):
 
     if "200" in run_params.modules:
         offices = scoping_offices(run_params.offices)
+
+        if run_params.rerun:
+            offices = set_rerun(run_params, "openstaande_crediteuren")
+            pull_openstaande_crediteuren(offices, run_params)
+            return logging.info('rerun afgerond!')
+        else:
+            offices = set_update(run_params, offices, run_params.module_names.get("200"))
+
         pull_openstaande_crediteuren(offices, run_params)
-        # if run_params.rerun:
-        #     offices = set_rerun(run_params, "openstaande_crediteuren")
-        # else:
-        #     try:
-        #         offices = set_update(run_params, offices, "openstaande_crediteuren")
-        #     except:
-        #         None
-
-
-
+        offices = set_rerun(run_params, run_params.module_names.get("200"))
+        pull_openstaande_crediteuren(offices, run_params)
 
 def add_metadata(df, office, rows):
 

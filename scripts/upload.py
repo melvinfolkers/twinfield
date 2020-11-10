@@ -1,10 +1,9 @@
 import logging
 from .functions import import_files
-
 # from .export import upload_data
 from df_to_azure.export import run as df_to_azure
 from . import transform
-from .mailing import send_mail
+from scripts.report import send_teams_message
 
 
 def upload_all(run_params):
@@ -29,10 +28,9 @@ def upload_all(run_params):
             method="create",
             local=True,
         )
-        send_mail(
-            f"Twinfield transacties {run_params.jaar}",
-            message=f"{len(data)} records geüpload naar Azure",
-        )
+
+        send_teams_message(tables={f"Transacties {run_params.jaar}": data,
+                                    f"Samenvatting {run_params.jaar}":sv})
 
     if "040_1" in run_params.modules:
 
@@ -46,7 +44,7 @@ def upload_all(run_params):
             local=True,
         )
 
-        send_mail(f"Twinfield {tablename}", message=f"{len(data)} records geüpload naar Azure")
+        send_teams_message(tables={f"Consolidatie {run_params.jaar}": data})
 
     if "100" in run_params.modules:
         data = import_files(run_params, "openstaande_debiteuren")
@@ -59,9 +57,7 @@ def upload_all(run_params):
             local=True,
         )
 
-        send_mail(
-            "Twinfield openstaande debiteuren", message=f"{len(data)} records geüpload naar Azure"
-        )
+        send_teams_message(tables = {"Openstaande debiteurenlijst": data})
 
     if "200" in run_params.modules:
         data = import_files(run_params, "openstaande_crediteuren")
@@ -74,6 +70,4 @@ def upload_all(run_params):
             local=True,
         )
 
-        send_mail(
-            "Twinfield openstaande crediteuren", message=f"{len(data)} records geüpload naar Azure"
-        )
+        send_teams_message(tables={"Openstaande crediteurenlijst": data})

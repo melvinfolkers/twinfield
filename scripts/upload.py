@@ -1,5 +1,6 @@
 import logging
 from .functions import import_files
+
 # from .export import upload_data
 from df_to_azure.export import run as df_to_azure
 from . import transform
@@ -29,8 +30,9 @@ def upload_all(run_params):
             local=True,
         )
 
-        send_teams_message(tables={f"Transacties {run_params.jaar}": data,
-                                    f"Samenvatting {run_params.jaar}":sv})
+        send_teams_message(
+            tables={f"Transacties {run_params.jaar}": data, f"Samenvatting {run_params.jaar}": sv}
+        )
 
     if "040_1" in run_params.modules:
 
@@ -57,7 +59,7 @@ def upload_all(run_params):
             local=True,
         )
 
-        send_teams_message(tables = {"Openstaande debiteurenlijst": data})
+        send_teams_message(tables={"Openstaande debiteurenlijst": data})
 
     if "200" in run_params.modules:
         data = import_files(run_params, "openstaande_crediteuren")

@@ -40,25 +40,27 @@ def create_section(msg, section_title, act_title, act_subtitle, act_body):
 
 
 def send_teams_message(tables):
-    stamp = datetime.now().strftime('%Y-%m-%d %H:%M%:%S')
+    stamp = datetime.now().strftime("%Y-%m-%d %H:%M%:%S")
 
     if len(tables) == 0:
-        return logging.info('geen bericht aangemaakt.')
+        return logging.info("geen bericht aangemaakt.")
 
     title = f"{os.path.basename(os.getcwd()).replace('_', ' ')} DWH"
 
     if len(tables) == 1:
-        body = f'''1 tabel "geëxporteerd". Zie onderstaand deze activiteit.'''
+        body = f"""1 tabel "geëxporteerd". Zie onderstaand deze activiteit."""
     else:
-        body = f'''In het totaal zijn er {len(tables)} tabellen geëxporteerd. Zie onderstaande activiteiten'''
+        body = f"""In het totaal zijn er {len(tables)} tabellen geëxporteerd. Zie onderstaande activiteiten"""
 
     msg = create_message(title, body)
 
     for tablename, table in tables.items():
-        msg = create_section(msg,
-                             section_title=None,
-                             act_title=tablename,
-                             act_subtitle=f"{table.shape[0]} records geupload naar Azure.",
-                             act_body=f"afgerond op: {stamp}")
+        msg = create_section(
+            msg,
+            section_title=None,
+            act_title=tablename,
+            act_subtitle=f"{table.shape[0]} records geupload naar Azure.",
+            act_body=f"afgerond op: {stamp}",
+        )
 
     msg.send()

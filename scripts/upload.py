@@ -1,7 +1,6 @@
 import logging
 from .functions import import_files
 
-# from .export import upload_data
 from df_to_azure.export import run as df_to_azure
 from . import transform
 from scripts.report import send_teams_message

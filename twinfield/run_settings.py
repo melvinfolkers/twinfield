@@ -1,7 +1,8 @@
 import logging
 import sys
 import yaml
-from scripts.functions import RunParameters, SessionParameters
+from scripts.functions import RunParameters
+from scripts.credentials import SessionParameters
 import os
 import sentry_sdk
 

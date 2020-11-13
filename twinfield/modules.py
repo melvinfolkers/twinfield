@@ -3,7 +3,7 @@ from datetime import datetime
 import pandas as pd
 import requests
 
-from . import functions, soap_bodies
+from . import functions, templates
 
 
 def read_offices(param) -> pd.DataFrame:
@@ -19,7 +19,7 @@ def read_offices(param) -> pd.DataFrame:
     """
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = soap_bodies.soap_offices(param.session_id)
+    body = templates.soap_offices(param.session_id)
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_session_response(response, param)
@@ -46,7 +46,7 @@ def read_100(param, run_params, periode) -> pd.DataFrame:
     logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = soap_bodies.soap_100(param.session_id, run_params, periode)
+    body = templates.soap_100(param.session_id, run_params, periode)
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)
@@ -73,7 +73,7 @@ def read_200(param, run_params, periode) -> pd.DataFrame:
     logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = soap_bodies.soap_200(param.session_id, run_params, periode)
+    body = templates.soap_200(param.session_id, run_params, periode)
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)
@@ -104,7 +104,7 @@ def read_040_1(param, run_params, periode) -> pd.DataFrame:
     )
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = soap_bodies.soap_040_1(param.session_id, run_params, periode)
+    body = templates.soap_040_1(param.session_id, run_params, periode)
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)
@@ -135,7 +135,7 @@ def read_030_1(param, run_params, periode) -> pd.DataFrame:
     )
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = soap_bodies.soap_030_1(param.session_id, run_params, periode)
+    body = templates.soap_030_1(param.session_id, run_params, periode)
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)
@@ -180,7 +180,7 @@ def read_164(param) -> pd.DataFrame:
     logging.info("start request credit management")
 
     url = "https://.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = soap_bodies.soap_164(param.session_id)
+    body = templates.soap_164(param.session_id)
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)

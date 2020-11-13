@@ -2,7 +2,6 @@ import logging
 import os
 
 
-
 def import_xml(filename):
     function_dir = os.path.dirname(os.path.realpath(__file__))
 

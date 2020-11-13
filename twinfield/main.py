@@ -15,6 +15,7 @@ sentry_sdk.init(
 
 load_dotenv()
 
+
 @serverless_function
 def mainscript():
 

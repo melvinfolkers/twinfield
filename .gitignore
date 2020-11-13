@@ -474,3 +474,5 @@ __pycache__/
 # OpenCover UI analysis results
 OpenCover/
 junit/
+
+/twinfield/debug.py

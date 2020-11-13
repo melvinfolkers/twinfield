@@ -2,6 +2,16 @@ import logging
 import os
 
 
+def import_xml(filename):
+    function_dir = os.path.dirname(os.path.realpath(__file__))
+
+    file_path = os.path.join(function_dir, filename)
+    file = open(file_path, "r", encoding="utf-16")
+    template = file.read()
+
+    return template
+
+
 def soap_template(run_params):
     filename = os.path.join(run_params.projectdir, "soap", "template.xml")
 

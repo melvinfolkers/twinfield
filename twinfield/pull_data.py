@@ -9,6 +9,7 @@ from .transform import maak_samenvatting
 from tqdm import tqdm
 from .credentials import twinfield_login_faheem
 
+
 def scoping_offices(offices) -> pd.DataFrame:
     login = twinfield_login_faheem()
     all_offices = read_offices(login)

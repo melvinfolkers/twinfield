@@ -4,6 +4,7 @@ import pandas as pd
 import requests
 from . import functions, templates
 
+
 def read_offices(param) -> pd.DataFrame:
     """
 
@@ -44,7 +45,9 @@ def read_100(param, run_params, periode) -> pd.DataFrame:
     logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = templates.import_xml("template_100.xml").format(param.session_id, periode["from"], periode["to"])
+    body = templates.import_xml("template_100.xml").format(
+        param.session_id, periode["from"], periode["to"]
+    )
 
     response = requests.post(url=url, headers=param.header, data=body)
 
@@ -72,7 +75,9 @@ def read_200(param, run_params, periode) -> pd.DataFrame:
     logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = templates.import_xml("template_200.xml").format(param.session_id, periode["from"], periode["to"])
+    body = templates.import_xml("template_200.xml").format(
+        param.session_id, periode["from"], periode["to"]
+    )
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)
@@ -140,8 +145,8 @@ def read_030_1(param, run_params, periode) -> pd.DataFrame:
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
 
     body = templates.import_xml("template_030_1.xml").format(
-        param.session_id, run_params.jaar, periode["from"], run_params.jaar, periode["to"])
-
+        param.session_id, run_params.jaar, periode["from"], run_params.jaar, periode["to"]
+    )
 
     response = requests.post(url=url, headers=param.header, data=body)
 

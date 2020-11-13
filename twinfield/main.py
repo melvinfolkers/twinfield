@@ -13,6 +13,7 @@ sentry_sdk.init(
 
 load_dotenv()
 
+
 @serverless_function
 def run(run_params):
 
@@ -26,9 +27,8 @@ def run(run_params):
 
 if __name__ == "__main__":
 
-
     run_params = RunParameters(
-        jaar="2020", refresh=True, upload=False, modules=["040_1"], offices = None, rerun = False)
+        jaar="2020", refresh=True, upload=False, modules=["040_1"], offices=None, rerun=False
     )
 
     run(run_params)

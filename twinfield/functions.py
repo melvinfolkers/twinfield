@@ -61,7 +61,6 @@ def get_metadata(module, login):
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(login.cluster)
     body = templates.soap_metadata(login, module=module)
 
-
     response = requests.post(url=url, headers=login.header, data=body)
 
     root = ET.fromstring(response.text)
@@ -294,8 +293,6 @@ def soap_columns(metadata):
         ttl = ttl + column_template
 
     return ttl
-
-
 
 
 class RunParameters:

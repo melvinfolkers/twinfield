@@ -9,14 +9,12 @@ from .credentials import twinfield_login_faheem
 def format_100(df):
     df.columns = [x.replace("fin.trs.", "") for x in df.columns]
 
-
     return df
 
 
 def format_200(df):
 
     df.columns = [x.replace("fin.trs.", "") for x in df.columns]
-
 
     return df
 

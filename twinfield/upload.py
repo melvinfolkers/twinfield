@@ -12,20 +12,12 @@ def upload_all(run_params):
     if "030_1" in run_params.modules:
         data = import_files(run_params, "transactions")
         df_to_azure(
-            df=data,
-            tablename=f"transacties_{run_params.jaar}",
-            schema="twinfield",
-            method="create"
+            df=data, tablename=f"transacties_{run_params.jaar}", schema="twinfield", method="create"
         )
 
         sv = import_files(run_params, "summary")
 
-        df_to_azure(
-            df=sv,
-            tablename=f"sv_{run_params.jaar}",
-            schema="twinfield",
-            method="create"
-        )
+        df_to_azure(df=sv, tablename=f"sv_{run_params.jaar}", schema="twinfield", method="create")
 
         send_teams_message(
             tables={f"Transacties {run_params.jaar}": data, f"Samenvatting {run_params.jaar}": sv}
@@ -39,7 +31,7 @@ def upload_all(run_params):
             df=data,
             tablename=f"consolidatie_{run_params.jaar}",
             schema="twinfield",
-            method="create"
+            method="create",
         )
 
         send_teams_message(tables={f"Consolidatie {run_params.jaar}": data})
@@ -48,10 +40,7 @@ def upload_all(run_params):
         data = import_files(run_params, "openstaande_debiteuren")
         data = transform.format_100(data)
         df_to_azure(
-            df=data,
-            tablename="openstaande_debiteuren",
-            schema="twinfield",
-            method="create"
+            df=data, tablename="openstaande_debiteuren", schema="twinfield", method="create"
         )
 
         send_teams_message(tables={"Openstaande debiteurenlijst": data})
@@ -60,10 +49,7 @@ def upload_all(run_params):
         data = import_files(run_params, "openstaande_crediteuren")
         data = transform.format_200(data)
         df_to_azure(
-            df=data,
-            tablename="openstaande_crediteuren",
-            schema="twinfield",
-            method="create"
+            df=data, tablename="openstaande_crediteuren", schema="twinfield", method="create"
         )
 
         send_teams_message(tables={"Openstaande crediteurenlijst": data})

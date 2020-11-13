@@ -13,8 +13,6 @@ def import_xml(filename):
     return template
 
 
-
-
 def soap_template(run_params):
     filename = os.path.join(run_params.projectdir, "soap", "template.xml")
 

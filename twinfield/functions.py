@@ -61,6 +61,7 @@ def get_metadata(module, login):
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(login.cluster)
     body = templates.soap_metadata(login, module=module)
 
+
     response = requests.post(url=url, headers=login.header, data=body)
 
     root = ET.fromstring(response.text)
@@ -159,7 +160,7 @@ def select_office(officecode, param):
 
     url = "https://{}.twinfield.com/webservices/session.asmx?wsdl".format(param.cluster)
 
-    body = templates.soap_select_office(param, officecode=officecode)
+    body = templates.import_xml("template_select_office.xml").format(param.session_id, officecode)
 
     response = requests.post(url=url, headers=param.header, data=body)
 
@@ -295,36 +296,11 @@ def soap_columns(metadata):
     return ttl
 
 
-def set_logging(logdir):
-    start = datetime.now()
-
-    logfilename = "runlog_" + start.strftime(format="%Y%m%d") + ".log"
-    full_path = os.path.join(logdir, logfilename)
-
-    for handler in logging.root.handlers[:]:
-        logging.root.removeHandler(handler)
-
-    logging.getLogger().setLevel(logging.INFO)
-    logging.basicConfig(
-        filename=full_path,
-        level=logging.DEBUG,
-        format="%(asctime)s %(message)s",
-        datefmt="%H:%M:%S",
-    )
-
-    # define a Handler which writes INFO messages or higher to the sys.stderr
-    console = logging.StreamHandler()
-    console.setLevel(logging.INFO)
-    # add the handler to the root logger
-    logging.getLogger("").addHandler(console)
-
-    return start
 
 
 class RunParameters:
     def __init__(self, jaar, refresh, upload, modules, offices, rerun):
 
-        self.projectdir = os.getcwd()
         self.jaar = str(jaar)
         self.refresh = refresh
         self.rerun = rerun
@@ -332,10 +308,11 @@ class RunParameters:
         self.modules = modules
         self.module_names = get_modules()
         self.offices = offices
-        self.logdir = create_dir(destination=os.path.join(self.projectdir, "data", "log"))
-        self.pickledir = create_dir(destination=os.path.join(self.projectdir, "data", "pickles"))
-        self.stagingdir = create_dir(destination=os.path.join(self.projectdir, "data", "staging"))
-        self.logfile = set_logging(self.logdir)
+        self.datadir = "/tmp/twinfield"
+        self.logdir = create_dir(destination=os.path.join(self.datadir, "data", "log"))
+        self.pickledir = create_dir(destination=os.path.join(self.datadir, "data", "pickles"))
+        self.stagingdir = create_dir(destination=os.path.join(self.datadir, "data", "staging"))
+        self.starttijd = datetime.now()
 
 
 def create_dir(destination):
@@ -350,8 +327,9 @@ def create_dir(destination):
 
 
 def get_modules():
-
-    file = open("static/modules.json").read()
+    function_dir = os.path.dirname(os.path.realpath(__file__))
+    file_path = os.path.join(function_dir, "modules.json")
+    file = open(file_path).read()
     modules = json.loads(file)
 
     return modules

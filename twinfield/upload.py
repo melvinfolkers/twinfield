@@ -1,9 +1,9 @@
 import logging
-from .functions import import_files
-
 from df_to_azure.export import run as df_to_azure
+
+from .functions import import_files
 from . import transform
-from scripts.report import send_teams_message
+from .report import send_teams_message
 
 
 def upload_all(run_params):
@@ -15,8 +15,7 @@ def upload_all(run_params):
             df=data,
             tablename=f"transacties_{run_params.jaar}",
             schema="twinfield",
-            method="create",
-            local=True,
+            method="create"
         )
 
         sv = import_files(run_params, "summary")
@@ -25,8 +24,7 @@ def upload_all(run_params):
             df=sv,
             tablename=f"sv_{run_params.jaar}",
             schema="twinfield",
-            method="create",
-            local=True,
+            method="create"
         )
 
         send_teams_message(
@@ -41,8 +39,7 @@ def upload_all(run_params):
             df=data,
             tablename=f"consolidatie_{run_params.jaar}",
             schema="twinfield",
-            method="create",
-            local=True,
+            method="create"
         )
 
         send_teams_message(tables={f"Consolidatie {run_params.jaar}": data})
@@ -54,8 +51,7 @@ def upload_all(run_params):
             df=data,
             tablename="openstaande_debiteuren",
             schema="twinfield",
-            method="create",
-            local=True,
+            method="create"
         )
 
         send_teams_message(tables={"Openstaande debiteurenlijst": data})
@@ -67,8 +63,7 @@ def upload_all(run_params):
             df=data,
             tablename="openstaande_crediteuren",
             schema="twinfield",
-            method="create",
-            local=True,
+            method="create"
         )
 
         send_teams_message(tables={"Openstaande crediteurenlijst": data})

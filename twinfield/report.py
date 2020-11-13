@@ -1,8 +1,6 @@
 import logging
 import os
 from datetime import datetime
-
-import pandas as pd
 import pymsteams
 
 WEBHOOK = "https://outlook.office.com/webhook/ee14f5e5-e9b2-464f-9a46-bda4c2ffb4f3@d8395682-5b2b-4f62-b3ec-2d438a29f6ea/IncomingWebhook/30ba4b33abf747038290ebb349ea09be/022ad6c2-8872-40cd-9cdd-5284a686e4b7"

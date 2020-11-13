@@ -1,7 +1,8 @@
 import logging
 from xml.etree import ElementTree as ET
-
+import os
 import requests
+from . import templates
 
 
 def twinfield_login_faheem():
@@ -9,11 +10,11 @@ def twinfield_login_faheem():
     password = os.environ.get("TW_PW_LS")
     organisation = os.environ.get("TW_ORG_LS")
 
-    logging.info(f"inlogpoging met gebruiker {user}")
+    logging.debug(f"inlogpoging met gebruiker {user}")
 
     login = SessionParameters(user=user, pw=password, organisation=organisation)
 
-    logging.info("ingelogd met gebruiker {}".format(user))
+    logging.debug("ingelogd met gebruiker {}".format(user))
 
     return login
 

@@ -2,16 +2,15 @@ import logging
 import os
 
 import pandas as pd
-from .run_settings import get_twinfield_settings
 from . import functions, modules, transform
 from .functions import select_office
 from .modules import read_offices
 from .transform import maak_samenvatting
 from tqdm import tqdm
-
+from .credentials import twinfield_login_faheem
 
 def scoping_offices(offices) -> pd.DataFrame:
-    login = get_twinfield_settings()
+    login = twinfield_login_faheem()
     all_offices = read_offices(login)
 
     if len(offices):
@@ -110,7 +109,7 @@ def pull_openstaande_debiteuren(offices, run_params):
         # logging.info("\t" + 3 * "-" + str(rows["shortname"]) + 3 * "-")
         # refresh login (session id) for every run
 
-        login = get_twinfield_settings()
+        login = twinfield_login_faheem()
         select_office(office, param=login)
         periodes = functions.periods_from_start(run_params)
         period = request_openstaande_debiteuren_data(login, run_params, periodes)
@@ -127,7 +126,7 @@ def pull_openstaande_crediteuren(offices, run_params):
         # logging.info("\t" + 3 * "-" + str(rows["shortname"]) + 3 * "-")
         # refresh login (session id) for every run
 
-        login = get_twinfield_settings()
+        login = twinfield_login_faheem()
         select_office(office, param=login)
         periodes = functions.periods_from_start(run_params)
         period = request_openstaande_crediteuren_data(login, run_params, periodes)
@@ -143,7 +142,7 @@ def pull_consolidatie(offices, run_params):
         logging.debug("\t" + 3 * "-" + str(rows["shortname"]) + 3 * "-")
         # refresh login (session id) for every run
 
-        login = get_twinfield_settings()
+        login = twinfield_login_faheem()
         select_office(office, param=login)
         periodes = functions.period_groups(window="year")
         period = request_consolidatie_data(login, run_params, periodes)
@@ -157,7 +156,7 @@ def pull_transactions(offices, run_params):
 
         # refresh login (session id) for every run
 
-        login = get_twinfield_settings()
+        login = twinfield_login_faheem()
 
         select_office(office, param=login)
 

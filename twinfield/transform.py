@@ -3,20 +3,12 @@ import os
 import pandas as pd
 
 from .functions import import_files, get_metadata
-from .run_settings import get_twinfield_settings
+from .credentials import twinfield_login_faheem
 
 
 def format_100(df):
     df.columns = [x.replace("fin.trs.", "") for x in df.columns]
-    # login = get_twinfield_settings()
-    # fields = get_metadata("100", login)
-    # df.rename(columns=fields["label"], inplace=True)
-    #
-    # # format numbers
-    # numbers = []
-    # for column in numbers:
-    #     if column in df.columns:
-    #         df[column] = df[column].astype(float)
+
 
     return df
 
@@ -24,21 +16,13 @@ def format_100(df):
 def format_200(df):
 
     df.columns = [x.replace("fin.trs.", "") for x in df.columns]
-    # login = get_twinfield_settings()
-    # fields = get_metadata("200", login)
-    # df.rename(columns=fields["label"], inplace=True)
-    #
-    # # format numbers
-    # numbers = []
-    # for column in numbers:
-    #     if column in df.columns:
-    #         df[column] = df[column].astype(float)
+
 
     return df
 
 
 def format_040_1(df):
-    login = get_twinfield_settings()
+    login = twinfield_login_faheem()
     fields = get_metadata("040_1", login)
     df.rename(columns=fields["label"], inplace=True)
 

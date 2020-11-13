@@ -1,11 +1,9 @@
-from scripts.functions import set_logging
-from scripts.pull_data import import_all
-from scripts.upload import upload_all
-from scripts.run_settings import set_run_parameters
+from .pull_data import import_all
+from .upload import upload_all
 from dotenv import load_dotenv
 import sentry_sdk
 from sentry_sdk.integrations.serverless import serverless_function
-
+from .functions import RunParameters
 
 sentry_sdk.init(
     "https://03f0371227ad473a89d7358c89c2e6c5@o472336.ingest.sentry.io/5515670",
@@ -15,14 +13,11 @@ sentry_sdk.init(
 
 load_dotenv()
 
-
 @serverless_function
-def mainscript():
-
-    run_params = set_run_parameters("../run_settings.yml")
-    set_logging(run_params.logdir)
+def run(run_params):
 
     if run_params.refresh:
+
         import_all(run_params)
 
     if run_params.upload:
@@ -31,4 +26,9 @@ def mainscript():
 
 if __name__ == "__main__":
 
-    mainscript()
+
+    run_params = RunParameters(
+        jaar="2020", refresh=True, upload=False, modules=["040_1"], offices = None, rerun = False)
+    )
+
+    run(run_params)

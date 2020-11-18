@@ -10,7 +10,7 @@
 run_settings.yml
 
 
-/twinfield/debug.py
+*debug.py
 
 ## The .gitignore file specifies things that git should ignore.
 ## This default template includes entries for R, Python and visual studio

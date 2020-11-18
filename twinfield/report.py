@@ -4,6 +4,7 @@ from datetime import datetime
 import pymsteams
 
 WEBHOOK = "https://outlook.office.com/webhook/ee14f5e5-e9b2-464f-9a46-bda4c2ffb4f3@d8395682-5b2b-4f62-b3ec-2d438a29f6ea/IncomingWebhook/30ba4b33abf747038290ebb349ea09be/022ad6c2-8872-40cd-9cdd-5284a686e4b7"
+URL_AZURE_FUNCTION = "https://twinfield-adapter.azurewebsites.net/api/twinfield"
 
 
 def create_message(title, body):
@@ -11,7 +12,11 @@ def create_message(title, body):
     myTeamsMessage.color("3d79ab")
     myTeamsMessage.title(title)
     myTeamsMessage.text(body)
-
+    myTeamsMessage.addLinkButton("Consolidatie", f"{URL_AZURE_FUNCTION}?module=040_1")
+    myTeamsMessage.addLinkButton("Openstaande posten debiteuren", f"{URL_AZURE_FUNCTION}?module=100")
+    myTeamsMessage.addLinkButton("Openstaande posten crediteuren", f"{URL_AZURE_FUNCTION}?module=200")
+    myTeamsMessage.addLinkButton("Transacties 2020", f"{URL_AZURE_FUNCTION}?script=upload_dimensions?jaar=2020")
+    myTeamsMessage.addLinkButton("Transacties 2019", f"{URL_AZURE_FUNCTION}?script=upload_dimensions?jaar=2019")
     return myTeamsMessage
 
 

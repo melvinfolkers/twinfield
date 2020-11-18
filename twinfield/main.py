@@ -27,13 +27,14 @@ def run(run_params):
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
+    logging.info("Python HTTP trigger function processed a request.")
 
-    options = {"100": "openstaande_debiteuren",
-               "200": "openstaande_crediteuren",
-               "030_1": "mutaties",
-               "040_1": "consolidatie"
-               }
+    options = {
+        "100": "openstaande_debiteuren",
+        "200": "openstaande_crediteuren",
+        "030_1": "mutaties",
+        "040_1": "consolidatie",
+    }
 
     module = req.params.get("module")
     jaar = req.params.get("jaar")
@@ -41,7 +42,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if not jaar:
         jaar = "2020"
     else:
-        jaar = req_body.get('jaar')
+        jaar = req_body.get("jaar")
 
     if not module:
         try:
@@ -49,7 +50,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         except ValueError:
             pass
         else:
-            module = req_body.get('module')
+            module = req_body.get("module")
 
     if module:
 
@@ -60,7 +61,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         return func.HttpResponse(
             f"Script {module} van Twinfield is afgerond. Zie teams voor het resultaat"
-            )
+        )
     else:
         return func.HttpResponse(
             f"Script is niet opgegeven of niet bekend geef met parameter 'script' "

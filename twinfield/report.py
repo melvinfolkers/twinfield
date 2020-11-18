@@ -13,10 +13,18 @@ def create_message(title, body):
     myTeamsMessage.title(title)
     myTeamsMessage.text(body)
     myTeamsMessage.addLinkButton("Consolidatie", f"{URL_AZURE_FUNCTION}?module=040_1")
-    myTeamsMessage.addLinkButton("Openstaande posten debiteuren", f"{URL_AZURE_FUNCTION}?module=100")
-    myTeamsMessage.addLinkButton("Openstaande posten crediteuren", f"{URL_AZURE_FUNCTION}?module=200")
-    myTeamsMessage.addLinkButton("Transacties 2020", f"{URL_AZURE_FUNCTION}?script=upload_dimensions?jaar=2020")
-    myTeamsMessage.addLinkButton("Transacties 2019", f"{URL_AZURE_FUNCTION}?script=upload_dimensions?jaar=2019")
+    myTeamsMessage.addLinkButton(
+        "Openstaande posten debiteuren", f"{URL_AZURE_FUNCTION}?module=100"
+    )
+    myTeamsMessage.addLinkButton(
+        "Openstaande posten crediteuren", f"{URL_AZURE_FUNCTION}?module=200"
+    )
+    myTeamsMessage.addLinkButton(
+        "Transacties 2020", f"{URL_AZURE_FUNCTION}?script=upload_dimensions?jaar=2020"
+    )
+    myTeamsMessage.addLinkButton(
+        "Transacties 2019", f"{URL_AZURE_FUNCTION}?script=upload_dimensions?jaar=2019"
+    )
     return myTeamsMessage
 
 

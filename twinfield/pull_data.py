@@ -19,7 +19,7 @@ def scoping_offices(offices) -> pd.DataFrame:
         scoping = all_offices[all_offices.name.isin(offices)]
         logging.info("{} administraties geselecteerd".format(len(scoping)))
     else:
-        scoping = all_offices#[:1]
+        scoping = all_offices  # [:1]
         logging.info(f"alle {len(scoping)} administraties in scope.")
 
     return scoping
@@ -167,7 +167,11 @@ def pull_transactions(offices, run_params):
 
         period = add_metadata(period, office, rows)
 
-        period.to_pickle(os.path.join(run_params.pickledir, "{}_transactions_{}.pkl".format(office, run_params.jaar)))
+        period.to_pickle(
+            os.path.join(
+                run_params.pickledir, "{}_transactions_{}.pkl".format(office, run_params.jaar)
+            )
+        )
 
 
 def request_transaction_data(login, run_params, periodes):

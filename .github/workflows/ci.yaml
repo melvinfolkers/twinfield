@@ -1,4 +1,4 @@
-name: Twinfield Adapter CI
+name: Twinfield DWH CI
 on: [push]
 env:
   AZURE_FUNCTIONAPP_NAME: staffing-twinfield
@@ -25,7 +25,7 @@ jobs:
         # stop the build if there are Python syntax errors or undefined names
         # flake8 twinfield --count --select=E9,F63,F7,F82, --ignore=F821 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 100 chars wide
-        flake8 twinfield --count --max-complexity=11 --max-line-length=100 --statistics
+        # flake8 twinfield --count --max-complexity=11 --max-line-length=100 --statistics
 #    - name: Test with pytest
 #      run: |
 #        pytest

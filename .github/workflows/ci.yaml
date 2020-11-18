@@ -1,4 +1,4 @@
-name: Twinfield DWH CI
+name: Twinfield DWH
 on: [push]
 env:
   AZURE_FUNCTIONAPP_NAME: staffing-twinfield

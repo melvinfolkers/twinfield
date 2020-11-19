@@ -9,6 +9,7 @@ import json
 
 from . import templates
 
+import timeit
 
 # offices
 
@@ -157,16 +158,23 @@ def parse_response(response, param):
 def select_office(officecode, param):
     logging.debug("selecting office: {}...".format(officecode))
 
-    url = "https://{}.twinfield.com/webservices/session.asmx?wsdl".format(param.cluster)
+    counter = 0
+    run = True
+    while run:
+        url = "https://{}.twinfield.com/webservices/session.asmx?wsdl".format(param.cluster)
+        body = templates.import_xml("template_select_office.xml").format(
+            param.session_id, officecode
+        )
+        response = requests.post(url=url, headers=param.header, data=body)
 
-    body = templates.import_xml("template_select_office.xml").format(param.session_id, officecode)
-
-    response = requests.post(url=url, headers=param.header, data=body)
+        if response.status_code == 200:
+            run = False
+        else:
+            counter += 1
+            logging.info(f"selecteren van office mislukt! start met poging {counter}")
 
     root = ET.fromstring(response.text)
-
     body = root.find("env:Body", param.ns)
-
     data = body.find("tw:SelectCompanyResponse/tw:SelectCompanyResult", param.ns)
 
     pass_fail = data.text
@@ -310,6 +318,7 @@ class RunParameters:
         self.pickledir = create_dir(destination=os.path.join(self.datadir, "data", "pickles"))
         self.stagingdir = create_dir(destination=os.path.join(self.datadir, "data", "staging"))
         self.starttijd = datetime.now()
+        self.start = timeit.default_timer()
 
 
 def create_dir(destination):
@@ -330,3 +339,14 @@ def get_modules():
     modules = json.loads(file)
 
     return modules
+
+
+def stop_time(start):
+    stop = timeit.default_timer()
+    end_time = round(stop - start)
+
+    m, s = divmod(end_time, 60)
+    h, m = divmod(m, 60)
+    logging.info(f"afgerond in {h:d}:{m:02d}:{s:02d}")
+
+    return f"{h:d}:{m:02d}:{s:02d}"

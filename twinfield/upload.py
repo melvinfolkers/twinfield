@@ -20,7 +20,8 @@ def upload_all(run_params):
         df_to_azure(df=sv, tablename=f"sv_{run_params.jaar}", schema="twinfield", method="create")
 
         send_teams_message(
-            tables={f"Transacties {run_params.jaar}": data, f"Samenvatting {run_params.jaar}": sv}
+            tables={f"Transacties {run_params.jaar}": data, f"Samenvatting {run_params.jaar}": sv},
+            run_params=run_params,
         )
 
     if "040_1" in run_params.modules:
@@ -34,7 +35,7 @@ def upload_all(run_params):
             method="create",
         )
 
-        send_teams_message(tables={f"Consolidatie {run_params.jaar}": data})
+        send_teams_message(tables={f"Consolidatie {run_params.jaar}": data}, run_params=run_params)
 
     if "100" in run_params.modules:
         data = import_files(run_params, "openstaande_debiteuren")
@@ -43,7 +44,7 @@ def upload_all(run_params):
             df=data, tablename="openstaande_debiteuren", schema="twinfield", method="create"
         )
 
-        send_teams_message(tables={"Openstaande debiteurenlijst": data})
+        send_teams_message(tables={"Openstaande debiteurenlijst": data}, run_params=run_params)
 
     if "200" in run_params.modules:
         data = import_files(run_params, "openstaande_crediteuren")
@@ -52,4 +53,4 @@ def upload_all(run_params):
             df=data, tablename="openstaande_crediteuren", schema="twinfield", method="create"
         )
 
-        send_teams_message(tables={"Openstaande crediteurenlijst": data})
+        send_teams_message(tables={"Openstaande crediteurenlijst": data}, run_params=run_params)

@@ -55,12 +55,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if module:
 
         run_params = RunParameters(
-            jaar=jaar, refresh=True, upload=True, modules=["040_1"], offices=[], rerun=False
+            jaar=jaar, refresh=True, upload=True, modules=[module], offices=[], rerun=False
         )
         run(run_params)
 
         return func.HttpResponse(
-            f"Script {module} van Twinfield is afgerond. Zie teams voor het resultaat"
+            f"Script {options.get(module)} van Twinfield is afgerond. Zie teams voor het resultaat"
         )
     else:
         return func.HttpResponse(

@@ -56,7 +56,7 @@ def send_teams_message(tables):
     if len(tables) == 0:
         return logging.info("geen bericht aangemaakt.")
 
-    title = f"{os.path.basename(os.getcwd()).replace('_', ' ')} DWH"
+    title = f"Twinfield DWH"
 
     if len(tables) == 1:
         body = f"""1 tabel "geëxporteerd". Zie onderstaand deze activiteit."""

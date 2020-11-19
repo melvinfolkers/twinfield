@@ -19,12 +19,8 @@ def create_message(title, body):
     myTeamsMessage.addLinkButton(
         "Openstaande posten crediteuren", f"{URL_AZURE_FUNCTION}?module=200"
     )
-    myTeamsMessage.addLinkButton(
-        "Transacties 2020", f"{URL_AZURE_FUNCTION}?script=upload_dimensions?jaar=2020"
-    )
-    myTeamsMessage.addLinkButton(
-        "Transacties 2019", f"{URL_AZURE_FUNCTION}?script=upload_dimensions?jaar=2019"
-    )
+    myTeamsMessage.addLinkButton("Transacties 2020", f"{URL_AZURE_FUNCTION}?module=030_1?jaar=2020")
+    myTeamsMessage.addLinkButton("Transacties 2019", f"{URL_AZURE_FUNCTION}?module=030_1?jaar=2019")
     return myTeamsMessage
 
 
@@ -51,7 +47,7 @@ def create_section(msg, section_title, act_title, act_subtitle, act_body):
 
 
 def send_teams_message(tables):
-    stamp = datetime.now().strftime("%Y-%m-%d %H:%M%:%S")
+    stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if len(tables) == 0:
         return logging.info("geen bericht aangemaakt.")

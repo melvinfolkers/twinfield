@@ -19,6 +19,6 @@ def run(run_params):
 if __name__ == "__main__":
 
     run_params = RunParameters(
-        jaar="2020", refresh=True, upload=True, modules=["100"], offices = [], rerun = False)
+        jaar="2020", refresh=True, upload=False, modules=["100"], offices = [], rerun = False)
 
     run(run_params)

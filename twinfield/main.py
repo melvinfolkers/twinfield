@@ -27,7 +27,6 @@ def run(run_params):
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info("Python HTTP trigger function processed a request.")
 
     options = {
         "100": "openstaande_debiteuren",
@@ -38,6 +37,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     module = req.params.get("module")
     jaar = req.params.get("jaar")
+
+    logging.info(f"Python HTTP trigger: request voor tabel {options.get(module)}")
 
     if not jaar:
         jaar = "2020"
@@ -64,7 +65,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         )
     else:
         return func.HttpResponse(
-            f"Script is niet opgegeven of niet bekend geef met parameter 'script' "
+            f"Module is niet opgegeven of niet bekend geef met parameter 'module' "
             f"aan welk module je wil draaien, te kiezen uit {', '.join(options.keys())}.",
             status_code=200,
         )

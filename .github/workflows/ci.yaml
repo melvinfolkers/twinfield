@@ -3,7 +3,7 @@ on: [push]
 env:
   AZURE_FUNCTIONAPP_NAME: staffing-twinfield
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
-  PYTHON_VERSION: '3.8' # supports 3.6, 3.7, 3.8)
+  PYTHON_VERSION: '3.7' # supports 3.6, 3.7, 3.8)
 jobs:
   ci:
     runs-on: ubuntu-latest

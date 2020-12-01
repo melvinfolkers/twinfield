@@ -5,7 +5,7 @@ import requests
 from . import templates
 
 
-def twinfield_login_faheem():
+def twinfield_login():
     user = os.environ.get("TW_USER_LS")
     password = os.environ.get("TW_PW_LS")
     organisation = os.environ.get("TW_ORG_LS")

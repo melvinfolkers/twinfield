@@ -2,11 +2,11 @@ import logging
 import os
 import xml.etree.ElementTree as ET
 from datetime import datetime
-
+import shutil
 import pandas as pd
 import requests
 import json
-
+from .credentials import twinfield_login
 from . import templates
 
 import timeit
@@ -15,6 +15,18 @@ import timeit
 
 
 def import_files(run_params, patt) -> pd.DataFrame():
+    """
+
+    Parameters
+    ----------
+    run_params: default run parameters for script
+    patt: pattern for files to import.
+
+    Returns: import of pickle files
+    -------
+
+    """
+
     ttl = list()
 
     files = os.listdir(os.path.join(run_params.pickledir))
@@ -167,7 +179,9 @@ def select_office(officecode, param):
         )
         response = requests.post(url=url, headers=param.header, data=body)
 
-        if response.status_code == 200:
+        if response.status_code == 200 or counter == 10:
+            # opnieuw inloggen en vervolgens nog een keer proberen.
+            param = twinfield_login()
             run = False
         else:
             counter += 1
@@ -323,11 +337,13 @@ class RunParameters:
 
 def create_dir(destination):
 
-    try:
-        if not os.path.exists(destination):
-            os.makedirs(destination)
-    except OSError:
-        logging.warning("Error Creating directory. " + destination)
+    if os.path.exists(destination):
+        logging.warning(f"tmp folder exists, removing {destination}")
+        shutil.rmtree(destination)
+        os.makedirs(destination)
+    else:
+        logging.warning(f"tmp folder does not exists, creating {destination}")
+        os.makedirs(destination)
 
     return destination
 

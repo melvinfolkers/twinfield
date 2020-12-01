@@ -7,7 +7,7 @@ from .functions import select_office
 from .modules import read_offices
 from .transform import maak_samenvatting
 from tqdm import tqdm
-from .credentials import twinfield_login_faheem
+from .credentials import twinfield_login
 
 
 def scoping_offices(offices, login) -> pd.DataFrame:
@@ -58,7 +58,7 @@ def set_rerun(run_params, module, login):
 
 def import_all(run_params):
 
-    login = twinfield_login_faheem()
+    login = twinfield_login()
     offices = scoping_offices(run_params.offices, login)
 
     if "030_1" in run_params.modules:

@@ -10,11 +10,9 @@ def twinfield_login_faheem():
     password = os.environ.get("TW_PW_LS")
     organisation = os.environ.get("TW_ORG_LS")
 
-    logging.debug(f"inlogpoging met gebruiker {user}")
-
     login = SessionParameters(user=user, pw=password, organisation=organisation)
 
-    logging.debug("ingelogd met gebruiker {}".format(user))
+    logging.info("ingelogd met gebruiker {}".format(user))
 
     return login
 

@@ -1,15 +1,17 @@
-name: Twinfield DWH
-on: [push]
-env:
-  AZURE_FUNCTIONAPP_NAME: staffing-twinfield
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
-  PYTHON_VERSION: '3.7' # supports 3.6, 3.7, 3.8)
+name: Twinfield CI
+on:
+  push:
+    branches:
+      - '*'
+      - '!master'
+      - '!main'
+      - '!development'
 jobs:
   ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.7, 3.8]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -26,33 +28,6 @@ jobs:
         # flake8 twinfield --count --select=E9,F63,F7,F82, --ignore=F821 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 100 chars wide
         # flake8 twinfield --count --max-complexity=11 --max-line-length=100 --statistics
-#    - name: Test with pytest
-#      run: |
-#        pytest
     - name: Python Black Check
       run: |
         black --line-length=100 --check twinfield
-  build-and-deploy-to-Azure:
-    name: 'Deploy to Azure'
-    runs-on: ubuntu-latest
-    steps:
-    - name: 'Checkout GitHub Action'
-      uses: actions/checkout@master
-    - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-    - name: 'Resolve Project Dependencies Using Pip'
-      shell: bash
-      run: |
-        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-        popd
-    - name: 'Deploy to Azure Functions'
-      uses: Azure/functions-action@v1
-      id: fa
-      with:
-        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}

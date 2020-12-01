@@ -1,4 +1,3 @@
-
 from twinfield.messages import create_messages_files
 from twinfield.send_soap_msg import run as send_soap_msg
 from twinfield.export import append_responses
@@ -16,9 +15,11 @@ def run(run_params):
         r = send_soap_msg(run_params)
         append_responses(r, run_params)
 
+
 if __name__ == "__main__":
 
     run_params = RunParameters(
-        jaar="2020", refresh=True, upload=True, modules=["040_1"], offices = [], rerun = False)
+        jaar="2020", refresh=True, upload=True, modules=["040_1"], offices=[], rerun=False
+    )
 
     run(run_params)

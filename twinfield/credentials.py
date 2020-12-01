@@ -34,7 +34,9 @@ class SessionParameters:
 
         self.ns_txt = {k: "{" + v + "}" for k, v in self.ns.items()}
 
-        self.body = templates.import_xml("xml_templates/template_login.xml").format(user, pw, organisation)
+        self.body = templates.import_xml("xml_templates/template_login.xml").format(
+            user, pw, organisation
+        )
         self.session_id, self.cluster = SessionParameters.get_session_info(
             self, self.url, self.header, self.body
         )

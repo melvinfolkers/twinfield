@@ -18,7 +18,7 @@ def read_offices(param) -> pd.DataFrame:
     """
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = templates.import_xml("template_list_offices.xml").format(param.session_id)
+    body = templates.import_xml("xml_templates/template_list_offices.xml").format(param.session_id)
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_session_response(response, param)
@@ -45,7 +45,7 @@ def read_100(param, run_params, periode) -> pd.DataFrame:
     logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = templates.import_xml("template_100.xml").format(
+    body = templates.import_xml("xml_templates/template_100.xml").format(
         param.session_id, periode["from"], periode["to"]
     )
 
@@ -75,7 +75,7 @@ def read_200(param, run_params, periode) -> pd.DataFrame:
     logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
-    body = templates.import_xml("template_200.xml").format(
+    body = templates.import_xml("xml_templates/template_200.xml").format(
         param.session_id, periode["from"], periode["to"]
     )
     response = requests.post(url=url, headers=param.header, data=body)
@@ -109,7 +109,7 @@ def read_040_1(param, run_params, periode) -> pd.DataFrame:
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
 
-    body = templates.import_xml("template_040_1.xml").format(
+    body = templates.import_xml("xml_templates/template_040_1.xml").format(
         param.session_id, run_params.jaar, periode["from"], run_params.jaar, periode["to"]
     )
 
@@ -144,7 +144,7 @@ def read_030_1(param, run_params, periode) -> pd.DataFrame:
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
 
-    body = templates.import_xml("template_030_1.xml").format(
+    body = templates.import_xml("xml_templates/template_030_1.xml").format(
         param.session_id, run_params.jaar, periode["from"], run_params.jaar, periode["to"]
     )
 

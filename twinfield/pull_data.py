@@ -192,7 +192,7 @@ def request_consolidatie_data(login, run_params, periodes):
 def request_openstaande_debiteuren_data(login, run_params, periodes):
     data = pd.DataFrame()
 
-    for periode in tqdm(periodes):
+    for periode in periodes:
         batch = modules.read_100(login, run_params, periode)
         data = pd.concat([data, batch], axis=0, ignore_index=True, sort=False)
 
@@ -202,7 +202,7 @@ def request_openstaande_debiteuren_data(login, run_params, periodes):
 def request_openstaande_crediteuren_data(login, run_params, periodes):
     data = pd.DataFrame()
 
-    for periode in tqdm(periodes):
+    for periode in periodes:
         batch = modules.read_200(login, run_params, periode)
         data = pd.concat([data, batch], axis=0, ignore_index=True, sort=False)
 

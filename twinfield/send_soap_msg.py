@@ -11,28 +11,28 @@ from . import responses
 from . import templates
 from .credentials import twinfield_login
 from .exceptions import ServerError
-from .functions import select_office, RunParameters
+from .functions import select_office, create_dir
 from .report import send_insert_message
 
 
-def check_response_errors(status_dict):
-    if status_dict.get("msgtype", "") == "error":
-        subject = status_dict["msg"].split("//")[0]
-        body = status_dict["msg"].split("//")[1]
-        logging.info(
-            f"error bij het inschieten van transactie:\nOnderwerp: {subject}\nDetail: {body}"
-        )
-        raise ServerError(
-            f"fout bij inschieten van transactie:\nOnderwerp: {subject}\nDetail: {body}"
-        )
+def save_xml_locally(run_params, response, msg_id) -> tuple:
+    """
 
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    response: xml response from twinfield server
+    msg_id: generated id for keeping track of messages
 
-def save_xml_locally(run_params, response, msg_id):
+    Returns tuple of the file_path and the filename
+    -------
+
+    """
 
     foldername = datetime.now().strftime("%Y%m%d")
     path = os.path.join(run_params.responsedir, foldername)
     if not os.path.exists(path):
-        filedir = RunParameters.create_dir(path)
+        filedir = create_dir(path)
     else:
         filedir = path
     filename = f"response_{msg_id}_{datetime.now().strftime('%H_%M_%S')}.xml"
@@ -50,6 +50,12 @@ def save_xml_locally(run_params, response, msg_id):
 
 
 def create_blob_service_client():
+    """
+
+    Returns Azure blob service client based on environment credentials
+    -------
+
+    """
 
     connect_str = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={}".format(
         os.environ.get("ls_blob_account_name"), os.environ.get("ls_blob_account_key")
@@ -60,7 +66,18 @@ def create_blob_service_client():
     return blob_service_client
 
 
-def response_to_blob(file_path, filename):
+def response_to_blob(file_path, filename) -> None:
+    """
+
+    Parameters
+    ----------
+    file_path: file_path of the XML file to be uploaded to the blob storage
+    filename: the filename of the XML.
+
+    Returns None. Uploads the XML file to the blob storage.
+    -------
+
+    """
 
     blob_service_client = create_blob_service_client()
 
@@ -75,13 +92,36 @@ def response_to_blob(file_path, filename):
     logging.info(f"finished uploading blob {filename}!")
 
 
-def export_response(run_params, response, msg_id):
+def export_response(run_params, response, msg_id) -> None:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    response: xml response from the twinfield server
+    msg_id: self generated ID to keep track of the messages
+
+    Returns None. Uploads the files to blob storage.
+    -------
+
+    """
 
     file_path, filename = save_xml_locally(run_params, response, msg_id)
     response_to_blob(file_path, filename)
 
 
-def parse_errors(run_params, data):
+def parse_errors(run_params, data) -> None:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    data: dataset containing potential errors
+
+    Returns None. Exports errors to a seperate pickle file called 'response_error.pkl'
+    -------
+
+    """
     if "msgtype" in data.columns:
         errors = data.loc[data.msgtype == "error"]
         # raise KostenPlaatsError(f"{len(errors)} kostenplaatsen ontbreken in TwinField.")
@@ -93,7 +133,19 @@ def parse_errors(run_params, data):
     logging.info(f"{len(errors)} errors geexporteerd.")
 
 
-def get_response(messages, run_params, login):
+def get_response(messages, run_params, login) -> pd.DataFrame():
+    """
+
+    Parameters
+    ----------
+    messages: the input XML messages for the twinfield server
+    run_params:  input parameters of script (set at start of script)
+    login:  login parameters (SessionParameters)
+
+    Returns: dataframe containing all responses from the xml messages
+    -------
+
+    """
     ttl = pd.DataFrame()
     msg_id = 0
     for msg in tqdm(messages):
@@ -152,7 +204,18 @@ def get_response(messages, run_params, login):
     return ttl
 
 
-def export_response_data(df, run_params):
+def export_response_data(df, run_params) -> None:
+    """
+
+    Parameters
+    ----------
+    df: dataframe containing responses
+    run_params:  input parameters of script (set at start of script)
+
+    Returns None. exports to a pickle file in the tmp directory
+    -------
+
+    """
     if run_params.modules == "upload_dimensions":
         return None
 
@@ -168,6 +231,17 @@ def export_response_data(df, run_params):
 
 
 def upload_soap(run_params, messages) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    messages: the input XML messages for the twinfield server
+
+    Returns dataframe of the Twinfield responses
+    -------
+
+    """
     login = twinfield_login()
 
     if run_params.upload:
@@ -184,6 +258,16 @@ def upload_soap(run_params, messages) -> pd.DataFrame:
 
 
 def run(run_params) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+
+    Returns dataframe of the Twinfield responses
+    -------
+
+    """
     with open(os.path.join(run_params.pickledir, "messages.pkl"), "rb") as f:
         messages = pickle.load(f)
 

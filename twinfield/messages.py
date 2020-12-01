@@ -7,7 +7,17 @@ from df_to_azure.export import auth_azure
 from sqlalchemy import create_engine
 
 
-def parse_line(row):
+def parse_line(row) -> str:
+    """
+
+    Parameters
+    ----------
+    row: record in dataframe that will be parsed in the soap_xml template for twinfield.
+
+    Returns: soap xml message for creating 'loonjournaalpost'
+    -------
+
+    """
     line = f"""<line id="{row['line_id']}" journalId="0">
       <dim1>{row['grootboek']}</dim1>
       <dim2>{row['kostenplaats']}</dim2>
@@ -19,7 +29,17 @@ def parse_line(row):
     return line
 
 
-def parse_header(row):
+def parse_header(row) -> str:
+    """
+
+    Parameters
+    ----------
+    row: record in dataframe that will be parsed in the soap_xml template for twinfield.
+
+    Returns: soap xml message for creating the header
+    -------
+
+    """
     header = f"""<header>
         <office>{row['office_code']}</office>
         <code>MEMO</code>
@@ -34,12 +54,33 @@ def parse_header(row):
 
 
 def create_line(data):
+    """
+
+    Parameters
+    ----------
+    data: dataframe containing input for the soap request
+
+    Returns: the same dataset, with a new column called line_xml. this column contains the xml
+             soap message that twinfield will understand.
+    -------
+
+    """
     data["line_xml"] = data.apply(lambda x: parse_line(x), axis=1)
 
     return data
 
 
-def create_header(data):
+def create_header(data) -> pd.DataFrame():
+    """
+
+    Parameters
+    ----------
+    data: dataframe containing input for the soap request
+
+    Returns: dataframe with header xml messages for twinfield server
+    -------
+
+    """
     df_unique = data.drop_duplicates(
         subset=["BV", "office_code", "omschrijving", "datum", "periode"]
     ).copy()
@@ -55,6 +96,17 @@ def create_header(data):
 
 
 def prep_data(data, f):
+    """
+
+    Parameters
+    ----------
+    data: dataframe containing input for the soap request
+    f: filename?
+
+    Returns: dataframe with content of xml messages for twinfield server
+    -------
+
+    """
     logging.info("Data wordt opgeschoond")
 
     data["datum"] = pd.to_datetime(data["datum"], format="%d-%m-%Y")
@@ -72,7 +124,19 @@ def prep_data(data, f):
     return data
 
 
-def write_xml_file(run_params, message, filename):
+def write_xml_file(run_params, message, filename) -> None:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    message: xml message to be send to Twinfield server
+    filename: filename to write the xml message to.
+
+    Returns None. Writes the XML message to temp 'xmldir' folder.
+    -------
+
+    """
 
     new_filename = filename.lower().replace(".csv", ".xml")
     f = open(os.path.join(run_params.xmldir, new_filename), "w")
@@ -81,7 +145,17 @@ def write_xml_file(run_params, message, filename):
     logging.debug("XML is geschreven")
 
 
-def transform_soap_message(run_params):
+def transform_soap_message(run_params) -> list:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+
+    Returns: list of xml messages imported from the temp 'rawdir' folder.
+    -------
+
+    """
 
     xml_messages = []
 
@@ -101,7 +175,17 @@ def transform_soap_message(run_params):
     return xml_messages
 
 
-def convert_xml(xml_msg):
+def convert_xml(xml_msg) -> str:
+    """
+
+    Parameters
+    ----------
+    xml_msg: str. XML soap message
+
+    Returns cleaned soap message without the label '</transaction>'
+    -------
+
+    """
 
     new = xml_msg.split("\n", 1)[1]
     new = [x for x in new.split() if x != "</transaction>"]
@@ -110,7 +194,13 @@ def convert_xml(xml_msg):
     return r
 
 
-def create_dimensions_sql():
+def create_dimensions_sql() -> list:
+    """
+
+    Returns xml_messages for module 'create_dimensions'
+    -------
+
+    """
     xml_messages = []
     data = read_and_delete_table("dimensie_wijziging_xml")
     data["soap_xml"] = data.Dimensies
@@ -124,7 +214,13 @@ def create_dimensions_sql():
     return xml_messages
 
 
-def create_facturen_sql():
+def create_facturen_sql() -> list:
+    """
+
+    Returns xml_messages for module 'salesinvoice'
+    -------
+
+    """
     xml_messages = []
     data = read_and_delete_table("facturen_xml")
     data["soap_xml"] = data.Samenvoegen.apply(lambda x: convert_xml(x))
@@ -139,7 +235,14 @@ def create_facturen_sql():
     return xml_messages
 
 
-def create_memoriaal_journaalpost_sql():
+def create_memoriaal_journaalpost_sql() -> list:
+    """
+
+    Returns xml_messages for module 'memo'
+    -------
+
+    """
+
     xml_messages = []
     data = read_and_delete_table("memo_xml")
     data["soap_xml"] = data.Samenvoegen.apply(lambda x: convert_xml(x))
@@ -154,7 +257,13 @@ def create_memoriaal_journaalpost_sql():
     return xml_messages
 
 
-def create_inkoopjournaalpost_sql():
+def create_inkoopjournaalpost_sql() -> list:
+    """
+
+    Returns xml_messages for module 'ink'
+    -------
+
+    """
     xml_messages = []
     data = read_and_delete_table("inkoop_xml")
     data["soap_xml"] = data.Samenvoegen.apply(lambda x: convert_xml(x))
@@ -169,7 +278,17 @@ def create_inkoopjournaalpost_sql():
     return xml_messages
 
 
-def read_table(tablename):
+def read_table(tablename) -> pd.DataFrame():
+    """
+
+    Parameters
+    ----------
+    tablename: tablename in DWH to read
+
+    Returns: dataframe containing records of selected tablename
+    -------
+
+    """
 
     conn = auth_azure()
     engn = create_engine(conn, pool_size=10, max_overflow=20)
@@ -179,7 +298,17 @@ def read_table(tablename):
     return data
 
 
-def read_and_delete_table(tablename):
+def read_and_delete_table(tablename) -> pd.DataFrame():
+    """
+
+    Parameters
+    ----------
+    tablename: tablename in DWH to read an delete
+
+    Returns: dataframe containing records of selected tablename. original table will be deleted.
+    -------
+
+    """
 
     conn = auth_azure()
     engn = create_engine(conn, pool_size=10, max_overflow=20)
@@ -190,7 +319,13 @@ def read_and_delete_table(tablename):
     return data
 
 
-def create_verkoopjournaalpost_sql():
+def create_verkoopjournaalpost_sql() -> list:
+    """
+
+    Returns xml_messages for module 'vrk'
+    -------
+
+    """
 
     data = read_and_delete_table("verkoopjournaal_xml")
     data["soap_xml"] = data.Samenvoegen.apply(lambda x: convert_xml(x))
@@ -206,21 +341,17 @@ def create_verkoopjournaalpost_sql():
     return xml_messages
 
 
-def create_verkoopjournaalpost(run_params):
+def create_loonjournaalpost(run_params) -> list:
+    """
 
-    xml_messages = []
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
 
-    for filename in os.listdir(run_params.rawdir):
-        if filename.endswith(".xml"):
-            f = open(os.path.join(run_params.rawdir, filename), "r", encoding="utf-8")
-            message = f.read()
-            d = {"office_code": "ZZ_1060255", "xml_msg": message}
+    Returns xml_messages for module 'ljp'
+    -------
 
-        xml_messages.append(d)
-    return xml_messages
-
-
-def create_loonjournaalpost(run_params):
+    """
     extension = ".csv"
     col_names = [
         "regel",
@@ -262,19 +393,15 @@ def create_loonjournaalpost(run_params):
     return xml_messages
 
 
-def get_dimension_parameters(run_params):
+def get_dimension_parameters() -> list:
+    """
+
+    Returns xml messages for 'read_dimensions'
+    -------
+
+    """
     data = read_table("dim_requests")
-
     messages = []
-
-    # if run_params.debug:
-    #     for dim_type in ["DEB", "CRD"]:
-    #         d = dict()
-    #         d["office_code"] = "FACTURATIE007"
-    #         d["xml_msg"] = ""
-    #         d["dim_type"] = dim_type
-    #         messages.append(d.copy())
-    #     return messages
 
     for index, row in data.iterrows():
         d = dict()
@@ -289,6 +416,16 @@ def get_dimension_parameters(run_params):
 
 
 def create_messages_files(run_params) -> list:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+
+    Returns xml messages the will be uploaded to the Twinfield server.
+    -------
+
+    """
 
     if run_params.modules == "ljp":
         messages = create_loonjournaalpost(run_params)
@@ -302,7 +439,7 @@ def create_messages_files(run_params) -> list:
         # messages = create_verkoopjournaalpost(run_params)
         messages = create_facturen_sql()
     elif run_params.modules == "read_dimensions":
-        messages = get_dimension_parameters(run_params)
+        messages = get_dimension_parameters()
     elif run_params.modules == "upload_dimensions":
         messages = create_dimensions_sql()
     else:

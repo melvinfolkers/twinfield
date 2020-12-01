@@ -19,6 +19,16 @@ load_dotenv()
 
 @serverless_function
 def run(run_params):
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+
+    Returns None. serverless function for azure deployment
+    -------
+
+    """
     if run_params.refresh:
         import_all(run_params)
 
@@ -27,6 +37,16 @@ def run(run_params):
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
+    """
+
+    Parameters
+    ----------
+    req: the request received from the Azure function endpoint
+
+    Returns: HTML response with succes/failure message
+    -------
+
+    """
 
     options = {
         "100": "openstaande_debiteuren",

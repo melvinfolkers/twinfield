@@ -7,7 +7,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def run(run_params):
+def run(run_params) -> None:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+
+    Returns None. executes the query scripts.
+    -------
+
+    """
 
     if run_params.refresh:
 

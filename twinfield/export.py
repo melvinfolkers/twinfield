@@ -4,7 +4,17 @@ import logging
 from df_to_azure.export import run as df_to_azure
 
 
-def upload_addresses(run_params):
+def upload_addresses(run_params) -> None:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+
+    Returns: None. uploads datasets of addresses to DWH
+    -------
+
+    """
     directory = os.path.join(run_params.pickledir, "addresses")
     all_addresses = list()
 
@@ -17,7 +27,18 @@ def upload_addresses(run_params):
     df_to_azure(data, "dimension_address", schema="twinfield", method="create")
 
 
-def append_responses(r, run_params):
+def append_responses(r, run_params) -> None:
+    """
+
+    Parameters
+    ----------
+    r: dataframe of XML responses from twinfield server
+    run_params:  input parameters of script (set at start of script)
+
+    Returns: None. appends datasets of selected module to DWH
+    -------
+
+    """
 
     logging.info(f"start met aanbieden van {len(r)} records voor {run_params.modules}")
 
@@ -37,7 +58,18 @@ def append_responses(r, run_params):
         upload_addresses(run_params)
 
 
-def upload_responses(run_params):
+def upload_responses(run_params) -> None:
+    """
+
+    Parameters
+    ----------
+    r: dataframe of XML responses from twinfield server
+    run_params:  input parameters of script (set at start of script)
+
+    Returns: None. uploads datasets of selected module to DWH
+    -------
+
+    """
 
     if run_params.modules != "upload_dimensions":
         r = import_responses(run_params)
@@ -57,7 +89,17 @@ def upload_responses(run_params):
         upload_addresses(run_params)
 
 
-def import_responses(run_params):
+def import_responses(run_params) -> pd.DataFrame():
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+
+    Returns: responses from the requests that have been send to the twinfield server
+    -------
+
+    """
     dfs = list()
     for file in os.listdir(run_params.pickledir):
         if file.startswith("response_data"):

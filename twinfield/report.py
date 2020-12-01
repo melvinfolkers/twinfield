@@ -8,7 +8,18 @@ WEBHOOK = "https://outlook.office.com/webhook/ee14f5e5-e9b2-464f-9a46-bda4c2ffb4
 URL_AZURE_FUNCTION = "https://staffing-twinfield.azurewebsites.net/api/twinfield"
 
 
-def create_message(title, body):
+def create_message(title, body) -> pymsteams.connectorcard:
+    """
+
+    Parameters
+    ----------
+    title: Title of the teams message
+    body: Body of the teams message
+
+    Returns teams message class from (connectorcard) from pymsteams
+    -------
+
+    """
     myTeamsMessage = pymsteams.connectorcard(WEBHOOK)
     myTeamsMessage.color("3d79ab")
     myTeamsMessage.title(title)

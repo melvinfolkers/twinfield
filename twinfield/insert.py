@@ -8,7 +8,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def run(run_params):
+def insert(run_params):
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+
+    Returns: None. Runs the insert scripts of this twinfield package.
+    -------
+
+    """
     create_messages_files(run_params)
 
     if run_params.upload:
@@ -22,4 +32,4 @@ if __name__ == "__main__":
         jaar="2020", refresh=True, upload=True, modules="read_dimensions", offices=[], rerun=False
     )
 
-    run(run_params)
+    insert(run_params)

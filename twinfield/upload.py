@@ -6,7 +6,17 @@ from . import transform
 from .report import send_teams_message
 
 
-def upload_all(run_params):
+def upload_all(run_params) -> None:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+
+    Returns None. uploads the read modules to the DWH
+    -------
+
+    """
     logging.info("start met uploaden van datasets")
 
     if "030_1" in run_params.modules:

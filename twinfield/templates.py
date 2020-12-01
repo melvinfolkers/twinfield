@@ -1,7 +1,17 @@
 import os
 
 
-def import_xml(filename):
+def import_xml(filename) -> str:
+    """
+
+    Parameters
+    ----------
+    filename: filename of the xml_template
+
+    Returns: the xml template
+    -------
+
+    """
     function_dir = os.path.dirname(os.path.realpath(__file__))
 
     file_path = os.path.join(function_dir, filename)
@@ -11,7 +21,17 @@ def import_xml(filename):
     return template
 
 
-def soap_metadata(param, module):
+def soap_metadata(param, module) -> str:
+    """
+
+    Parameters
+    ----------
+    param:  login parameters (SessionParameters)
+
+    Returns: the xml template
+    -------
+
+    """
 
     #   <office>{office}</office>
 

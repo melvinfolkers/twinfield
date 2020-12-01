@@ -5,7 +5,13 @@ import requests
 from . import templates
 
 
-def twinfield_login():
+def twinfield_login() -> SessionParameters():
+    """
+
+    Returns: class SessionParameters with credentials from environment
+    -------
+
+    """
     user = os.environ.get("TW_USER_LS")
     password = os.environ.get("TW_PW_LS")
     organisation = os.environ.get("TW_ORG_LS")
@@ -19,6 +25,14 @@ def twinfield_login():
 
 class SessionParameters:
     def __init__(self, user, pw, organisation):
+        """
+
+        Parameters
+        ----------
+        user: username of twinfield
+        pw: twinfield password
+        organisation: twinfield organisation
+        """
 
         self.user = user
         self.password = pw
@@ -41,7 +55,17 @@ class SessionParameters:
             self, self.url, self.header, self.body
         )
 
-    def parse_session_id(self, root):
+    def parse_session_id(self, root) -> str:
+        """
+
+        Parameters
+        ----------
+        root: root level of soap login response
+
+        Returns: session_id needed for every twinfield request.
+        -------
+
+        """
 
         header = root.find("env:Header/tw:Header", self.ns)
         session_id = header.find("tw:SessionID", self.ns).text
@@ -50,6 +74,16 @@ class SessionParameters:
         return session_id
 
     def parse_cluster(self, root):
+        """
+
+        Parameters
+        ----------
+        root: root level of soap login response
+
+        Returns: cluster of twinfield endpoint
+        -------
+
+        """
 
         header = root.find("env:Body/tw:LogonResponse", self.ns)
         cluster = header.find("tw:cluster", self.ns).text
@@ -58,7 +92,19 @@ class SessionParameters:
 
         return cluster
 
-    def get_session_info(self, url, header, body):
+    def get_session_info(self, url, header, body) -> list:
+        """
+
+        Parameters
+        ----------
+        url: twinfield endpoint for getting a new session
+        header: headers to be send in request
+        body: soap message as body
+
+        Returns session id and cluster
+        -------
+
+        """
 
         response = requests.post(url=url, headers=header, data=body)
 

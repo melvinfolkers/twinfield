@@ -70,6 +70,7 @@ def read_200(param, run_params, periode) -> pd.DataFrame:
     -------
 
     """
+
     start = datetime.now()
 
     logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))

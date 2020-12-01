@@ -22,6 +22,6 @@ def soap_metadata(param, module):
         module
     )
 
-    body = import_xml("template_metadata.xml").format(param.session_id, xml)
+    body = import_xml("xml_templates/template_metadata.xml").format(param.session_id, xml)
 
     return body

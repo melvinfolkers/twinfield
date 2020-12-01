@@ -13,15 +13,15 @@ def create_message(title, body):
     myTeamsMessage.color("3d79ab")
     myTeamsMessage.title(title)
     myTeamsMessage.text(body)
-    myTeamsMessage.addLinkButton("Consolidatie", f"{URL_AZURE_FUNCTION}?module=040_1")
-    myTeamsMessage.addLinkButton(
-        "Openstaande posten debiteuren", f"{URL_AZURE_FUNCTION}?module=100"
-    )
-    myTeamsMessage.addLinkButton(
-        "Openstaande posten crediteuren", f"{URL_AZURE_FUNCTION}?module=200"
-    )
-    myTeamsMessage.addLinkButton("Transacties 2020", f"{URL_AZURE_FUNCTION}?module=030_1?jaar=2020")
-    myTeamsMessage.addLinkButton("Transacties 2019", f"{URL_AZURE_FUNCTION}?module=030_1?jaar=2019")
+    # myTeamsMessage.addLinkButton("Consolidatie", f"{URL_AZURE_FUNCTION}?module=040_1")
+    # myTeamsMessage.addLinkButton(
+    #     "Openstaande posten debiteuren", f"{URL_AZURE_FUNCTION}?module=100"
+    # )
+    # myTeamsMessage.addLinkButton(
+    #     "Openstaande posten crediteuren", f"{URL_AZURE_FUNCTION}?module=200"
+    # )
+    # myTeamsMessage.addLinkButton("Transacties 2020", f"{URL_AZURE_FUNCTION}?module=030_1?jaar=2020")
+    # myTeamsMessage.addLinkButton("Transacties 2019", f"{URL_AZURE_FUNCTION}?module=030_1?jaar=2019")
     return myTeamsMessage
 
 
@@ -53,10 +53,10 @@ def send_teams_message(tables, run_params):
     if len(tables) == 0:
         return logging.info("geen bericht aangemaakt.")
 
-    title = f"Twinfield DWH"
+    title = f"Twinfield read"
 
     if len(tables) == 1:
-        body = f"""1 tabel "geëxporteerd". Zie onderstaand deze activiteit."""
+        body = f"""1 tabel geëxporteerd. Zie onderstaand deze activiteit."""
     else:
         body = f"""In het totaal zijn er {len(tables)} tabellen geëxporteerd. Zie onderstaande activiteiten"""
 
@@ -65,10 +65,31 @@ def send_teams_message(tables, run_params):
     for tablename, table in tables.items():
         msg = create_section(
             msg,
-            section_title=None,
+            section_title=run_params.modules,
             act_title=tablename,
             act_subtitle=f"{table.shape[0]} records geupload naar Azure.",
             act_body=f"afgerond in: {runtime}",
         )
+
+    msg.send()
+
+
+def send_insert_message(table, messages, run_params):
+    runtime = stop_time(run_params.start)
+
+    title = f"Twinfield insert"
+
+    body = "Zie onderstaande activiteit."
+
+    msg = create_message(title, body)
+
+    msg = create_section(
+        msg,
+        section_title=run_params.modules,
+        act_title=f"script: {title}",
+        act_subtitle=f"""{len(messages)} records aangeboden aan de twinfield API.
+        Dit heeft geleid tot {table.shape[0]} responses.""",
+        act_body=f"afgerond in: {runtime}",
+    )
 
     msg.send()

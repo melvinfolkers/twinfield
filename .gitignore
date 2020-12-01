@@ -9,7 +9,7 @@
 /yml*
 run_settings.yml
 
-
+.vscode
 *debug.py
 
 ## The .gitignore file specifies things that git should ignore.

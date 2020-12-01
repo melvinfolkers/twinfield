@@ -3,7 +3,7 @@ import os
 import pandas as pd
 
 from .functions import import_files, get_metadata
-from .credentials import twinfield_login_faheem
+from .credentials import twinfield_login
 
 
 def format_100(df):
@@ -20,7 +20,7 @@ def format_200(df):
 
 
 def format_040_1(df):
-    login = twinfield_login_faheem()
+    login = twinfield_login()
     fields = get_metadata("040_1", login)
     df.rename(columns=fields["label"], inplace=True)
 

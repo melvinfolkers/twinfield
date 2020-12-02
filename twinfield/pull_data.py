@@ -186,9 +186,7 @@ def pull_openstaande_debiteuren(offices, run_params, login) -> None:
         periodes = functions.periods_from_start(run_params)
         period = request_openstaande_debiteuren_data(login, run_params, periodes)
         period = add_metadata(period, office, rows)
-        period.to_pickle(
-            os.path.join(run_params.pickledir, f"{office}_openstaande_debiteuren.pkl")
-        )
+        period.to_pickle(os.path.join(run_params.pickledir, f"{office}_openstaande_debiteuren.pkl"))
 
 
 def pull_openstaande_crediteuren(offices, run_params, login) -> None:
@@ -272,9 +270,7 @@ def pull_transactions(offices, run_params, login) -> None:
         period = add_metadata(period, office, rows)
 
         period.to_pickle(
-            os.path.join(
-                run_params.pickledir, f"{office}_transactions_{run_params.jaar}.pkl"
-            )
+            os.path.join(run_params.pickledir, f"{office}_transactions_{run_params.jaar}.pkl")
         )
 
 

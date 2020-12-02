@@ -273,7 +273,7 @@ def periods_from_start(run_params) -> list:
 
     periodlist = [
         {"from": "2015/00", "to": "2019/55"},
-        {"from": f"2020/00", "to": f"{datetime.now().year}/55"},
+        {"from": "2020/00", "to": f"{datetime.now().year}/55"},
     ]
 
     if run_params.rerun:

@@ -5,7 +5,17 @@ import pandas as pd
 from .functions import create_dir
 
 
-def parse_several_modules(dimension):
+def parse_several_modules(dimension) -> dict:
+    """
+
+    Parameters
+    ----------
+    dimension: xml layer of dimensions submodule
+
+    Returns dictionary containing parsed data
+    -------
+
+    """
     credman = dimension.find("creditmanagement")
     d_credman = parse_layer(credman)
 
@@ -20,7 +30,17 @@ def parse_several_modules(dimension):
     return d
 
 
-def parse_financials(dimension):
+def parse_financials(dimension) -> dict:
+    """
+
+    Parameters
+    ----------
+    dimension: xml layer of dimensions submodule
+
+    Returns dictionary containing parsed data
+    -------
+
+    """
     financials = dimension.find("financials")
     d_financials = parse_layer(financials)
 
@@ -35,7 +55,17 @@ def parse_financials(dimension):
     return financial_info
 
 
-def parse_banks(dimension):
+def parse_banks(dimension) -> dict:
+    """
+
+    Parameters
+    ----------
+    dimension: xml layer of dimensions submodule
+
+    Returns dictionary containing parsed data
+    -------
+
+    """
     banks = dimension.find("banks")
     bank_info = parse_layer(banks)
     if banks:
@@ -46,7 +76,17 @@ def parse_banks(dimension):
     return bank_info
 
 
-def parse_addresses(dimension):
+def parse_addresses(dimension) -> dict:
+    """
+
+    Parameters
+    ----------
+    dimension: xml layer of dimensions submodule
+
+    Returns dictionary containing parsed data
+    -------
+
+    """
     addresses = dimension.find("addresses")
     d_addresses = parse_layer(addresses)
     address = addresses.find("address")
@@ -57,7 +97,17 @@ def parse_addresses(dimension):
     return address_info
 
 
-def parse_layer(dimension):
+def parse_layer(dimension) -> dict:
+    """
+
+    Parameters
+    ----------
+    dimension: xml layer of dimensions submodule
+
+    Returns dictionary containing parsed data
+    -------
+
+    """
     if dimension is None:
         return {}
 
@@ -73,7 +123,18 @@ def parse_layer(dimension):
     return d
 
 
-def parse_transactions(transactions):
+def parse_transactions(transactions) -> list:
+    """
+
+    Parameters
+    ----------
+    transactions: xml layer of transaction related submodules
+
+    Returns list of dictionaries containing parsed data
+    -------
+
+    """
+
     records = []
 
     for trx in transactions:
@@ -83,7 +144,17 @@ def parse_transactions(transactions):
     return records
 
 
-def parse_dimensions(dimensions):
+def parse_dimensions(dimensions) -> list:
+    """
+
+    Parameters
+    ----------
+    dimensions: xml layers of dimensions
+
+    Returns list of dictionaries containing parsed data
+    -------
+
+    """
     records = []
 
     for dimension in dimensions:
@@ -99,7 +170,17 @@ def parse_dimensions(dimensions):
     return records
 
 
-def get_dimension_codes(dimension):
+def get_dimension_codes(dimension) -> dict:
+    """
+
+    Parameters
+    ----------
+    dimensions: xml layers of dimensions
+
+    Returns list of dictionaries containing parsed data
+    -------
+
+    """
     dimdata = parse_layer(dimension)
     fields = ["dimension.office", "dimension.type", "dimension.code"]
     d = {k: v for k, v in dimdata.items() if k in fields}
@@ -107,7 +188,19 @@ def get_dimension_codes(dimension):
     return d
 
 
-def parse_response_dimension_addresses(run_params, response, login):
+def parse_response_dimension_addresses(run_params, response, login) -> None:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    response: response from twinfield server
+    login:  login parameters (SessionParameters)
+
+    Returns None. exports the dimension address data to pickle file in the tmp directory
+    -------
+
+    """
     root = ET.fromstring(response.text)
     body = root.find("env:Body", login.ns)
     data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", login.ns)
@@ -142,7 +235,19 @@ def parse_response_dimension_addresses(run_params, response, login):
     logging.debug(f"{filename} geexporteerd!")
 
 
-def parse_response_dimensions(run_params, response, login):
+def parse_response_dimensions(run_params, response, login) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    response: response from twinfield server
+    login:  login parameters (SessionParameters)
+
+    Returns None. exports the dimension address data to pickle file in the tmp directory
+    -------
+
+    """
     logging.debug(f"start van parsen {run_params.modules}")
     root = ET.fromstring(response.text)
     body = root.find("env:Body", login.ns)
@@ -154,7 +259,19 @@ def parse_response_dimensions(run_params, response, login):
     return data
 
 
-def parse_response_transactions(run_params, response, login):
+def parse_response_transactions(run_params, response, login) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    response: response from twinfield server
+    login:  login parameters (SessionParameters)
+
+    Returns None. exports the dimension address data to pickle file in the tmp directory
+    -------
+
+    """
     # logging.info(f"start van parsen {run_params.modules}")
     root = ET.fromstring(response.text)
     body = root.find("env:Body", login.ns)
@@ -171,7 +288,18 @@ def parse_response_transactions(run_params, response, login):
     return data
 
 
-def parse_result_status(data_xml, module):
+def parse_result_status(data_xml, module) -> str:
+    """
+
+    Parameters
+    ----------
+    data_xml: response from twinfield server
+    module: selected module
+
+    Returns result of status. if not there, returns error
+    -------
+
+    """
     result_xml = parse_layer(data_xml)
     colname = "{http://www.twinfield.com/}ProcessXmlDocumentResult." + module + ".result"
     result = result_xml.get(colname, "error")
@@ -179,7 +307,19 @@ def parse_result_status(data_xml, module):
     return result
 
 
-def parse_memo(run_params, response, login):
+def parse_memo(run_params, response, login) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    response: response from twinfield server
+    login:  login parameters (SessionParameters)
+
+    Returns
+    -------
+
+    """
 
     # logging.info(f"start van parsen {run_params.modules}")
     root = ET.fromstring(response.text)
@@ -204,7 +344,17 @@ def parse_memo(run_params, response, login):
     return data
 
 
-def get_header_data(trx):
+def get_header_data(trx) -> dict:
+    """
+
+    Parameters
+    ----------
+    trx: transaction line in xml
+
+    Returns dictionary containing data
+    -------
+
+    """
     info = dict()
 
     header = trx.find("header")
@@ -236,7 +386,19 @@ def get_header_data(trx):
     return info
 
 
-def parse_response(run_params, response, login):
+def parse_response(run_params, response, login) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    response: response from twinfield server
+    login:  login parameters (SessionParameters)
+
+    Returns datadrame of parsed responses
+    -------
+
+    """
     if run_params.modules == "vrk":
         data = parse_response_ljp(run_params, response, login)
     elif run_params.modules == "ink":
@@ -262,7 +424,19 @@ def parse_response(run_params, response, login):
     return data
 
 
-def parse_response_ljp(run_params, response, login):
+def parse_response_ljp(run_params, response, login) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    response: response from twinfield server
+    login:  login parameters (SessionParameters)
+
+    Returns dataframe containing responsess
+    -------
+
+    """
     root = ET.fromstring(response.text)
     body = root.find("env:Body", login.ns)
 

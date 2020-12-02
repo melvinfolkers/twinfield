@@ -8,13 +8,10 @@ import requests
 import json
 from .credentials import twinfield_login
 from . import templates
-
 import timeit
 
-# offices
 
-
-def import_files(run_params, patt) -> pd.DataFrame():
+def import_files(run_params, patt) -> pd.DataFrame:
     """
 
     Parameters
@@ -42,7 +39,18 @@ def import_files(run_params, patt) -> pd.DataFrame():
     return data
 
 
-def parse_session_response(response, param):
+def parse_session_response(response, param) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    response: response xml from twinfield server
+    param:  login parameters (SessionParameters)
+
+    Returns: dataframe of parsed XML response
+    -------
+
+    """
     root = ET.fromstring(response.text)
 
     body = root.find("env:Body", param.ns)
@@ -63,12 +71,17 @@ def parse_session_response(response, param):
 # metadata
 
 
-def get_metadata(module, login):
+def get_metadata(module, login) -> pd.DataFrame:
     """
 
-    :param param: session parameters
-    :param module:  code van de module (zie dataservices twinfield)
-    :return: metadata van de tabel
+    Parameters
+    ----------
+    module: code of the module: see api documentation of twinfield for available codes.
+    login:  login parameters (SessionParameters)
+
+    Returns: dataframe of fieldnames and labels for the module
+    -------
+
     """
 
     url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(login.cluster)
@@ -96,7 +109,18 @@ def get_metadata(module, login):
     return metadata
 
 
-def parse_soap_error(body, login):
+def parse_soap_error(body, login) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    body: body of the soap message
+    login:  login parameters (SessionParameters)
+
+    Returns
+    -------
+
+    """
     fault = body.find("env:Fault", login.ns)
     d = dict()
     d["faultcode"] = fault.find("faultcode").text
@@ -113,7 +137,17 @@ def parse_soap_error(body, login):
     return pd.DataFrame([d])
 
 
-def parse_metadata_response(data):
+def parse_metadata_response(data) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    data: layer of XML metadata response from twinfield server
+
+    Returns dataframe of metadata
+    -------
+
+    """
     col = data.find("columns")
 
     rec = list()
@@ -131,7 +165,18 @@ def parse_metadata_response(data):
     return df
 
 
-def parse_response(response, param):
+def parse_response(response, param) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    response : initial response from twinfield server
+    param:  login parameters (SessionParameters)
+
+    Returns dataframe of records for the selected module
+    -------
+
+    """
     root = ET.fromstring(response.text)
     body = root.find("env:Body", param.ns)
 
@@ -167,7 +212,22 @@ def parse_response(response, param):
     return data
 
 
-def select_office(officecode, param):
+def select_office(officecode, param) -> None:
+    """
+
+    Parameters
+    ----------
+    officecode : officecode of Twinfield administration.
+    param:  login parameters (SessionParameters)
+    info: Because the function sometimes gets a 503 error from the twinfield server, a retry is
+          added. There will be a new login attempt followed by a repetion of the select office
+          request.
+
+    Returns None. this function selects the office before starting the send a soap message.
+
+    -------
+
+    """
     logging.debug("selecting office: {}...".format(officecode))
 
     counter = 0
@@ -180,10 +240,10 @@ def select_office(officecode, param):
         response = requests.post(url=url, headers=param.header, data=body)
 
         if response.status_code == 200 or counter == 10:
-            # opnieuw inloggen en vervolgens nog een keer proberen.
-            param = twinfield_login()
             run = False
         else:
+            # opnieuw inloggen en vervolgens nog een keer proberen.
+            param = twinfield_login()
             counter += 1
             logging.info(f"selecteren van office mislukt! start met poging {counter}")
 
@@ -196,16 +256,32 @@ def select_office(officecode, param):
     logging.debug(pass_fail)
 
 
-def periods_from_start(run_params):
-    # all the records from 2015
+def periods_from_start(run_params) -> list:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    info: for the query modules, sometimes the datasets are to big to request in a full years
+          period. In that case, the RunParameter setting 'rerun' can be used to make smaller
+          periods.
+
+    Returns: list of periods that will be iterated over when sending the request.
+    -------
+
+    """
+
     periodlist = [
-        {"from": "2015/00", "to": f"{datetime.now().year -1}/55"},
-        {"from": f"{datetime.now().year}/00", "to": f"{datetime.now().year}/55"},
+        {"from": "2015/00", "to": "2019/55"},
+        {"from": f"2020/00", "to": f"{datetime.now().year}/55"},
     ]
 
     if run_params.rerun:
         periodlist = []
-        years = range(datetime.now().year + 1)[-6:]
+        min_years = 2015
+        years_to_add = datetime.now().year + 1 - min_years
+        years = [x + min_years for x in range(years_to_add)]
+
         periods = [
             "00",
             "01",
@@ -232,18 +308,18 @@ def periods_from_start(run_params):
     return periodlist
 
 
-def periods_last_n_years(n):
-    # last 10 years
-    years = range(datetime.now().year + 1)[-n:]
-    periods = list()
-    for year in years:
-        period = {"from": f"{year-1}/00", "to": f"{year}/55"}
-        periods.append(period.copy())
+def period_groups(window="year") -> list:
+    """
 
-    return periods
+    Parameters
+    ----------
+    window: selected window for the request. pick a smaller window if expected response size of
+            request is large. that way the Twinfield server does not timeout.
 
+    Returns: list of periods that will be iterated over when sending the request.
+    -------
 
-def period_groups(window="year"):
+    """
     if window == "year":
 
         period = [{"from": "00", "to": "55"}]
@@ -299,26 +375,23 @@ def period_groups(window="year"):
     return period
 
 
-def soap_columns(metadata):
-    ttl = ""
-
-    for field, rows in metadata.iterrows():
-        column_template = """<column xmlns="">
-              <field>{}</field>
-              <label>{}</label>
-              <visible>{}</visible>
-           </column>
-           """.format(
-            field, rows["label"], rows["visible"]
-        )
-
-        ttl = ttl + column_template
-
-    return ttl
-
-
 class RunParameters:
     def __init__(self, jaar, refresh, upload, modules, offices, rerun):
+        """
+
+        Parameters
+        ----------
+        jaar :   parameter for choosing a year for the selected module. Not always necessary, but is
+                 necessary when requesting the read modules "040_1" and "030_1". These modules are
+                 split up in years.
+        refresh: boolean. Set to True if request need to be made to the Twinfield server.
+        upload:  boolean. Set to True if the data needs to be uploaded to Azure
+        modules: mixed. can be list, containing multiple modules, in case of read statement.
+                 in case of insert statements it will
+                 be a string type containing the module that needs to be run.
+        offices: list. list of officecodes. if list is empty, all offices will be selected.
+        rerun:   parameter for rerunning the module, with smaller periods.
+        """
 
         self.jaar = str(jaar)
         self.refresh = refresh
@@ -335,7 +408,40 @@ class RunParameters:
         self.start = timeit.default_timer()
 
 
-def create_dir(destination):
+def create_dir(destination) -> str:
+    """
+
+    Parameters
+    ----------
+    destination: the file path that needs to be created
+    info: the function checks if the folder exists. If so, it will remove it. If not, the folder
+          will be created.
+    Returns : the original file_path
+    -------
+
+    """
+
+    if os.path.exists(destination):
+        pass
+    else:
+        logging.warning(f"tmp folder does not exists, creating {destination}")
+        os.makedirs(destination)
+
+    return destination
+
+
+def remove_and_create_dir(destination) -> str:
+    """
+
+    Parameters
+    ----------
+    destination: the file path that needs to be created
+    info: the function checks if the folder exists. If so, it will remove it. If not, the folder
+          will be created.
+    Returns : the original file_path
+    -------
+
+    """
 
     if os.path.exists(destination):
         logging.warning(f"tmp folder exists, removing {destination}")
@@ -348,7 +454,13 @@ def create_dir(destination):
     return destination
 
 
-def get_modules():
+def get_modules() -> dict:
+    """
+
+    Returns: modules dictionary loaded from static file modules.json
+    -------
+
+    """
     function_dir = os.path.dirname(os.path.realpath(__file__))
     file_path = os.path.join(function_dir, "modules.json")
     file = open(file_path).read()
@@ -357,7 +469,17 @@ def get_modules():
     return modules
 
 
-def stop_time(start):
+def stop_time(start) -> str:
+    """
+
+    Parameters
+    ----------
+    start: starttime of script
+
+    Returns str. parsed endtime of script
+    -------
+
+    """
     stop = timeit.default_timer()
     end_time = round(stop - start)
 

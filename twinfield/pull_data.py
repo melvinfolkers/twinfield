@@ -11,6 +11,18 @@ from .credentials import twinfield_login
 
 
 def scoping_offices(offices, login) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    offices: list of offices
+    login: login parameters (SessionParameters)
+
+
+    Returns: dataframe of scoped offices
+    -------
+
+    """
 
     all_offices = read_offices(login)
 
@@ -25,7 +37,20 @@ def scoping_offices(offices, login) -> pd.DataFrame:
     return scoping
 
 
-def set_update(run_params, offices, module):
+def set_update(run_params, offices, module) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+
+    offices: list of offices
+    module
+
+    Returns: only offices that are not already imported to the temp directory
+    -------
+
+    """
 
     df = functions.import_files(run_params, module)
     if not len(df):
@@ -36,7 +61,19 @@ def set_update(run_params, offices, module):
     return offices
 
 
-def set_rerun(run_params, module, login):
+def set_rerun(run_params, module, login) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+    module: selected module
+    login:  login parameters (SessionParameters)
+
+    Returns: dataframe of offices that are not correctly imported
+    -------
+
+    """
 
     offices = scoping_offices(run_params.offices, login)
 
@@ -56,7 +93,17 @@ def set_rerun(run_params, module, login):
     return rerun
 
 
-def import_all(run_params):
+def import_all(run_params) -> None:
+    """
+
+    Parameters
+    ----------
+    run_params:  input parameters of script (set at start of script)
+
+    Returns None. Runs the appropriate import script based on the selected module.
+    -------
+
+    """
 
     login = twinfield_login()
     offices = scoping_offices(run_params.offices, login)
@@ -95,7 +142,19 @@ def import_all(run_params):
         pull_openstaande_crediteuren(offices, run_params, login)
 
 
-def add_metadata(df, office, rows):
+def add_metadata(df, office, rows) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    df: original dataframe containing records of selected module
+    office: officode
+    rows: row of dataframe containing office metadata
+
+    Returns
+    -------
+
+    """
 
     df["administratienaam"] = rows["name"]
     df["administratienummer"] = office
@@ -104,7 +163,19 @@ def add_metadata(df, office, rows):
     return df
 
 
-def pull_openstaande_debiteuren(offices, run_params, login):
+def pull_openstaande_debiteuren(offices, run_params, login) -> None:
+    """
+
+    Parameters
+    ----------
+    offices: selected offices to perform request
+    run_params:  input parameters of script (set at start of script)
+    login:  login parameters (SessionParameters)
+
+    Returns None. exports the data for the module to a pickle file in the tmp directory
+    -------
+
+    """
 
     logging.info("\t" + 3 * "-" + "openstaande debiteuren" + 3 * "-")
     for office, rows in tqdm(offices.iterrows(), desc="administraties", total=offices.shape[0]):
@@ -120,7 +191,20 @@ def pull_openstaande_debiteuren(offices, run_params, login):
         )
 
 
-def pull_openstaande_crediteuren(offices, run_params, login):
+def pull_openstaande_crediteuren(offices, run_params, login) -> None:
+    """
+
+    Parameters
+    ----------
+    offices: selected offices to perform request
+    run_params:  input parameters of script (set at start of script)
+    login:  login parameters (SessionParameters)
+
+    Returns None. exports the data for the module to a pickle file in the tmp directory
+    -------
+
+    """
+
     logging.info("\t" + 3 * "-" + "openstaande crediteuren" + 3 * "-")
     for office, rows in tqdm(offices.iterrows(), total=offices.shape[0]):
         # logging.info("\t" + 3 * "-" + str(rows["shortname"]) + 3 * "-")
@@ -135,7 +219,20 @@ def pull_openstaande_crediteuren(offices, run_params, login):
         )
 
 
-def pull_consolidatie(offices, run_params, login):
+def pull_consolidatie(offices, run_params, login) -> None:
+    """
+
+    Parameters
+    ----------
+    offices: selected offices to perform request
+    run_params:  input parameters of script (set at start of script)
+    login:  login parameters (SessionParameters)
+
+    Returns None. exports the data for the module to a pickle file in the tmp directory
+    -------
+
+    """
+
     for office, rows in tqdm(offices.iterrows(), total=offices.shape[0]):
         logging.debug("\t" + 3 * "-" + str(rows["shortname"]) + 3 * "-")
         # refresh login (session id) for every run
@@ -147,7 +244,20 @@ def pull_consolidatie(offices, run_params, login):
         period.to_pickle(os.path.join(run_params.pickledir, "{}_consolidatie.pkl".format(office)))
 
 
-def pull_transactions(offices, run_params, login):
+def pull_transactions(offices, run_params, login) -> None:
+    """
+
+    Parameters
+    ----------
+    offices: selected offices to perform request
+    run_params:  input parameters of script (set at start of script)
+    login:  login parameters (SessionParameters)
+
+    Returns None. exports the data for the module to a pickle file in the tmp directory
+    -------
+
+    """
+
     for office, rows in tqdm(offices.iterrows(), total=offices.shape[0]):
         logging.info("\t" + 3 * "-" + str(rows["shortname"]) + 3 * "-")
 
@@ -168,7 +278,19 @@ def pull_transactions(offices, run_params, login):
         )
 
 
-def request_transaction_data(login, run_params, periodes):
+def request_transaction_data(login, run_params, periodes) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    login:  login parameters (SessionParameters)
+    run_params:  input parameters of script (set at start of script)
+    periodes: list of period offsets that will be iterated over in the requests.
+
+    Returns dataset containing records for selected module
+    -------
+
+    """
     data = pd.DataFrame()
 
     for periode in periodes:
@@ -179,7 +301,20 @@ def request_transaction_data(login, run_params, periodes):
     return data
 
 
-def request_consolidatie_data(login, run_params, periodes):
+def request_consolidatie_data(login, run_params, periodes) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    login:  login parameters (SessionParameters)
+    run_params:  input parameters of script (set at start of script)
+    periodes: list of period offsets that will be iterated over in the requests.
+
+    Returns dataset containing records for selected module
+    -------
+
+    """
+
     data = pd.DataFrame()
 
     for periode in periodes:
@@ -189,7 +324,19 @@ def request_consolidatie_data(login, run_params, periodes):
     return data
 
 
-def request_openstaande_debiteuren_data(login, run_params, periodes):
+def request_openstaande_debiteuren_data(login, run_params, periodes) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    login:  login parameters (SessionParameters)
+    run_params:  input parameters of script (set at start of script)
+    periodes: list of period offsets that will be iterated over in the requests.
+
+    Returns dataset containing records for selected module
+    -------
+
+    """
     data = pd.DataFrame()
 
     for periode in periodes:
@@ -199,7 +346,19 @@ def request_openstaande_debiteuren_data(login, run_params, periodes):
     return data
 
 
-def request_openstaande_crediteuren_data(login, run_params, periodes):
+def request_openstaande_crediteuren_data(login, run_params, periodes) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    login:  login parameters (SessionParameters)
+    run_params:  input parameters of script (set at start of script)
+    periodes: list of period offsets that will be iterated over in the requests.
+
+    Returns dataset containing records for selected module
+    -------
+
+    """
     data = pd.DataFrame()
 
     for periode in periodes:

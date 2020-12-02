@@ -27,9 +27,9 @@ def scoping_offices(offices, login) -> pd.DataFrame:
     all_offices = read_offices(login)
 
     if len(offices):
-        logging.info("{} administraties beschikbaar".format(len(all_offices)))
+        logging.info(f"{len(all_offices)} administraties beschikbaar")
         scoping = all_offices[all_offices.name.isin(offices)]
-        logging.info("{} administraties geselecteerd".format(len(scoping)))
+        logging.info(f"{len(scoping)} administraties geselecteerd")
     else:
         scoping = all_offices  # [:1]
         logging.info(f"alle {len(scoping)} administraties in scope.")
@@ -187,7 +187,7 @@ def pull_openstaande_debiteuren(offices, run_params, login) -> None:
         period = request_openstaande_debiteuren_data(login, run_params, periodes)
         period = add_metadata(period, office, rows)
         period.to_pickle(
-            os.path.join(run_params.pickledir, "{}_openstaande_debiteuren.pkl".format(office))
+            os.path.join(run_params.pickledir, f"{office}_openstaande_debiteuren.pkl")
         )
 
 
@@ -215,7 +215,7 @@ def pull_openstaande_crediteuren(offices, run_params, login) -> None:
         period = request_openstaande_crediteuren_data(login, run_params, periodes)
         period = add_metadata(period, office, rows)
         period.to_pickle(
-            os.path.join(run_params.pickledir, "{}_openstaande_crediteuren.pkl".format(office))
+            os.path.join(run_params.pickledir, f"{office}_openstaande_crediteuren.pkl")
         )
 
 
@@ -241,7 +241,7 @@ def pull_consolidatie(offices, run_params, login) -> None:
         periodes = functions.period_groups(window="year")
         period = request_consolidatie_data(login, run_params, periodes)
         period = add_metadata(period, office, rows)
-        period.to_pickle(os.path.join(run_params.pickledir, "{}_consolidatie.pkl".format(office)))
+        period.to_pickle(os.path.join(run_params.pickledir, f"{office}_consolidatie.pkl"))
 
 
 def pull_transactions(offices, run_params, login) -> None:
@@ -273,7 +273,7 @@ def pull_transactions(offices, run_params, login) -> None:
 
         period.to_pickle(
             os.path.join(
-                run_params.pickledir, "{}_transactions_{}.pkl".format(office, run_params.jaar)
+                run_params.pickledir, f"{office}_transactions_{run_params.jaar}.pkl"
             )
         )
 

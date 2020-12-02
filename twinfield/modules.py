@@ -17,7 +17,7 @@ def read_offices(param) -> pd.DataFrame:
 
     """
 
-    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
+    url = f"https://{param.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
     body = templates.import_xml("xml_templates/template_list_offices.xml").format(param.session_id)
     response = requests.post(url=url, headers=param.header, data=body)
 
@@ -42,9 +42,9 @@ def read_100(param, run_params, periode) -> pd.DataFrame:
 
     start = datetime.now()
 
-    logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
+    logging.debug(f"start request periode van {periode['from']} t/m {periode['to']}")
 
-    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
+    url = f"https://{param.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
     body = templates.import_xml("xml_templates/template_100.xml").format(
         param.session_id, periode["from"], periode["to"]
     )
@@ -52,7 +52,7 @@ def read_100(param, run_params, periode) -> pd.DataFrame:
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)
-    logging.debug("{} records in {}".format(len(data), datetime.now() - start))
+    logging.debug(f"{len(data)} records in {datetime.now() - start}")
 
     return data
 
@@ -73,16 +73,16 @@ def read_200(param, run_params, periode) -> pd.DataFrame:
 
     start = datetime.now()
 
-    logging.debug("start request periode van {} t/m {}".format(periode["from"], periode["to"]))
+    logging.debug(f"start request periode van {periode['from']} t/m {periode['to']}")
 
-    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
+    url = f"https://{param.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
     body = templates.import_xml("xml_templates/template_200.xml").format(
         param.session_id, periode["from"], periode["to"]
     )
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)
-    logging.debug("{} records in {}".format(len(data), datetime.now() - start))
+    logging.debug(f"{len(data)} records in {datetime.now() - start}")
 
     return data
 
@@ -103,12 +103,10 @@ def read_040_1(param, run_params, periode) -> pd.DataFrame:
     start = datetime.now()
 
     logging.debug(
-        "start request {} periode van {} t/m {}".format(
-            run_params.jaar, periode["from"], periode["to"]
-        )
+        f"start request {run_params.jaar} periode van {periode['from']} t/m {periode['to']}"
     )
 
-    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
+    url = f"https://{param.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
 
     body = templates.import_xml("xml_templates/template_040_1.xml").format(
         param.session_id, run_params.jaar, periode["from"], run_params.jaar, periode["to"]
@@ -117,7 +115,7 @@ def read_040_1(param, run_params, periode) -> pd.DataFrame:
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)
-    logging.debug("{} records in {}".format(len(data), datetime.now() - start))
+    logging.debug(f"{len(data)} records in {datetime.now() - start}")
 
     return data
 
@@ -138,12 +136,10 @@ def read_030_1(param, run_params, periode) -> pd.DataFrame:
     start = datetime.now()
 
     logging.info(
-        "start request {} periode van {} t/m {}".format(
-            run_params.jaar, periode["from"], periode["to"]
-        )
+        f"start request {run_params.jaar} periode van {periode['from']} t/m {periode['to']}"
     )
 
-    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
+    url = f"https://{param.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
 
     body = templates.import_xml("xml_templates/template_030_1.xml").format(
         param.session_id, run_params.jaar, periode["from"], run_params.jaar, periode["to"]
@@ -153,7 +149,7 @@ def read_030_1(param, run_params, periode) -> pd.DataFrame:
 
     data = functions.parse_response(response, param)
 
-    logging.info("{} records in {}".format(len(data), datetime.now() - start))
+    logging.info(f"{len(data)} records in {datetime.now() - start}")
 
     return data
 
@@ -192,12 +188,12 @@ def read_164(param) -> pd.DataFrame:
 
     logging.info("start request credit management")
 
-    url = "https://.twinfield.com/webservices/processxml.asmx?wsdl".format(param.cluster)
+    url = "https://.twinfield.com/webservices/processxml.asmx?wsdl"
     body = templates.soap_164(param.session_id)
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = functions.parse_response(response, param)
 
-    logging.info("{} records in {}".format(len(data), datetime.now() - start))
+    logging.info(f"{len(data)} records in {datetime.now() - start}")
 
     return data

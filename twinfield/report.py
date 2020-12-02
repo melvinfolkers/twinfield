@@ -72,8 +72,10 @@ def send_teams_message(tables, run_params):
     if len(tables) == 1:
         body = "1 tabel geëxporteerd. Zie onderstaand deze activiteit."
     else:
-        body = f"In het totaal zijn er {len(tables)} " \
-               f"tabellen geëxporteerd. Zie onderstaande activiteiten"
+        body = (
+            f"In het totaal zijn er {len(tables)} "
+            f"tabellen geëxporteerd. Zie onderstaande activiteiten"
+        )
 
     msg = create_message(title, body)
 

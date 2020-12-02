@@ -5,7 +5,7 @@ import requests
 from . import templates
 
 
-def twinfield_login() -> SessionParameters():
+def twinfield_login():
     """
 
     Returns: class SessionParameters with credentials from environment

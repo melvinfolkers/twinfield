@@ -240,10 +240,10 @@ def select_office(officecode, param) -> None:
         response = requests.post(url=url, headers=param.header, data=body)
 
         if response.status_code == 200 or counter == 10:
-            # opnieuw inloggen en vervolgens nog een keer proberen.
-            param = twinfield_login()
             run = False
         else:
+            # opnieuw inloggen en vervolgens nog een keer proberen.
+            param = twinfield_login()
             counter += 1
             logging.info(f"selecteren van office mislukt! start met poging {counter}")
 
@@ -422,9 +422,10 @@ def create_dir(destination) -> str:
     """
 
     if os.path.exists(destination):
-        logging.warning(f"tmp folder exists, removing {destination}")
-        shutil.rmtree(destination)
-        os.makedirs(destination)
+        pass
+        # logging.warning(f"tmp folder exists, removing {destination}")
+        # shutil.rmtree(destination)
+        # os.makedirs(destination)
     else:
         logging.warning(f"tmp folder does not exists, creating {destination}")
         os.makedirs(destination)

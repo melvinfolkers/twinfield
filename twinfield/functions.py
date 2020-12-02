@@ -429,6 +429,7 @@ def create_dir(destination) -> str:
 
     return destination
 
+
 def remove_and_create_dir(destination) -> str:
     """
 
@@ -451,7 +452,6 @@ def remove_and_create_dir(destination) -> str:
         os.makedirs(destination)
 
     return destination
-
 
 
 def get_modules() -> dict:

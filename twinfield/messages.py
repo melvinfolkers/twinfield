@@ -312,9 +312,10 @@ def read_and_delete_table(tablename) -> pd.DataFrame:
 
     conn = auth_azure()
     engn = create_engine(conn, pool_size=10, max_overflow=20)
-    data = pd.read_sql_table(table_name=tablename, con=engn)
+    query = f"SELECT TOP(1) * FROM {tablename};"
+    data = pd.read_sql(query, con=engn)
     data.head(n=0).to_sql(tablename, engn, schema="dbo", if_exists="replace")
-    logging.info(f"{len(data)} regels gelezen. tabel verwijderd")
+    logging.info(f"Tabel {tablename} gelezen. Tabel verwijderd")
 
     return data
 

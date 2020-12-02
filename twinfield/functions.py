@@ -423,14 +423,35 @@ def create_dir(destination) -> str:
 
     if os.path.exists(destination):
         pass
-        # logging.warning(f"tmp folder exists, removing {destination}")
-        # shutil.rmtree(destination)
-        # os.makedirs(destination)
     else:
         logging.warning(f"tmp folder does not exists, creating {destination}")
         os.makedirs(destination)
 
     return destination
+
+def remove_and_create_dir(destination) -> str:
+    """
+
+    Parameters
+    ----------
+    destination: the file path that needs to be created
+    info: the function checks if the folder exists. If so, it will remove it. If not, the folder
+          will be created.
+    Returns : the original file_path
+    -------
+
+    """
+
+    if os.path.exists(destination):
+        logging.warning(f"tmp folder exists, removing {destination}")
+        shutil.rmtree(destination)
+        os.makedirs(destination)
+    else:
+        logging.warning(f"tmp folder does not exists, creating {destination}")
+        os.makedirs(destination)
+
+    return destination
+
 
 
 def get_modules() -> dict:

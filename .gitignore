@@ -3,7 +3,6 @@
 *.idea
 *.DS_Store
 *data
-*notebooks
 /venv
 /data/_old
 /yml*
@@ -23,11 +22,11 @@ dbg.py
 .cache/v/cache/lastfailed
 tests/.cache/v/cache/lastfailed
 .vscode/settings.json
-/notebooks
+
 ##
 ## R Section - See https://github.com/github/gitignore/blob/master/R.gitignore
 ##
-
+_old
 # History files
 .Rhistory
 .Rapp.history

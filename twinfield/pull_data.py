@@ -10,7 +10,7 @@ from tqdm import tqdm
 from .credentials import twinfield_login
 
 
-def scoping_offices(offices, login) -> pd.DataFrame():
+def scoping_offices(offices, login) -> pd.DataFrame:
     """
 
     Parameters
@@ -37,7 +37,7 @@ def scoping_offices(offices, login) -> pd.DataFrame():
     return scoping
 
 
-def set_update(run_params, offices, module) -> pd.DataFrame():
+def set_update(run_params, offices, module) -> pd.DataFrame:
     """
 
     Parameters
@@ -61,7 +61,7 @@ def set_update(run_params, offices, module) -> pd.DataFrame():
     return offices
 
 
-def set_rerun(run_params, module, login) -> pd.DataFrame():
+def set_rerun(run_params, module, login) -> pd.DataFrame:
     """
 
     Parameters
@@ -142,7 +142,7 @@ def import_all(run_params) -> None:
         pull_openstaande_crediteuren(offices, run_params, login)
 
 
-def add_metadata(df, office, rows) -> pd.DataFrame():
+def add_metadata(df, office, rows) -> pd.DataFrame:
     """
 
     Parameters
@@ -278,7 +278,7 @@ def pull_transactions(offices, run_params, login) -> None:
         )
 
 
-def request_transaction_data(login, run_params, periodes) -> pd.DataFrame():
+def request_transaction_data(login, run_params, periodes) -> pd.DataFrame:
     """
 
     Parameters
@@ -301,7 +301,7 @@ def request_transaction_data(login, run_params, periodes) -> pd.DataFrame():
     return data
 
 
-def request_consolidatie_data(login, run_params, periodes) -> pd.DataFrame():
+def request_consolidatie_data(login, run_params, periodes) -> pd.DataFrame:
     """
 
     Parameters
@@ -324,7 +324,7 @@ def request_consolidatie_data(login, run_params, periodes) -> pd.DataFrame():
     return data
 
 
-def request_openstaande_debiteuren_data(login, run_params, periodes) -> pd.DataFrame():
+def request_openstaande_debiteuren_data(login, run_params, periodes) -> pd.DataFrame:
     """
 
     Parameters
@@ -346,7 +346,7 @@ def request_openstaande_debiteuren_data(login, run_params, periodes) -> pd.DataF
     return data
 
 
-def request_openstaande_crediteuren_data(login, run_params, periodes) -> pd.DataFrame():
+def request_openstaande_crediteuren_data(login, run_params, periodes) -> pd.DataFrame:
     """
 
     Parameters

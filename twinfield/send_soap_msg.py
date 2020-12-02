@@ -133,7 +133,7 @@ def parse_errors(run_params, data) -> None:
     logging.info(f"{len(errors)} errors geexporteerd.")
 
 
-def get_response(messages, run_params, login) -> pd.DataFrame():
+def get_response(messages, run_params, login) -> pd.DataFrame:
     """
 
     Parameters

@@ -235,7 +235,7 @@ def parse_response_dimension_addresses(run_params, response, login) -> None:
     logging.debug(f"{filename} geexporteerd!")
 
 
-def parse_response_dimensions(run_params, response, login) -> pd.DataFrame():
+def parse_response_dimensions(run_params, response, login) -> pd.DataFrame:
     """
 
     Parameters
@@ -259,7 +259,7 @@ def parse_response_dimensions(run_params, response, login) -> pd.DataFrame():
     return data
 
 
-def parse_response_transactions(run_params, response, login) -> pd.DataFrame():
+def parse_response_transactions(run_params, response, login) -> pd.DataFrame:
     """
 
     Parameters
@@ -307,7 +307,7 @@ def parse_result_status(data_xml, module) -> str:
     return result
 
 
-def parse_memo(run_params, response, login) -> pd.DataFrame():
+def parse_memo(run_params, response, login) -> pd.DataFrame:
     """
 
     Parameters
@@ -386,7 +386,7 @@ def get_header_data(trx) -> dict:
     return info
 
 
-def parse_response(run_params, response, login) -> pd.DataFrame():
+def parse_response(run_params, response, login) -> pd.DataFrame:
     """
 
     Parameters
@@ -424,7 +424,7 @@ def parse_response(run_params, response, login) -> pd.DataFrame():
     return data
 
 
-def parse_response_ljp(run_params, response, login) -> pd.DataFrame():
+def parse_response_ljp(run_params, response, login) -> pd.DataFrame:
     """
 
     Parameters

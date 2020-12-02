@@ -11,7 +11,7 @@ from . import templates
 import timeit
 
 
-def import_files(run_params, patt) -> pd.DataFrame():
+def import_files(run_params, patt) -> pd.DataFrame:
     """
 
     Parameters
@@ -39,7 +39,7 @@ def import_files(run_params, patt) -> pd.DataFrame():
     return data
 
 
-def parse_session_response(response, param) -> pd.DataFrame():
+def parse_session_response(response, param) -> pd.DataFrame:
     """
 
     Parameters
@@ -71,7 +71,7 @@ def parse_session_response(response, param) -> pd.DataFrame():
 # metadata
 
 
-def get_metadata(module, login) -> pd.DataFrame():
+def get_metadata(module, login) -> pd.DataFrame:
     """
 
     Parameters
@@ -109,7 +109,7 @@ def get_metadata(module, login) -> pd.DataFrame():
     return metadata
 
 
-def parse_soap_error(body, login) -> pd.DataFrame():
+def parse_soap_error(body, login) -> pd.DataFrame:
     """
 
     Parameters
@@ -137,7 +137,7 @@ def parse_soap_error(body, login) -> pd.DataFrame():
     return pd.DataFrame([d])
 
 
-def parse_metadata_response(data) -> pd.DataFrame():
+def parse_metadata_response(data) -> pd.DataFrame:
     """
 
     Parameters
@@ -165,7 +165,7 @@ def parse_metadata_response(data) -> pd.DataFrame():
     return df
 
 
-def parse_response(response, param) -> pd.DataFrame():
+def parse_response(response, param) -> pd.DataFrame:
     """
 
     Parameters

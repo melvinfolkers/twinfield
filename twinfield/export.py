@@ -89,7 +89,7 @@ def upload_responses(run_params) -> None:
         upload_addresses(run_params)
 
 
-def import_responses(run_params) -> pd.DataFrame():
+def import_responses(run_params) -> pd.DataFrame:
     """
 
     Parameters

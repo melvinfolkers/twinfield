@@ -70,7 +70,7 @@ def create_line(data):
     return data
 
 
-def create_header(data) -> pd.DataFrame():
+def create_header(data) -> pd.DataFrame:
     """
 
     Parameters
@@ -278,7 +278,7 @@ def create_inkoopjournaalpost_sql() -> list:
     return xml_messages
 
 
-def read_table(tablename) -> pd.DataFrame():
+def read_table(tablename) -> pd.DataFrame:
     """
 
     Parameters
@@ -298,7 +298,7 @@ def read_table(tablename) -> pd.DataFrame():
     return data
 
 
-def read_and_delete_table(tablename) -> pd.DataFrame():
+def read_and_delete_table(tablename) -> pd.DataFrame:
     """
 
     Parameters

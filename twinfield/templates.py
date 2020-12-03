@@ -35,12 +35,10 @@ def soap_metadata(param, module) -> str:
 
     #   <office>{office}</office>
 
-    xml = """<read>
+    xml = f"""<read>
     <type>browse</type>
-    <code>{}</code>
-    </read>""".format(
-        module
-    )
+    <code>{module}</code>
+    </read>"""
 
     body = import_xml("xml_templates/template_metadata.xml").format(param.session_id, xml)
 

@@ -18,7 +18,7 @@ def twinfield_login():
 
     login = SessionParameters(user=user, pw=password, organisation=organisation)
 
-    logging.info("ingelogd met gebruiker {}".format(user))
+    logging.info(f"ingelogd met gebruiker {user}")
 
     return login
 
@@ -69,7 +69,7 @@ class SessionParameters:
 
         header = root.find("env:Header/tw:Header", self.ns)
         session_id = header.find("tw:SessionID", self.ns).text
-        logging.debug("session id: {}".format(session_id))
+        logging.debug(f"session id: {session_id}")
 
         return session_id
 
@@ -88,7 +88,7 @@ class SessionParameters:
         header = root.find("env:Body/tw:LogonResponse", self.ns)
         cluster = header.find("tw:cluster", self.ns).text
         cluster = cluster.split("https://")[1].split(".twinfield.com")[0]
-        logging.debug("cluster: {}".format(cluster))
+        logging.debug(f"cluster: {cluster}")
 
         return cluster
 
@@ -117,6 +117,7 @@ class SessionParameters:
             )  # lees de response uit
 
         else:
+            session_id, cluster = None, None
             logging.info("niet gelukt om data binnen te halen")
 
         return [session_id, cluster]

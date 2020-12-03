@@ -20,7 +20,7 @@ def upload_all(run_params) -> None:
     logging.info("start met uploaden van datasets")
 
     if "030_1" in run_params.modules:
-        data = import_files(run_params, "transactions_{}.pkl".format(run_params.jaar))
+        data = import_files(run_params, f"transactions_{run_params.jaar}.pkl")
         df_to_azure(
             df=data, tablename=f"transacties_{run_params.jaar}", schema="twinfield", method="create"
         )

@@ -84,7 +84,7 @@ def get_metadata(module, login) -> pd.DataFrame:
 
     """
 
-    url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(login.cluster)
+    url = f"https://{login.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
     body = templates.soap_metadata(login, module=module)
 
     response = requests.post(url=url, headers=login.header, data=body)
@@ -228,12 +228,12 @@ def select_office(officecode, param) -> None:
     -------
 
     """
-    logging.debug("selecting office: {}...".format(officecode))
+    logging.debug(f"selecting office: {officecode}...")
 
     counter = 0
     run = True
     while run:
-        url = "https://{}.twinfield.com/webservices/session.asmx?wsdl".format(param.cluster)
+        url = f"https://{param.cluster}.twinfield.com/webservices/session.asmx?wsdl"
         body = templates.import_xml("xml_templates/template_select_office.xml").format(
             param.session_id, officecode
         )
@@ -273,7 +273,7 @@ def periods_from_start(run_params) -> list:
 
     periodlist = [
         {"from": "2015/00", "to": "2019/55"},
-        {"from": f"2020/00", "to": f"{datetime.now().year}/55"},
+        {"from": "2020/00", "to": f"{datetime.now().year}/55"},
     ]
 
     if run_params.rerun:

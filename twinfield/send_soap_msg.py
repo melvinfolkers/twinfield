@@ -56,10 +56,8 @@ def create_blob_service_client():
     -------
 
     """
-
-    connect_str = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={}".format(
-        os.environ.get("ls_blob_account_name"), os.environ.get("ls_blob_account_key")
-    )
+    name, key = os.environ.get("ls_blob_account_name"), os.environ.get("ls_blob_account_key")
+    connect_str = f"DefaultEndpointsProtocol=https;AccountName={name};AccountKey={key}"
 
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
 
@@ -187,7 +185,7 @@ def get_response(messages, run_params, login) -> pd.DataFrame:
         else:
             raise ServerError(f"geen routine voor {run_params.modules}")
 
-        url = "https://{}.twinfield.com/webservices/processxml.asmx?wsdl".format(login.cluster)
+        url = f"https://{login.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
         response = requests.post(url=url, headers=login.header, data=soap_msg.encode("utf16"))
 
         if run_params.modules != "read_dimensions" and run_params.modules != "upload_dimensions":

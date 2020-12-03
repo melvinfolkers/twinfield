@@ -67,12 +67,15 @@ def send_teams_message(tables, run_params):
     if len(tables) == 0:
         return logging.info("geen bericht aangemaakt.")
 
-    title = f"Twinfield read"
+    title = "Twinfield read"
 
     if len(tables) == 1:
-        body = f"""1 tabel geëxporteerd. Zie onderstaand deze activiteit."""
+        body = "1 tabel geëxporteerd. Zie onderstaand deze activiteit."
     else:
-        body = f"""In het totaal zijn er {len(tables)} tabellen geëxporteerd. Zie onderstaande activiteiten"""
+        body = (
+            f"In het totaal zijn er {len(tables)} "
+            f"tabellen geëxporteerd. Zie onderstaande activiteiten"
+        )
 
     msg = create_message(title, body)
 
@@ -91,7 +94,7 @@ def send_teams_message(tables, run_params):
 def send_insert_message(table, messages, run_params):
     runtime = stop_time(run_params.start)
 
-    title = f"Twinfield insert"
+    title = "Twinfield insert"
 
     body = "Zie onderstaande activiteit."
 

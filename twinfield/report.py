@@ -6,17 +6,19 @@ from .functions import stop_time
 URL_AZURE_FUNCTION = "https://staffing-twinfield.azurewebsites.net/api/twinfield"
 
 
-def create_message(title, body) -> pymsteams.connectorcard:
+def create_message(title: str, body: str) -> pymsteams.connectorcard:
     """
-
     Parameters
     ----------
-    title: Title of the teams message
-    body: Body of the teams message
+    title: str
+        Title of the teams message
+    body: str
+        Body of the teams message
 
-    Returns teams message class from (connectorcard) from pymsteams
+    Returns
     -------
-
+    myTeamsMessage: pymsteams.connectorcard
+        teams message class from (connectorcard) from pymsteams
     """
     WEBHOOK = os.environ.get("teams_webhook")
     if not WEBHOOK:
@@ -26,15 +28,6 @@ def create_message(title, body) -> pymsteams.connectorcard:
     myTeamsMessage.color("3d79ab")
     myTeamsMessage.title(title)
     myTeamsMessage.text(body)
-    # myTeamsMessage.addLinkButton("Consolidatie", f"{URL_AZURE_FUNCTION}?module=040_1")
-    # myTeamsMessage.addLinkButton(
-    #     "Openstaande posten debiteuren", f"{URL_AZURE_FUNCTION}?module=100"
-    # )
-    # myTeamsMessage.addLinkButton(
-    #     "Openstaande posten crediteuren", f"{URL_AZURE_FUNCTION}?module=200"
-    # )
-    # myTeamsMessage.addLinkButton("Transacties 2020", f"{URL_AZURE_FUNCTION}?module=030_1?jaar=2020")
-    # myTeamsMessage.addLinkButton("Transacties 2019", f"{URL_AZURE_FUNCTION}?module=030_1?jaar=2019")
     return myTeamsMessage
 
 
@@ -45,7 +38,6 @@ def create_section(msg, section_title, act_title, act_subtitle, act_body):
     myMessageSection = pymsteams.cardsection()
 
     # Section Title
-
     if section_title:
         myMessageSection.title(section_title)
 
@@ -62,12 +54,10 @@ def create_section(msg, section_title, act_title, act_subtitle, act_body):
 
 def send_teams_message(tables, run_params):
     runtime = stop_time(run_params.start)
+    title = "Twinfield read"
 
     if len(tables) == 0:
         return logging.info("geen bericht aangemaakt.")
-
-    title = "Twinfield read"
-
     if len(tables) == 1:
         body = "1 tabel geëxporteerd. Zie onderstaand deze activiteit."
     else:
@@ -77,7 +67,6 @@ def send_teams_message(tables, run_params):
         )
 
     msg = create_message(title, body)
-
     for tablename, table in tables.items():
         msg = create_section(
             msg,
@@ -92,13 +81,9 @@ def send_teams_message(tables, run_params):
 
 def send_insert_message(table, messages, run_params):
     runtime = stop_time(run_params.start)
-
     title = "Twinfield insert"
-
     body = "Zie onderstaande activiteit."
-
     msg = create_message(title, body)
-
     msg = create_section(
         msg,
         section_title=run_params.modules,

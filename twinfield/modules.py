@@ -7,14 +7,12 @@ from . import functions, templates
 
 def read_offices(param) -> pd.DataFrame:
     """
-
     Parameters
     ----------
     param: login class with twinfield credentials
 
     Returns: dataframe containing a list of offices available
     -------
-
     """
 
     url = f"https://{param.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
@@ -28,7 +26,6 @@ def read_offices(param) -> pd.DataFrame:
 
 def read_100(param, run_params, periode) -> pd.DataFrame:
     """
-
     Parameters
     ----------
     param: login class with twinfield credentials
@@ -37,7 +34,6 @@ def read_100(param, run_params, periode) -> pd.DataFrame:
 
     Returns: dataframe containing data from browse code 100
     -------
-
     """
 
     start = datetime.now()
@@ -59,7 +55,6 @@ def read_100(param, run_params, periode) -> pd.DataFrame:
 
 def read_200(param, run_params, periode) -> pd.DataFrame:
     """
-
     Parameters
     ----------
     param: login class with twinfield credentials
@@ -68,7 +63,6 @@ def read_200(param, run_params, periode) -> pd.DataFrame:
 
     Returns: dataframe containing data from browse code 200
     -------
-
     """
 
     start = datetime.now()

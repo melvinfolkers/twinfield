@@ -58,23 +58,14 @@ def parse_session_response(response, param) -> pd.DataFrame:
         dataframe of parsed XML response
     """
     root = ET.fromstring(response.text)
-
     body = root.find("env:Body", param.ns)
-
     data = body.find("tw:ProcessXmlStringResponse/tw:ProcessXmlStringResult", param.ns)
-
     data = ET.fromstring(data.text)
 
-    df_ttl = pd.DataFrame()
-
-    for child in data:
-        df = pd.DataFrame(data=child.attrib, index=[child.text])
-        df_ttl = pd.concat([df_ttl, df], axis=0)
+    df_ttl = [pd.DataFrame(data=child.attrib, index=[child.text]) for child in data]
+    df_ttl = pd.concat(df_ttl, ignore_index=True)
 
     return df_ttl
-
-
-# metadata
 
 
 def get_metadata(module, login) -> pd.DataFrame:
@@ -82,7 +73,7 @@ def get_metadata(module, login) -> pd.DataFrame:
     Parameters
     ----------
     module
-        code of the module: see api documentation of twinfield for available codes.
+        code of the module, see api documentation of twinfield for available codes.
     login
         login parameters (SessionParameters)
 
@@ -96,9 +87,7 @@ def get_metadata(module, login) -> pd.DataFrame:
     body = templates.soap_metadata(login, module=module)
 
     response = requests.post(url=url, headers=login.header, data=body)
-
     root = ET.fromstring(response.text)
-
     body = root.find("env:Body", login.ns)
 
     if body.find("env:Fault", login.ns):
@@ -106,12 +95,10 @@ def get_metadata(module, login) -> pd.DataFrame:
         return error
 
     data = body.find("tw:ProcessXmlStringResponse/tw:ProcessXmlStringResult", login.ns)
-
     data = ET.fromstring(data.text)
 
     metadata = parse_metadata_response(data)
     metadata.loc[metadata.label.isna(), "label"] = metadata.field
-
     metadata.set_index("field", inplace=True)
 
     return metadata
@@ -159,15 +146,12 @@ def parse_metadata_response(data) -> pd.DataFrame:
         dataframe of metadata
     """
     col = data.find("columns")
-
     rec = list()
 
     for records in col:
-
         ttl = dict()
         for record in records:
             ttl[record.tag] = record.text
-
         rec.append(ttl)
 
     df = pd.DataFrame(rec)
@@ -320,24 +304,17 @@ def period_groups(window="year") -> list:
         list of periods that will be iterated over when sending the request.
     """
     if window == "year":
-
         period = [{"from": "00", "to": "55"}]
-
     elif window == "half-year":
-
         period = [{"from": "00", "to": "06"}, {"from": "07", "to": "55"}]
-
     elif window == "quarter":
-
         period = [
             {"from": "00", "to": "03"},
             {"from": "04", "to": "06"},
             {"from": "07", "to": "09"},
             {"from": "10", "to": "55"},
         ]
-
     elif window == "two_months":
-
         period = [
             {"from": "00", "to": "02"},
             {"from": "03", "to": "04"},
@@ -347,9 +324,7 @@ def period_groups(window="year") -> list:
             {"from": "11", "to": "12"},
             {"from": "13", "to": "55"},
         ]
-
     elif window == "month":
-
         period = [
             {"from": "00", "to": "00"},
             {"from": "01", "to": "01"},
@@ -367,10 +342,10 @@ def period_groups(window="year") -> list:
             {"from": "13", "to": "13"},
             {"from": "55", "to": "55"},
         ]
-
     else:
         logging.info("geen periode kunnen toewijzen")
         period = [{"from": "00", "to": "55"}]
+
     return period
 
 
@@ -424,7 +399,6 @@ def create_dir(destination: str) -> str:
     destination: str
         the original file_path
     """
-
     if os.path.exists(destination):
         pass
     else:

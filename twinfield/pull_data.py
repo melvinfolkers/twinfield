@@ -4,10 +4,11 @@ import os
 import pandas as pd
 from . import functions, modules, transform
 from .functions import select_office
-from .modules import read_offices, read_module
+from .modules import read_offices
 from .transform import maak_samenvatting
 from tqdm import tqdm
 from .credentials import twinfield_login
+from .exceptions import FaultCodeNotFoundError
 
 
 def scoping_offices(offices: list, login) -> pd.DataFrame:
@@ -89,7 +90,7 @@ def set_rerun(run_params, module, login) -> pd.DataFrame:
     df = functions.import_files(run_params, module)
     try:
         errors = df.loc[~df["faultcode"].isna(), "administratienummer"].tolist()
-    except:
+    except FaultCodeNotFoundError:
         logging.info("no errors")
         return offices.head(n=0)
 

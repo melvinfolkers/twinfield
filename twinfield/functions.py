@@ -350,7 +350,9 @@ def period_groups(window="year") -> list:
 
 
 class RunParameters:
-    def __init__(self, jaar, refresh: bool, upload: bool, modules: Union[str, list], offices: list, rerun):
+    def __init__(
+        self, jaar, refresh: bool, upload: bool, modules: Union[str, list], offices: list, rerun
+    ):
         """
         Parameters
         ----------

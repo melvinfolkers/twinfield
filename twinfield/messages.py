@@ -188,19 +188,13 @@ def create_xml_messages(sql_table_name: str) -> list:
     data = read_and_delete_table(sql_table_name)
 
     # voor tabel dimensie_wijziging_xml zijn er andere settings.
-    dimensions = sql_table_name.lower() == 'dimensie_wijziging_xml'
+    dimensions = sql_table_name.lower() == "dimensie_wijziging_xml"
 
     for index, row in data.iterrows():
         if dimensions:
-            d = {
-                "office_code": row["Administratie_nummer"],
-                "xml_msg": row["Dimensies"]
-            }
+            d = {"office_code": row["Administratie_nummer"], "xml_msg": row["Dimensies"]}
         else:
-            d = {
-                "office_code": row["Twinfield_OfficeCode"],
-                "xml_msg": row["Samenvoegen"]
-            }
+            d = {"office_code": row["Twinfield_OfficeCode"], "xml_msg": row["Samenvoegen"]}
         xml_messages.append(d.copy())
 
     return xml_messages
@@ -313,11 +307,7 @@ def get_dimension_parameters() -> list:
     messages = []
 
     for index, row in data.iterrows():
-        d = {
-            "office_code": row["OFFICECODE"],
-            "xml_msg": "",
-            "dim_type": row["dim_type"]
-        }
+        d = {"office_code": row["OFFICECODE"], "xml_msg": "", "dim_type": row["dim_type"]}
         messages.append(d.copy())
 
     return messages
@@ -331,7 +321,7 @@ def mapping_module_script(run_params) -> dict:
         "ink": create_xml_messages("inkoop_xml"),
         "salesinvoice": create_xml_messages("facturen_xml"),
         "read_dimensions": get_dimension_parameters(),
-        "upload_dimensions": create_xml_messages("dimensie_wijziging_xml")
+        "upload_dimensions": create_xml_messages("dimensie_wijziging_xml"),
     }
 
     return mapping

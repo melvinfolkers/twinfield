@@ -88,7 +88,7 @@ def set_rerun(run_params, module, login) -> pd.DataFrame:
 
     df = functions.import_files(run_params, module)
     try:
-        errors = df.loc[~df['faultcode'].isna(), "administratienummer"].tolist()
+        errors = df.loc[~df["faultcode"].isna(), "administratienummer"].tolist()
     except:
         logging.info("no errors")
         return offices.head(n=0)
@@ -289,7 +289,7 @@ def request_transaction_data(run_params, periodes) -> pd.DataFrame:
     data = pd.DataFrame()
 
     for periode in periodes:
-        batch = modules.read_module(run_params, periode, '030_1')
+        batch = modules.read_module(run_params, periode, "030_1")
         batch = transform.format_030_1(batch)
         data = pd.concat([data, batch], axis=0, ignore_index=True, sort=False)
 
@@ -312,7 +312,7 @@ def request_consolidatie_data(run_params, periodes) -> pd.DataFrame:
     data = pd.DataFrame()
 
     for periode in periodes:
-        batch = modules.read_module(run_params, periode, '040_1')
+        batch = modules.read_module(run_params, periode, "040_1")
         data = pd.concat([data, batch], axis=0, ignore_index=True, sort=False)
 
     return data
@@ -334,7 +334,7 @@ def request_openstaande_debiteuren_data(run_params, periodes) -> pd.DataFrame:
     data = pd.DataFrame()
 
     for periode in periodes:
-        batch = modules.read_module(run_params, periode, '100')
+        batch = modules.read_module(run_params, periode, "100")
         data = pd.concat([data, batch], axis=0, ignore_index=True, sort=False)
 
     return data
@@ -356,7 +356,7 @@ def request_openstaande_crediteuren_data(run_params, periodes) -> pd.DataFrame:
     data = pd.DataFrame()
 
     for periode in periodes:
-        batch = modules.read_module(run_params, periode, '200')
+        batch = modules.read_module(run_params, periode, "200")
         data = pd.concat([data, batch], axis=0, ignore_index=True, sort=False)
 
     return data

@@ -3,8 +3,20 @@ import pickle
 import numpy as np
 import pandas as pd
 import logging
-from df_to_azure.export import auth_azure
 from sqlalchemy import create_engine
+
+
+def auth_azure():
+
+    connection_string = "mssql+pyodbc://{}:{}@{}:1433/{}?driver={}".format(
+        os.environ.get("ls_sql_database_user"),
+        os.environ.get("ls_sql_database_password"),
+        os.environ.get("ls_sql_server_name"),
+        os.environ.get("ls_sql_database_name"),
+        "ODBC Driver 17 for SQL Server",
+    )
+
+    return connection_string
 
 
 def parse_line(row) -> str:

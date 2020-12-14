@@ -8,4 +8,5 @@ class ServerError(Exception):
 
 class FaultCodeNotFoundError(Exception):
     """Exception when faultcode not found"""
+
     pass

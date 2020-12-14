@@ -9,14 +9,15 @@ from sqlalchemy import create_engine
 
 def parse_line(row) -> str:
     """
-
     Parameters
     ----------
-    row: record in dataframe that will be parsed in the soap_xml template for twinfield.
+    row
+        record in dataframe that will be parsed in the soap_xml template for twinfield.
 
-    Returns: soap xml message for creating 'loonjournaalpost'
+    Returns
     -------
-
+    line: str
+        soap xml message for creating 'loonjournaalpost'
     """
     line = f"""<line id="{row['line_id']}" journalId="0">
       <dim1>{row['grootboek']}</dim1>
@@ -31,14 +32,15 @@ def parse_line(row) -> str:
 
 def parse_header(row) -> str:
     """
-
     Parameters
     ----------
-    row: record in dataframe that will be parsed in the soap_xml template for twinfield.
+    row
+        record in dataframe that will be parsed in the soap_xml template for twinfield.
 
-    Returns: soap xml message for creating the header
+    Returns
     -------
-
+    header: str
+        soap xml message for creating the header
     """
     header = f"""<header>
         <office>{row['office_code']}</office>
@@ -53,33 +55,35 @@ def parse_header(row) -> str:
     return header
 
 
-def create_line(data):
+def create_line(data: pd.DataFrame) -> pd.DataFrame:
     """
-
     Parameters
     ----------
-    data: dataframe containing input for the soap request
+    data: pd.DataFrame
+        dataframe containing input for the soap request
 
-    Returns: the same dataset, with a new column called line_xml. this column contains the xml
-             soap message that twinfield will understand.
+    Returns
     -------
-
+    data: pd.DataFrame
+        the same dataset, with a new column called line_xml. this column contains the xml
+        soap message that twinfield will understand.
     """
     data["line_xml"] = data.apply(lambda x: parse_line(x), axis=1)
 
     return data
 
 
-def create_header(data) -> pd.DataFrame:
+def create_header(data: pd.DataFrame) -> pd.DataFrame:
     """
-
     Parameters
     ----------
-    data: dataframe containing input for the soap request
+    data: pd.DataFrame
+        Dataframe containing input for the soap request
 
-    Returns: dataframe with header xml messages for twinfield server
+    Returns
     -------
-
+    df_unique: pd.DataFrame
+        dataframe with header xml messages for twinfield server
     """
     df_unique = data.drop_duplicates(
         subset=["BV", "office_code", "omschrijving", "datum", "periode"]
@@ -95,17 +99,19 @@ def create_header(data) -> pd.DataFrame:
     return df_unique
 
 
-def prep_data(data, f):
+def prep_data(data: pd.DataFrame, f: str) -> pd.DataFrame:
     """
-
     Parameters
     ----------
-    data: dataframe containing input for the soap request
-    f: filename?
+    data: pd.DataFrame
+        dataframe containing input for the soap request
+    f: str
+        filename
 
-    Returns: dataframe with content of xml messages for twinfield server
+    Returns
     -------
-
+    data: pd.DataFrame
+        Dataframe with content of xml messages for twinfield server
     """
     logging.info("Data wordt opgeschoond")
 
@@ -126,16 +132,18 @@ def prep_data(data, f):
 
 def write_xml_file(run_params, message, filename) -> None:
     """
-
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
-    message: xml message to be send to Twinfield server
-    filename: filename to write the xml message to.
+    run_params
+        input parameters of script (set at start of script)
+    message
+        xml message to be send to Twinfield server
+    filename
+        filename to write the xml message to.
 
-    Returns None. Writes the XML message to temp 'xmldir' folder.
+    Returns
     -------
-
+    None. Writes the XML message to temp 'xmldir' folder.
     """
 
     new_filename = filename.lower().replace(".csv", ".xml")
@@ -145,46 +153,17 @@ def write_xml_file(run_params, message, filename) -> None:
     logging.debug("XML is geschreven")
 
 
-def transform_soap_message(run_params) -> list:
+def convert_xml(xml_msg: str) -> str:
     """
-
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
+    xml_msg: str
+        XML soap message
 
-    Returns: list of xml messages imported from the temp 'rawdir' folder.
+    Returns
     -------
-
-    """
-
-    xml_messages = []
-
-    for filename in os.listdir(run_params.rawdir):
-        if filename.endswith(".xml"):
-            f = open(os.path.join(run_params.rawdir, filename), "r", encoding="utf-8")
-            message = f.read()
-
-            return message
-
-            d = dict()
-            d["office_code"] = "ZZ_1060255"  # let op deze moet variabel worden
-            d["xml_msg"] = message
-
-        xml_messages.append(d)
-
-    return xml_messages
-
-
-def convert_xml(xml_msg) -> str:
-    """
-
-    Parameters
-    ----------
-    xml_msg: str. XML soap message
-
-    Returns cleaned soap message without the label '</transaction>'
-    -------
-
+    r: str
+        cleaned soap message without the label '</transaction>'
     """
 
     new = xml_msg.split("\n", 1)[1]
@@ -196,14 +175,14 @@ def convert_xml(xml_msg) -> str:
 
 def create_dimensions_sql() -> list:
     """
-
-    Returns xml_messages for module 'create_dimensions'
+    Returns
     -------
-
+    xml_messages: list
+        List of messages for module 'create_dimensions'
     """
     xml_messages = []
     data = read_and_delete_table("dimensie_wijziging_xml")
-    data["soap_xml"] = data.Dimensies
+    data["soap_xml"] = data['Dimensies']
 
     d = dict()
     for index, row in data.iterrows():
@@ -216,15 +195,14 @@ def create_dimensions_sql() -> list:
 
 def create_facturen_sql() -> list:
     """
-
-    Returns xml_messages for module 'salesinvoice'
+    Returns
     -------
-
+    xml_messages: list
+        xml_messages for module 'salesinvoice'
     """
     xml_messages = []
     data = read_and_delete_table("facturen_xml")
-    data["soap_xml"] = data.Samenvoegen.apply(lambda x: convert_xml(x))
-    data["soap_xml"] = data.Samenvoegen
+    data["soap_xml"] = data['Samenvoegen']
 
     d = dict()
     for index, row in data.iterrows():
@@ -237,7 +215,6 @@ def create_facturen_sql() -> list:
 
 def create_memoriaal_journaalpost_sql() -> list:
     """
-
     Returns xml_messages for module 'memo'
     -------
 

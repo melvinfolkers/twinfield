@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Union
 import xml.etree.ElementTree as ET
 from datetime import datetime
 import shutil
@@ -16,12 +17,15 @@ def import_files(run_params, patt) -> pd.DataFrame:
 
     Parameters
     ----------
-    run_params: default run parameters for script
-    patt: pattern for files to import.
+    run_params
+        default run parameters for script
+    patt
+        pattern for files to import.
 
-    Returns: import of pickle files
+    Returns
     -------
-
+    data: pd.DataFrame
+        import of pickle files
     """
 
     ttl = list()
@@ -41,15 +45,17 @@ def import_files(run_params, patt) -> pd.DataFrame:
 
 def parse_session_response(response, param) -> pd.DataFrame:
     """
-
     Parameters
     ----------
-    response: response xml from twinfield server
-    param:  login parameters (SessionParameters)
+    response
+        response xml from twinfield server
+    param
+        login parameters (SessionParameters)
 
-    Returns: dataframe of parsed XML response
+    Returns
     -------
-
+    df_ttl: pd.DataFrame
+        dataframe of parsed XML response
     """
     root = ET.fromstring(response.text)
 
@@ -73,15 +79,17 @@ def parse_session_response(response, param) -> pd.DataFrame:
 
 def get_metadata(module, login) -> pd.DataFrame:
     """
-
     Parameters
     ----------
-    module: code of the module: see api documentation of twinfield for available codes.
-    login:  login parameters (SessionParameters)
+    module
+        code of the module: see api documentation of twinfield for available codes.
+    login
+        login parameters (SessionParameters)
 
-    Returns: dataframe of fieldnames and labels for the module
+    Returns
     -------
-
+    metadata: pd.DataFrame
+        dataframe of fieldnames and labels for the module
     """
 
     url = f"https://{login.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
@@ -111,15 +119,16 @@ def get_metadata(module, login) -> pd.DataFrame:
 
 def parse_soap_error(body, login) -> pd.DataFrame:
     """
-
     Parameters
     ----------
-    body: body of the soap message
-    login:  login parameters (SessionParameters)
+    body
+        body of the soap message
+    login
+        login parameters (SessionParameters)
 
     Returns
     -------
-
+    pandas dataframe with error information
     """
     fault = body.find("env:Fault", login.ns)
     d = dict()
@@ -139,14 +148,15 @@ def parse_soap_error(body, login) -> pd.DataFrame:
 
 def parse_metadata_response(data) -> pd.DataFrame:
     """
-
     Parameters
     ----------
-    data: layer of XML metadata response from twinfield server
+    data
+        layer of XML metadata response from twinfield server
 
-    Returns dataframe of metadata
+    Returns
     -------
-
+    df: pd.DataFrame
+        dataframe of metadata
     """
     col = data.find("columns")
 
@@ -167,15 +177,16 @@ def parse_metadata_response(data) -> pd.DataFrame:
 
 def parse_response(response, param) -> pd.DataFrame:
     """
-
     Parameters
     ----------
-    response : initial response from twinfield server
-    param:  login parameters (SessionParameters)
-
-    Returns dataframe of records for the selected module
+    response
+        initial response from twinfield server
+    param
+        login parameters (SessionParameters)
+    Returns
     -------
-
+    data: pd.DataFrame
+        dataframe of records for the selected module
     """
     root = ET.fromstring(response.text)
     body = root.find("env:Body", param.ns)
@@ -185,24 +196,16 @@ def parse_response(response, param) -> pd.DataFrame:
         return error
 
     data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", param.ns)
-
     browse = data.find("browse")
-
     tr = browse.findall("tr")
 
     ttl_records = list()
-
     for trans in tr:
-
         info = dict()
-
         for col in trans:
-
             val = col.text
-
             if "field" in col.attrib.keys():
                 name = col.attrib["field"]
-
                 info[name] = val
 
         ttl_records.append(info)
@@ -214,19 +217,16 @@ def parse_response(response, param) -> pd.DataFrame:
 
 def select_office(officecode, param) -> None:
     """
-
     Parameters
     ----------
-    officecode : officecode of Twinfield administration.
-    param:  login parameters (SessionParameters)
-    info: Because the function sometimes gets a 503 error from the twinfield server, a retry is
-          added. There will be a new login attempt followed by a repetion of the select office
-          request.
+    officecode
+        officecode of Twinfield administration.
+    param
+        login parameters (SessionParameters)
 
-    Returns None. this function selects the office before starting the send a soap message.
-
+    Returns
     -------
-
+    None. this function selects the office before starting the send a soap message.
     """
     logging.debug(f"selecting office: {officecode}...")
 
@@ -258,17 +258,15 @@ def select_office(officecode, param) -> None:
 
 def periods_from_start(run_params) -> list:
     """
-
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
-    info: for the query modules, sometimes the datasets are to big to request in a full years
-          period. In that case, the RunParameter setting 'rerun' can be used to make smaller
-          periods.
+    run_params
+        input parameters of script (set at start of script)
 
-    Returns: list of periods that will be iterated over when sending the request.
+    Returns
     -------
-
+    periodlist
+        list of periods that will be iterated over when sending the request.
     """
 
     periodlist = [
@@ -310,15 +308,16 @@ def periods_from_start(run_params) -> list:
 
 def period_groups(window="year") -> list:
     """
-
     Parameters
     ----------
-    window: selected window for the request. pick a smaller window if expected response size of
-            request is large. that way the Twinfield server does not timeout.
+    window
+        Selected window for the request. pick a smaller window if expected response size of
+        request is large. That way the Twinfield server does not timeout.
 
-    Returns: list of periods that will be iterated over when sending the request.
+    Returns
     -------
-
+    period
+        list of periods that will be iterated over when sending the request.
     """
     if window == "year":
 
@@ -376,21 +375,26 @@ def period_groups(window="year") -> list:
 
 
 class RunParameters:
-    def __init__(self, jaar, refresh, upload, modules, offices, rerun):
+    def __init__(self, jaar, refresh: bool, upload: bool, modules: Union[str, list], offices: list, rerun):
         """
-
         Parameters
         ----------
-        jaar :   parameter for choosing a year for the selected module. Not always necessary, but is
-                 necessary when requesting the read modules "040_1" and "030_1". These modules are
-                 split up in years.
-        refresh: boolean. Set to True if request need to be made to the Twinfield server.
-        upload:  boolean. Set to True if the data needs to be uploaded to Azure
-        modules: mixed. can be list, containing multiple modules, in case of read statement.
-                 in case of insert statements it will
-                 be a string type containing the module that needs to be run.
-        offices: list. list of officecodes. if list is empty, all offices will be selected.
-        rerun:   parameter for rerunning the module, with smaller periods.
+        jaar
+            Parameter for choosing a year for the selected module. Not always necessary, but is
+            necessary when requesting the read modules "040_1" and "030_1". These modules are
+            split up in years.
+        refresh: boolean.
+            Set to True if request need to be made to the Twinfield server.
+        upload: boolean.
+            Set to True if the data needs to be uploaded to Azure
+        modules: mixed.
+            Can be list, containing multiple modules, in case of read statement.
+            in case of insert statements it will
+            be a string type containing the module that needs to be run.
+        offices: list.
+            list of officecodes. if list is empty, all offices will be selected.
+        rerun
+            parameter for rerunning the module, with smaller periods.
         """
 
         self.jaar = str(jaar)
@@ -408,17 +412,17 @@ class RunParameters:
         self.start = timeit.default_timer()
 
 
-def create_dir(destination) -> str:
+def create_dir(destination: str) -> str:
     """
-
     Parameters
     ----------
-    destination: the file path that needs to be created
-    info: the function checks if the folder exists. If so, it will remove it. If not, the folder
-          will be created.
-    Returns : the original file_path
-    -------
+    destination: str
+        the file path that needs to be created
 
+    Returns
+    -------
+    destination: str
+        the original file_path
     """
 
     if os.path.exists(destination):
@@ -430,17 +434,17 @@ def create_dir(destination) -> str:
     return destination
 
 
-def remove_and_create_dir(destination) -> str:
+def remove_and_create_dir(destination: str) -> str:
     """
-
     Parameters
     ----------
-    destination: the file path that needs to be created
-    info: the function checks if the folder exists. If so, it will remove it. If not, the folder
-          will be created.
-    Returns : the original file_path
-    -------
+    destination: str
+        The file path that needs to be created
 
+    Returns
+    -------
+    destination: str
+        the original file_path
     """
 
     if os.path.exists(destination):
@@ -456,10 +460,10 @@ def remove_and_create_dir(destination) -> str:
 
 def get_modules() -> dict:
     """
-
-    Returns: modules dictionary loaded from static file modules.json
+    Returns
     -------
-
+    modules: dict
+        modules dictionary loaded from static file modules.json
     """
     function_dir = os.path.dirname(os.path.realpath(__file__))
     file_path = os.path.join(function_dir, "modules.json")
@@ -471,14 +475,14 @@ def get_modules() -> dict:
 
 def stop_time(start) -> str:
     """
-
     Parameters
     ----------
-    start: starttime of script
+    start
+        Start time of script.
 
-    Returns str. parsed endtime of script
+    Returns
     -------
-
+    Parsed end time of script
     """
     stop = timeit.default_timer()
     end_time = round(stop - start)

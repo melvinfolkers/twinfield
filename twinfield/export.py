@@ -6,14 +6,14 @@ from df_to_azure.export import run as df_to_azure
 
 def upload_addresses(run_params) -> None:
     """
-
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
+    run_params
+        input parameters of script (set at start of script)
 
-    Returns: None. uploads datasets of addresses to DWH
+    Returns
     -------
-
+    None. uploads datasets of addresses to DWH
     """
     directory = os.path.join(run_params.pickledir, "addresses")
     all_addresses = list()
@@ -29,15 +29,16 @@ def upload_addresses(run_params) -> None:
 
 def append_responses(r, run_params) -> None:
     """
-
     Parameters
     ----------
-    r: dataframe of XML responses from twinfield server
-    run_params:  input parameters of script (set at start of script)
+    r
+        dataframe of XML responses from twinfield server
+    run_params
+        input parameters of script (set at start of script)
 
-    Returns: None. appends datasets of selected module to DWH
+    Returns
     -------
-
+    None. appends datasets of selected module to DWH
     """
 
     logging.info(f"start met aanbieden van {len(r)} records voor {run_params.modules}")
@@ -60,15 +61,14 @@ def append_responses(r, run_params) -> None:
 
 def upload_responses(run_params) -> None:
     """
-
     Parameters
     ----------
-    r: dataframe of XML responses from twinfield server
-    run_params:  input parameters of script (set at start of script)
+    run_params
+        input parameters of script (set at start of script)
 
-    Returns: None. uploads datasets of selected module to DWH
+    Returns
     -------
-
+    None. uploads datasets of selected module to DWH
     """
 
     if run_params.modules != "upload_dimensions":
@@ -91,14 +91,14 @@ def upload_responses(run_params) -> None:
 
 def import_responses(run_params) -> pd.DataFrame:
     """
-
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
-
-    Returns: responses from the requests that have been send to the twinfield server
+    run_params
+        input parameters of script (set at start of script)
+    Returns
     -------
-
+    data: pd.Dataframe
+        responses from the requests that have been send to the twinfield server
     """
     dfs = list()
     for file in os.listdir(run_params.pickledir):

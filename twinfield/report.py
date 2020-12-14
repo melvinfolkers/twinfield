@@ -1,6 +1,5 @@
 import logging
 import os
-from datetime import datetime
 import pymsteams
 from .functions import stop_time
 

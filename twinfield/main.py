@@ -20,14 +20,14 @@ load_dotenv()
 @serverless_function
 def run(run_params):
     """
-
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
+    run_params
+        input parameters of script (set at start of script)
 
-    Returns None. serverless function for azure deployment
+    Returns
     -------
-
+    None. serverless function for azure deployment
     """
     if run_params.refresh:
         import_all(run_params)
@@ -38,14 +38,14 @@ def run(run_params):
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     """
-
     Parameters
     ----------
-    req: the request received from the Azure function endpoint
+    req
+        the request received from the Azure function endpoint
 
-    Returns: HTML response with succes/failure message
+    Returns
     -------
-
+    HTML response with succes/failure message
     """
 
     options = {
@@ -63,7 +63,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if not jaar:
         jaar = "2020"
     else:
-        jaar = req_body.get("jaar")
+        jaar = req.params.get("jaar")
 
     if not module:
         try:

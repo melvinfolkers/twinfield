@@ -3,7 +3,6 @@ import logging
 import azure.functions as func
 
 from .pull_data import import_all
-from .upload import upload_all
 from dotenv import load_dotenv
 import sentry_sdk
 from sentry_sdk.integrations.serverless import serverless_function

@@ -7,7 +7,7 @@ with open("requirements.txt") as fp:
     install_requires = fp.read()
 
 setup(
-    name="twinfield",  # Replace with your own username
+    name="twinfield",
     version="0.0.1",
     author="Melvin Folkers",
     author_email="melvin@zypp.io",

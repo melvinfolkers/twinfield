@@ -7,10 +7,10 @@ from . import templates
 
 def twinfield_login():
     """
-
-    Returns: class SessionParameters with credentials from environment
+    Returns
     -------
-
+    login
+        class SessionParameters with credentials from environment
     """
     user = os.environ.get("TW_USER_LS")
     password = os.environ.get("TW_PW_LS")
@@ -24,14 +24,16 @@ def twinfield_login():
 
 
 class SessionParameters:
-    def __init__(self, user, pw, organisation):
+    def __init__(self, user: str, pw: str, organisation: str):
         """
-
         Parameters
         ----------
-        user: username of twinfield
-        pw: twinfield password
-        organisation: twinfield organisation
+        user: str
+            username of twinfield
+        pw: str
+            twinfield password
+        organisation: str
+            twinfield organisation
         """
 
         self.user = user
@@ -57,14 +59,15 @@ class SessionParameters:
 
     def parse_session_id(self, root) -> str:
         """
-
         Parameters
         ----------
-        root: root level of soap login response
+        root
+            root level of soap login response
 
-        Returns: session_id needed for every twinfield request.
+        Returns
         -------
-
+        session_id: str
+            session_id needed for every twinfield request.
         """
 
         header = root.find("env:Header/tw:Header", self.ns)
@@ -97,13 +100,16 @@ class SessionParameters:
 
         Parameters
         ----------
-        url: twinfield endpoint for getting a new session
-        header: headers to be send in request
-        body: soap message as body
+        url
+            twinfield endpoint for getting a new session
+        header
+            headers to be send in request
+        body
+            soap message as body
 
-        Returns session id and cluster
+        Returns
         -------
-
+        session id and cluster
         """
 
         response = requests.post(url=url, headers=header, data=body)

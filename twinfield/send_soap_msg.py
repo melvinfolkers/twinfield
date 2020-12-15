@@ -12,7 +12,6 @@ from . import templates
 from .credentials import twinfield_login
 from .exceptions import ServerError
 from .functions import select_office, create_dir
-from .report import send_insert_message
 
 
 def save_xml_locally(run_params, response, msg_id) -> tuple:
@@ -197,7 +196,7 @@ def get_response(messages, run_params, login) -> pd.DataFrame:
 
     export_response_data(ttl, run_params)
 
-    send_insert_message(table=ttl, messages=messages, run_params=run_params)
+    # send_insert_message(table=ttl, messages=messages, run_params=run_params)
 
     return ttl
 

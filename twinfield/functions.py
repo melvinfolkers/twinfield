@@ -8,6 +8,7 @@ import requests
 from .credentials import twinfield_login
 from . import templates
 import timeit
+from twinfield import MODULES
 
 
 def import_files(run_params) -> pd.DataFrame:
@@ -36,7 +37,7 @@ def import_files(run_params) -> pd.DataFrame:
         ttl.append(df)
 
     data = pd.concat(ttl, axis=0, sort=False, ignore_index=True)
-    data.columns = data.columns.str.replace("fin.trs.", "")
+    data = rename_column_labels(data, run_params.module)
 
     return data
 
@@ -369,7 +370,7 @@ class RunParameters:
         self.jaar = jaar
         self.rerun = rerun
         self.module = module
-        self.module_names = self.mapping_modules()
+        self.module_names = MODULES
         self.offices = offices
         self.datadir = "/tmp/twinfield"
         self.logdir = create_dir(destination=os.path.join(self.datadir, "data", "log"))
@@ -378,16 +379,16 @@ class RunParameters:
         self.starttijd = datetime.now()
         self.start = timeit.default_timer()
 
-    @staticmethod
-    def mapping_modules():
-        mapping = {
-            "100": "openstaande_debiteuren",
-            "200": "openstaande_crediteuren",
-            "030_1": "mutaties",
-            "040_1": "consolidatie",
-        }
-
-        return mapping
+    # @staticmethod
+    # def mapping_modules():
+    #     mapping = {
+    #         "100": "openstaande_debiteuren",
+    #         "200": "openstaande_crediteuren",
+    #         "030_1": "mutaties",
+    #         "040_1": "consolidatie",
+    #     }
+    #
+    #     return mapping
 
 
 def create_dir(destination: str) -> str:
@@ -454,3 +455,11 @@ def stop_time(start) -> str:
     logging.info(f"afgerond in {h:d}:{m:02d}:{s:02d}")
 
     return f"{h:d}:{m:02d}:{s:02d}"
+
+
+def rename_column_labels(df, module):
+    login = twinfield_login()
+    fields = get_metadata(module, login)
+    df.rename(columns=fields["label"], inplace=True)
+
+    return df

@@ -5,3 +5,10 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.INFO,
 )
+
+MODULES = {
+    "100": "openstaande_debiteuren",
+    "200": "openstaande_crediteuren",
+    "030_1": "mutaties",
+    "040_1": "consolidatie",
+}

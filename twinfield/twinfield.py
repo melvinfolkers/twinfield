@@ -5,9 +5,7 @@ from twinfield.pull_data import import_all
 from twinfield.functions import RunParameters, import_files, remove_and_create_dir
 
 
-def query(
-    module: str, jaar: Union[int, str] = None, offices: list = None
-) -> pd.DataFrame:
+def query(module: str, jaar: Union[int, str] = None, offices: list = None) -> pd.DataFrame:
     """
     Import data from Twinfield using the API.
 

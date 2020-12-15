@@ -6,7 +6,7 @@ import shutil
 import pandas as pd
 import requests
 from .credentials import twinfield_login
-from . import templates
+from .templates import soap_metadata, import_xml
 import timeit
 from twinfield import MODULES
 
@@ -83,7 +83,7 @@ def get_metadata(module, login) -> pd.DataFrame:
     """
 
     url = f"https://{login.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
-    body = templates.soap_metadata(login, module=module)
+    body = soap_metadata(login, module=module)
 
     response = requests.post(url=url, headers=login.header, data=body)
     root = ET.fromstring(response.text)
@@ -217,7 +217,7 @@ def select_office(officecode, param) -> None:
     run = True
     while run:
         url = f"https://{param.cluster}.twinfield.com/webservices/session.asmx?wsdl"
-        body = templates.import_xml("xml_templates/template_select_office.xml").format(
+        body = import_xml("xml_templates/template_select_office.xml").format(
             param.session_id, officecode
         )
         response = requests.post(url=url, headers=param.header, data=body)

@@ -28,12 +28,14 @@ def read_offices(param) -> pd.DataFrame:
     return data
 
 
-def read_module(param, periode, module) -> pd.DataFrame:
+def read_module(param, periode, module, jaar=None) -> pd.DataFrame:
     """
     Parameters
     ----------
     param
         login class with twinfield credentials
+    jaar
+        jaar van scope
     periode
         scope of period in request.
     module
@@ -50,9 +52,20 @@ def read_module(param, periode, module) -> pd.DataFrame:
     logging.debug(f"start request periode van {periode['from']} t/m {periode['to']}")
 
     url = f"https://{param.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
-    body = templates.import_xml(f"xml_templates/template_{module}.xml").format(
-        param.session_id, periode["from"], periode["to"]
-    )
+    if module in ["100", "200"]:
+        body = templates.import_xml(f"xml_templates/template_{module}.xml").format(
+            param.session_id, periode["from"], periode["to"]
+        )
+    elif module in ["030_1", "040_1"]:
+        if not jaar:
+            raise ValueError(
+                "Let op: je runt nu consolidatie / transacties, maar jaar is niet opgegeven."
+            )
+        body = templates.import_xml(f"xml_templates/template_{module}.xml").format(
+            param.session_id, jaar, periode["from"], jaar, periode["to"]
+        )
+    else:
+        logging.info("Let op module is nog niet ontwikkeld")
     response = requests.post(url=url, headers=param.header, data=body)
 
     data = parse_response(response, param)

@@ -1,44 +1,42 @@
 import logging
 import os
-from typing import Union
 import xml.etree.ElementTree as ET
 from datetime import datetime
 import shutil
 import pandas as pd
 import requests
-import json
 from .credentials import twinfield_login
 from . import templates
 import timeit
 
 
-def import_files(run_params, patt) -> pd.DataFrame:
+def import_files(run_params) -> pd.DataFrame:
     """
 
     Parameters
     ----------
     run_params
         default run parameters for script
-    patt
-        pattern for files to import.
 
     Returns
     -------
     data: pd.DataFrame
         import of pickle files
     """
-
-    ttl = list()
-
     files = os.listdir(os.path.join(run_params.pickledir))
-    files = [x for x in files if x.find(patt) != -1]
+
+    files = [x for x in files if x.endswith(f"{run_params.module}.pkl")]
+
     if not files:
         return pd.DataFrame()
+
+    ttl = list()
     for file in files:
         df = pd.read_pickle(os.path.join(run_params.pickledir, file))
         ttl.append(df)
 
     data = pd.concat(ttl, axis=0, sort=False, ignore_index=True)
+    data.columns = data.columns.str.replace("fin.trs.", "")
 
     return data
 
@@ -63,7 +61,7 @@ def parse_session_response(response, param) -> pd.DataFrame:
     data = ET.fromstring(data.text)
 
     df_ttl = [pd.DataFrame(data=child.attrib, index=[child.text]) for child in data]
-    df_ttl = pd.concat(df_ttl, ignore_index=True)
+    df_ttl = pd.concat(df_ttl)
 
     return df_ttl
 
@@ -350,9 +348,7 @@ def period_groups(window="year") -> list:
 
 
 class RunParameters:
-    def __init__(
-        self, jaar, refresh: bool, upload: bool, modules: Union[str, list], offices: list, rerun
-    ):
+    def __init__(self, module: str, offices: list, rerun, jaar=None):
         """
         Parameters
         ----------
@@ -360,11 +356,7 @@ class RunParameters:
             Parameter for choosing a year for the selected module. Not always necessary, but is
             necessary when requesting the read modules "040_1" and "030_1". These modules are
             split up in years.
-        refresh: boolean.
-            Set to True if request need to be made to the Twinfield server.
-        upload: boolean.
-            Set to True if the data needs to be uploaded to Azure
-        modules: mixed.
+        module: str
             Can be list, containing multiple modules, in case of read statement.
             in case of insert statements it will
             be a string type containing the module that needs to be run.
@@ -374,12 +366,10 @@ class RunParameters:
             parameter for rerunning the module, with smaller periods.
         """
 
-        self.jaar = str(jaar)
-        self.refresh = refresh
+        self.jaar = jaar
         self.rerun = rerun
-        self.upload = upload
-        self.modules = modules
-        self.module_names = get_modules()
+        self.module = module
+        self.module_names = self.mapping_modules()
         self.offices = offices
         self.datadir = "/tmp/twinfield"
         self.logdir = create_dir(destination=os.path.join(self.datadir, "data", "log"))
@@ -387,6 +377,17 @@ class RunParameters:
         self.stagingdir = create_dir(destination=os.path.join(self.datadir, "data", "staging"))
         self.starttijd = datetime.now()
         self.start = timeit.default_timer()
+
+    @staticmethod
+    def mapping_modules():
+        mapping = {
+            "100": "openstaande_debiteuren",
+            "200": "openstaande_crediteuren",
+            "030_1": "mutaties",
+            "040_1": "consolidatie",
+        }
+
+        return mapping
 
 
 def create_dir(destination: str) -> str:
@@ -432,21 +433,6 @@ def remove_and_create_dir(destination: str) -> str:
         os.makedirs(destination)
 
     return destination
-
-
-def get_modules() -> dict:
-    """
-    Returns
-    -------
-    modules: dict
-        modules dictionary loaded from static file modules.json
-    """
-    function_dir = os.path.dirname(os.path.realpath(__file__))
-    file_path = os.path.join(function_dir, "modules.json")
-    file = open(file_path).read()
-    modules = json.loads(file)
-
-    return modules
 
 
 def stop_time(start) -> str:

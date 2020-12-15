@@ -68,7 +68,7 @@ def format_164(df):
 
 
 def maak_samenvatting(run_params):
-    df = import_files(run_params, "transactions")
+    df = import_files(run_params)
 
     aggcols = [
         "wm",

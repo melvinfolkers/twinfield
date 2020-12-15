@@ -2,10 +2,12 @@ import logging
 from typing import Union
 import pandas as pd
 from twinfield.pull_data import import_all
-from twinfield.functions import RunParameters, import_files
+from twinfield.functions import RunParameters, import_files, remove_and_create_dir
 
 
-def query(module: str, jaar: Union[int, str] = None, offices: list = None) -> pd.DataFrame:
+def query(
+    module: str, jaar: Union[int, str] = None, offices: list = None, clean_dir: bool = False
+) -> pd.DataFrame:
     """
     Import data from Twinfield using the API.
 
@@ -17,6 +19,8 @@ def query(module: str, jaar: Union[int, str] = None, offices: list = None) -> pd
         Year of the scope.
     offices: list
         List of the offices in scope and to be imported.
+    clean_dir: bool
+        Remove all files in the pickle dir.
 
     Returns
     -------
@@ -24,6 +28,10 @@ def query(module: str, jaar: Union[int, str] = None, offices: list = None) -> pd
         DataFrame containing for requested module, year and all offices in scope.
     """
     run_params = RunParameters(jaar=jaar, module=module, offices=offices, rerun=False)
+    # User can start with clean pickle directory so no wrong modules are written to DB.
+    if clean_dir:
+        remove_and_create_dir(run_params.pickledir)
+
     logging.info(
         f"{3 * '*'} Starting import of {run_params.module_names.get(run_params.module)} {3 * '*'}"
     )

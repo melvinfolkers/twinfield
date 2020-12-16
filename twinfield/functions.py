@@ -447,7 +447,7 @@ def stop_time(start) -> str:
 
 def rename_column_labels(df, module):
     if module != "040_1":
-        return df
+        df.columns = df.columns.str.replace("fin.trs.", "")
     else:
         login = twinfield_login()
         fields = get_metadata(module, login)

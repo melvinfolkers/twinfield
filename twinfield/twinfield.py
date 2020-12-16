@@ -5,7 +5,10 @@ from twinfield.pull_data import import_all
 from twinfield.functions import RunParameters, import_files
 
 
-def query(module: str, jaar: Union[int, str] = None, offices: list = None, rerun: bool = False) -> pd.DataFrame:
+def query(module: str,
+          jaar: Union[int, str] = None,
+          offices: list = None,
+          rerun: bool = False) -> pd.DataFrame:
     """
     Import data from Twinfield using the API.
 

@@ -3,10 +3,12 @@ import os
 
 import pandas as pd
 from . import functions, modules, transform
-from .functions import select_office
+from .functions import select_office, import_xml
 from .modules import read_offices
 from tqdm import tqdm
 from .credentials import twinfield_login
+from .responses import parse_response_dimension_addresses, parse_response_dimensions
+import requests
 
 
 def scoping_offices(offices: list, login) -> pd.DataFrame:
@@ -148,7 +150,8 @@ def import_all(run_params) -> None:
         pull_data_twinfield(offices, run_params)
 
     if run_params.module.startswith("dimensions"):
-        pull_data_twinfield(offices,run_params)
+        pull_dimensions(offices, run_params)
+
 
 def add_metadata(df, office, rows) -> pd.DataFrame:
     """
@@ -170,6 +173,33 @@ def add_metadata(df, office, rows) -> pd.DataFrame:
     df["wm"] = rows["shortname"]
 
     return df
+
+
+def pull_dimensions(offices, run_params) -> None:
+    dim_type = run_params.module.split("_")[1].upper()
+
+    for office, rows in tqdm(offices.iterrows(), total=offices.shape[0]):
+        logging.debug(f"\t {3 * '-'} {rows['shortname']} {3 * '-'}")
+        login = twinfield_login()
+        select_office(office, param=login)
+        template_xml = import_xml("xml_templates/template_dimensions.xml")
+        url = f"https://{login.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
+        body = template_xml.format(login.session_id, dim_type)
+        response = requests.post(url=url, headers=login.header, data=body)
+
+        # dimensions
+        dimensions = parse_response_dimensions(response, login)
+        dimensions = add_metadata(dimensions, office, rows)
+        dimensions.to_pickle(
+            os.path.join(run_params.pickledir, f"{office}_{run_params.module}.pkl")
+        )
+
+        # dimensions addresses
+        dim_addresses = parse_response_dimension_addresses(response, login)
+        dim_addresses = add_metadata(dim_addresses, office, rows)
+        dim_addresses.to_pickle(
+            os.path.join(run_params.pickledir, f"{office}_{run_params.module}_addresses.pkl")
+        )
 
 
 def pull_data_twinfield(offices, run_params) -> None:
@@ -205,29 +235,11 @@ def pull_data_twinfield(offices, run_params) -> None:
         elif run_params.module == "030_1":
             periodes = functions.period_groups(window="year")
             batch = request_transaction_data(login, periodes, run_params.jaar)
-        elif run_params.module.startswith("dimensions"):
-            batch = request_dimensions_data(login)
         else:
             continue
         batch = add_metadata(batch, office, rows)
         batch.to_pickle(os.path.join(run_params.pickledir, f"{office}_{run_params.module}.pkl"))
 
-def request_dimensions_data(login) -> pd.DataFrame:
-    """
-
-    Parameters
-    ----------
-    login:  login parameters (SessionParameters)
-    dimtyp: Dimension typ to be requested (DEB / CRD / KPL)
-
-    Returns dataset containing records for selected module
-    -------
-
-    """
-    batch = modules.read_module(param=login, periode=None, module = "template_dimensions", jaar=None)
-    batch = transform.format_030_1(batch)
-
-    return data
 
 def request_transaction_data(login, periodes, jaar) -> pd.DataFrame:
     """

@@ -6,7 +6,11 @@ from twinfield.functions import RunParameters, import_files, remove_and_create_d
 
 
 def query(
-    module: str, jaar: Union[int, str] = None, offices: list = None, rerun: bool = False
+    module: str,
+    jaar: Union[int, str] = None,
+    offices: list = None,
+    rerun: bool = False,
+    clean: bool = True,
 ) -> pd.DataFrame:
     """
     Import data from Twinfield using the API.
@@ -21,6 +25,8 @@ def query(
         List of the offices in scope and to be imported.
     rerun: bool
         set to True in case some modules are not correctly imported in previous run.
+    clean: bool
+        clean up pickle directory and remove pickle files.
     Returns
     -------
     df: pd.DataFrame
@@ -35,7 +41,8 @@ def query(
 
     df = import_files(run_params)
     # clean up directory where files are stored
-    remove_and_create_dir(run_params.pickledir)
+    if clean:
+        remove_and_create_dir(run_params.pickledir)
 
     return df
 

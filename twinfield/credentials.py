@@ -18,7 +18,7 @@ def twinfield_login():
 
     login = SessionParameters(user=user, pw=password, organisation=organisation)
 
-    logging.info(f"ingelogd met gebruiker {user}")
+    logging.debug(f"ingelogd met gebruiker {user}")
 
     return login
 

@@ -40,6 +40,8 @@ def soap_metadata(param, module) -> str:
     <code>{module}</code>
     </read>"""
 
-    body = import_xml("xml_templates/template_metadata.xml").format(param.session_id, xml)
+    body = import_xml(os.path.join("xml_templates", "template_metadata.xml")).format(
+        param.session_id, xml
+    )
 
     return body

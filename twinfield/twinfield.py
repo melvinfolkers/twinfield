@@ -2,7 +2,7 @@ import logging
 from typing import Union
 import pandas as pd
 from twinfield.pull_data import import_all
-from twinfield.functions import RunParameters, import_files
+from twinfield.functions import RunParameters, import_files, remove_and_create_dir
 
 
 def query(
@@ -26,12 +26,17 @@ def query(
     df: pd.DataFrame
         DataFrame containing for requested module, year and all offices in scope.
     """
+    
     run_params = RunParameters(jaar=jaar, module=module, offices=offices, rerun=rerun)
+
     logging.info(
         f"{3 * '*'} Starting import of {run_params.module_names.get(run_params.module)} {3 * '*'}"
     )
     import_all(run_params)
+
     df = import_files(run_params)
+    # clean up directory where files are stored
+    remove_and_create_dir(run_params.pickledir)
 
     return df
 

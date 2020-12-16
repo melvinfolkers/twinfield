@@ -6,7 +6,7 @@ import shutil
 import pandas as pd
 import requests
 from .credentials import twinfield_login
-from . import templates
+from .templates import soap_metadata, import_xml
 import timeit
 from twinfield import MODULES
 
@@ -83,7 +83,7 @@ def get_metadata(module, login) -> pd.DataFrame:
     """
 
     url = f"https://{login.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
-    body = templates.soap_metadata(login, module=module)
+    body = soap_metadata(login, module=module)
 
     response = requests.post(url=url, headers=login.header, data=body)
     root = ET.fromstring(response.text)
@@ -217,9 +217,8 @@ def select_office(officecode, param) -> None:
     run = True
     while run:
         url = f"https://{param.cluster}.twinfield.com/webservices/session.asmx?wsdl"
-        body = templates.import_xml("xml_templates/template_select_office.xml").format(
-            param.session_id, officecode
-        )
+        path_xml = os.path.join("xml_templates", "template_select_office.xml")
+        body = import_xml(path_xml).format(param.session_id, officecode)
         response = requests.post(url=url, headers=param.header, data=body)
 
         if response.status_code == 200 or counter == 10:
@@ -378,17 +377,6 @@ class RunParameters:
         self.stagingdir = create_dir(destination=os.path.join(self.datadir, "data", "staging"))
         self.starttijd = datetime.now()
         self.start = timeit.default_timer()
-
-    # @staticmethod
-    # def mapping_modules():
-    #     mapping = {
-    #         "100": "openstaande_debiteuren",
-    #         "200": "openstaande_crediteuren",
-    #         "030_1": "mutaties",
-    #         "040_1": "consolidatie",
-    #     }
-    #
-    #     return mapping
 
 
 def create_dir(destination: str) -> str:

@@ -1,8 +1,6 @@
 import logging
-import os
 from xml.etree import ElementTree as ET
 import pandas as pd
-from .functions import create_dir
 
 
 def parse_several_modules(dimension) -> dict:
@@ -188,7 +186,7 @@ def get_dimension_codes(dimension) -> dict:
     return d
 
 
-def parse_response_dimension_addresses(run_params, response, login) -> None:
+def parse_response_dimension_addresses(response, login) -> pd.DataFrame:
     """
 
     Parameters
@@ -223,19 +221,13 @@ def parse_response_dimension_addresses(run_params, response, login) -> None:
     df = pd.DataFrame(records)
 
     if not len(df):
-        return logging.debug("geen addressen geexporteerd")
+        logging.debug("geen addressen geexporteerd")
+        return pd.DataFrame()
 
-    filename = f"{df.loc[0]['dimension.office']}_{df.loc[0]['dimension.type']}_addresses.pkl"
-    path = os.path.join(run_params.pickledir, "addresses")
-    if not os.path.exists(path):
-        directory = create_dir(path)
-    else:
-        directory = path
-    df.to_pickle(os.path.join(directory, filename))
-    logging.debug(f"{filename} geexporteerd!")
+    return df
 
 
-def parse_response_dimensions(run_params, response, login) -> pd.DataFrame:
+def parse_response_dimensions(response, login) -> pd.DataFrame:
     """
 
     Parameters
@@ -248,7 +240,6 @@ def parse_response_dimensions(run_params, response, login) -> pd.DataFrame:
     -------
 
     """
-    logging.debug(f"start van parsen {run_params.modules}")
     root = ET.fromstring(response.text)
     body = root.find("env:Body", login.ns)
     data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", login.ns)
@@ -413,10 +404,6 @@ def parse_response(run_params, response, login) -> pd.DataFrame:
         logging.debug(f"geen parsing mogelijk voor {run_params.modules}")
         data = pd.DataFrame()
         # data = parse_response_ljp(run_params, response, login)
-
-    elif run_params.modules == "read_dimensions":
-        data = parse_response_dimensions(run_params, response, login)
-        parse_response_dimension_addresses(run_params, response, login)
     else:
         logging.info(f"response niet kunnen parsen voor script {run_params.modules}")
         data = pd.DataFrame()

@@ -218,7 +218,7 @@ def select_office(officecode, param) -> None:
     while run:
         url = f"https://{param.cluster}.twinfield.com/webservices/session.asmx?wsdl"
         path_xml = os.path.join("xml_templates", "template_select_office.xml")
-        body = templates.import_xml(path_xml).format(param.session_id, officecode)
+        body = import_xml(path_xml).format(param.session_id, officecode)
         response = requests.post(url=url, headers=param.header, data=body)
 
         if response.status_code == 200 or counter == 10:
@@ -377,17 +377,6 @@ class RunParameters:
         self.stagingdir = create_dir(destination=os.path.join(self.datadir, "data", "staging"))
         self.starttijd = datetime.now()
         self.start = timeit.default_timer()
-
-    # @staticmethod
-    # def mapping_modules():
-    #     mapping = {
-    #         "100": "openstaande_debiteuren",
-    #         "200": "openstaande_crediteuren",
-    #         "030_1": "mutaties",
-    #         "040_1": "consolidatie",
-    #     }
-    #
-    #     return mapping
 
 
 def create_dir(destination: str) -> str:

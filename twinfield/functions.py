@@ -11,7 +11,7 @@ import timeit
 from twinfield import MODULES
 
 
-def import_files(run_params) -> pd.DataFrame:
+def import_files(run_params, module) -> pd.DataFrame:
     """
 
     Parameters
@@ -26,7 +26,7 @@ def import_files(run_params) -> pd.DataFrame:
     """
     files = os.listdir(os.path.join(run_params.pickledir))
 
-    files = [x for x in files if x.endswith(f"{run_params.module}.pkl")]
+    files = [x for x in files if x.endswith(f"{module}.pkl")]
 
     if not files:
         return pd.DataFrame()
@@ -37,7 +37,7 @@ def import_files(run_params) -> pd.DataFrame:
         ttl.append(df)
 
     data = pd.concat(ttl, axis=0, sort=False, ignore_index=True)
-    data = rename_column_labels(data, run_params.module)
+    data = rename_column_labels(data, module)
 
     return data
 

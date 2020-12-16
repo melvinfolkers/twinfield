@@ -56,7 +56,7 @@ def set_update(run_params, offices, module) -> pd.DataFrame:
         Only offices that are not already imported to the temp directory
     """
 
-    df = functions.import_files(run_params)
+    df = functions.import_files(run_params, run_params.module)
     if not None or len(df):
         return offices
     succes = df["administratienaam"].unique().tolist()
@@ -83,7 +83,7 @@ def set_rerun(run_params, login) -> pd.DataFrame:
     """
 
     offices = scoping_offices(run_params.offices, login)
-    df = functions.import_files(run_params)
+    df = functions.import_files(run_params, run_params.module)
 
     if "faultcode" in df.columns:
         errors = df.loc[~df["faultcode"].isna(), "administratienummer"].tolist()
@@ -194,12 +194,13 @@ def pull_dimensions(offices, run_params) -> None:
             os.path.join(run_params.pickledir, f"{office}_{run_params.module}.pkl")
         )
 
-        # dimensions addresses
-        dim_addresses = parse_response_dimension_addresses(response, login)
-        dim_addresses = add_metadata(dim_addresses, office, rows)
-        dim_addresses.to_pickle(
-            os.path.join(run_params.pickledir, f"{office}_{run_params.module}_addresses.pkl")
-        )
+        if dim_type in ["DEB", "CRD"]:
+            # dimensions addresses
+            dim_addresses = parse_response_dimension_addresses(response, login)
+            dim_addresses = add_metadata(dim_addresses, office, rows)
+            dim_addresses.to_pickle(
+                os.path.join(run_params.pickledir, f"{office}_{run_params.module}_addresses.pkl")
+            )
 
 
 def pull_data_twinfield(offices, run_params) -> None:

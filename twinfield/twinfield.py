@@ -11,7 +11,7 @@ def query(
     offices: list = None,
     rerun: bool = False,
     clean: bool = True,
-) -> pd.DataFrame:
+) -> Union[pd.DataFrame, tuple]:
     """
     Import data from Twinfield using the API.
 
@@ -29,7 +29,7 @@ def query(
         clean up pickle directory and remove pickle files.
     Returns
     -------
-    df: pd.DataFrame
+    df: pd.DataFrame or tuple of dateframes
         DataFrame containing for requested module, year and all offices in scope.
     """
     run_params = RunParameters(jaar=jaar, module=module, offices=offices, rerun=rerun)
@@ -39,7 +39,12 @@ def query(
     )
     import_all(run_params)
 
-    df = import_files(run_params)
+    if run_params.module in ["dimensions_deb", "dimensions_crd"]:
+        dim = import_files(run_params, run_params.module)
+        dim_address = import_files(run_params, f"{run_params.module}_addresses")
+        return dim, dim_address
+
+    df = import_files(run_params, run_params.module)
     # clean up directory where files are stored
     if clean:
         remove_and_create_dir(run_params.pickledir)

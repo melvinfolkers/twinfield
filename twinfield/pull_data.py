@@ -175,7 +175,21 @@ def add_metadata(df, office, rows) -> pd.DataFrame:
     return df
 
 
-def pull_dimensions(offices, run_params) -> None:
+def pull_dimensions(offices: pd.DataFrame, run_params) -> None:
+    """
+    Function for pulling data based om the dimensions template
+
+    Parameters
+    ----------
+    offices : pd.DataFrame
+        dataframe with the offices that are selected in the run
+    run_params
+        : run parameters class set at the start of the scripts
+    Returns
+    -------
+    None
+        exports the datasets
+    """
     dim_type = run_params.module.split("_")[1].upper()
 
     for office, rows in tqdm(offices.iterrows(), total=offices.shape[0]):

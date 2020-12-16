@@ -153,34 +153,26 @@ def get_response(messages, run_params, login) -> pd.DataFrame:
         select_office(officecode=officecode, param=login)
 
         if run_params.modules == "vrk":
-
-            soap_msg = templates.import_xml("xml_templates/template_transactions.xml").format(
-                login.session_id, soap_body
-            )
+            path_xml = os.path.join("xml_templates", "template_transactions.xml")
+            soap_msg = templates.import_xml(path_xml).format(login.session_id, soap_body)
         elif run_params.modules == "ink":
-            soap_msg = templates.import_xml("xml_templates/template_transactions.xml").format(
-                login.session_id, soap_body
-            )
+            path_xml = os.path.join("xml_templates", "template_transactions.xml")
+            soap_msg = templates.import_xml(path_xml).format(login.session_id, soap_body)
         elif run_params.modules == "memo":
-            soap_msg = templates.import_xml("xml_templates/template_transactions.xml").format(
-                login.session_id, soap_body
-            )
+            path_xml = os.path.join("xml_templates", "template_transactions.xml")
+            soap_msg = templates.import_xml(path_xml).format(login.session_id, soap_body)
         elif run_params.modules == "ljp":
-            soap_msg = templates.import_xml("xml_templates/template_concept.xml").format(
-                login.session_id, soap_body
-            )
+            path_xml = os.path.join("xml_templates", "template_concept.xml")
+            soap_msg = templates.import_xml(path_xml).format(login.session_id, soap_body)
         elif run_params.modules == "salesinvoice":
-            soap_msg = templates.import_xml("xml_templates/template_salesinvoices.xml").format(
-                login.session_id, soap_body
-            )
+            path_xml = os.path.join("xml_templates", "template_salesinvoices.xml")
+            soap_msg = templates.import_xml(path_xml).format(login.session_id, soap_body)
         elif run_params.modules == "read_dimensions":
-            soap_msg = templates.import_xml("xml_templates/read_dimensions.xml").format(
-                login.session_id, msg.get("dim_type")
-            )
+            path_xml = os.path.join("xml_templates", "read_dimensions.xml")
+            soap_msg = templates.import_xml(path_xml).format(login.session_id, msg.get("dim_type"))
         elif run_params.modules == "upload_dimensions":
-            soap_msg = templates.import_xml("xml_templates/upload_dimensions.xml").format(
-                login.session_id, soap_body
-            )
+            path_xml = os.path.join("xml_templates", "upload_dimensions.xml")
+            soap_msg = templates.import_xml(path_xml).format(login.session_id, soap_body)
         else:
             raise ServerError(f"geen routine voor {run_params.modules}")
 

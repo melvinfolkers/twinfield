@@ -217,9 +217,8 @@ def select_office(officecode, param) -> None:
     run = True
     while run:
         url = f"https://{param.cluster}.twinfield.com/webservices/session.asmx?wsdl"
-        body = import_xml("xml_templates/template_select_office.xml").format(
-            param.session_id, officecode
-        )
+        path_xml = os.path.join("xml_templates", "template_select_office.xml")
+        body = templates.import_xml(path_xml).format(param.session_id, officecode)
         response = requests.post(url=url, headers=param.header, data=body)
 
         if response.status_code == 200 or counter == 10:

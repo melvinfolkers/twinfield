@@ -13,5 +13,5 @@ MODULES = {
     "040_1": "consolidatie",
     "dimensions_deb": "stamgegevens_debiteuren",
     "dimensions_crd": "stamgegevens_crediteuren",
-    "dimensions_kpl": "stamgegevens_kpl"
+    "dimensions_kpl": "stamgegevens_kpl",
 }

@@ -147,6 +147,8 @@ def import_all(run_params) -> None:
         # pull_openstaande_crediteuren(offices, run_params, login)
         pull_data_twinfield(offices, run_params)
 
+    if run_params.module.startswith("dimensions"):
+        pull_data_twinfield(offices,run_params)
 
 def add_metadata(df, office, rows) -> pd.DataFrame:
     """
@@ -203,11 +205,29 @@ def pull_data_twinfield(offices, run_params) -> None:
         elif run_params.module == "030_1":
             periodes = functions.period_groups(window="year")
             batch = request_transaction_data(login, periodes, run_params.jaar)
+        elif run_params.module.startswith("dimensions"):
+            batch = request_dimensions_data(login)
         else:
             continue
         batch = add_metadata(batch, office, rows)
         batch.to_pickle(os.path.join(run_params.pickledir, f"{office}_{run_params.module}.pkl"))
 
+def request_dimensions_data(login) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    login:  login parameters (SessionParameters)
+    dimtyp: Dimension typ to be requested (DEB / CRD / KPL)
+
+    Returns dataset containing records for selected module
+    -------
+
+    """
+    batch = modules.read_module(param=login, periode=None, module = "template_dimensions", jaar=None)
+    batch = transform.format_030_1(batch)
+
+    return data
 
 def request_transaction_data(login, periodes, jaar) -> pd.DataFrame:
     """

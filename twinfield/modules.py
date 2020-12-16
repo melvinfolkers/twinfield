@@ -64,6 +64,10 @@ def read_module(param, periode, module, jaar=None) -> pd.DataFrame:
         body = templates.import_xml(f"xml_templates/template_{module}.xml").format(
             param.session_id, jaar, periode["from"], jaar, periode["to"]
         )
+    elif module.startswith('dimensions'):
+        dim_type = module.split('_')[1].upper()
+        body = templates.import_xml("xml_templates/template_dimensions.xml").format(
+            param.session_id, dim_type)
     else:
         logging.info("Let op module is nog niet ontwikkeld")
     response = requests.post(url=url, headers=param.header, data=body)

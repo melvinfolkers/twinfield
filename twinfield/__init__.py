@@ -11,4 +11,7 @@ MODULES = {
     "200": "openstaande_crediteuren",
     "030_1": "mutaties",
     "040_1": "consolidatie",
+    "dimensions_deb": "stamgegevens_debiteuren",
+    "dimensions_crd": "stamgegevens_crediteuren",
+    "dimensions_kpl": "stamgegevens_kpl"
 }

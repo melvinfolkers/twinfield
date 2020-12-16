@@ -6,7 +6,11 @@ from twinfield.functions import RunParameters, import_files, remove_and_create_d
 
 
 def query(
-    module: str, jaar: Union[int, str] = None, offices: list = None, rerun: bool = False, clean: bool = False
+    module: str,
+    jaar: Union[int, str] = None,
+    offices: list = None,
+    rerun: bool = False,
+    clean: bool = True,
 ) -> pd.DataFrame:
     """
     Import data from Twinfield using the API.

@@ -23,7 +23,9 @@ def read_offices(param) -> pd.DataFrame:
     body = templates.import_xml("xml_templates/template_list_offices.xml").format(param.session_id)
     response = requests.post(url=url, headers=param.header, data=body)
     if not response:
-        return pd.DataFrame([{"faultcode": "Twinfield server error. status_code='{response.status_code}'"}])
+        return pd.DataFrame(
+            [{"faultcode": "Twinfield server error. status_code='{response.status_code}'"}]
+        )
     data = parse_session_response(response, param)
 
     return data
@@ -69,7 +71,9 @@ def read_module(param, periode, module, jaar=None) -> pd.DataFrame:
         logging.info("Let op module is nog niet ontwikkeld")
     response = requests.post(url=url, headers=param.header, data=body)
     if not response:
-        return pd.DataFrame([{"faultcode": "Twinfield server error. status_code='{response.status_code}'"}])
+        return pd.DataFrame(
+            [{"faultcode": "Twinfield server error. status_code='{response.status_code}'"}]
+        )
     data = parse_response(response, param)
     logging.debug(f"{len(data)} records in {datetime.now() - start}")
 

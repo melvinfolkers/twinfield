@@ -24,7 +24,7 @@ def read_offices(param) -> pd.DataFrame:
     response = requests.post(url=url, headers=param.header, data=body)
     if not response:
         return pd.DataFrame(
-            [{"faultcode": "Twinfield server error. status_code='{response.status_code}'"}]
+            [{"faultcode": f"Twinfield server error. status_code='{response.status_code}'"}]
         )
     data = parse_session_response(response, param)
 
@@ -72,7 +72,7 @@ def read_module(param, periode, module, jaar=None) -> pd.DataFrame:
     response = requests.post(url=url, headers=param.header, data=body)
     if not response:
         return pd.DataFrame(
-            [{"faultcode": "Twinfield server error. status_code='{response.status_code}'"}]
+            [{"faultcode": f"Twinfield server error. status_code='{response.status_code}'"}]
         )
     data = parse_response(response, param)
     logging.debug(f"{len(data)} records in {datetime.now() - start}")

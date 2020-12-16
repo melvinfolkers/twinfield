@@ -29,7 +29,7 @@ def scoping_offices(offices: list, login) -> pd.DataFrame:
 
     if offices:
         logging.info(f"{len(all_offices)} administraties beschikbaar")
-        scoping = all_offices[all_offices["name"].isin(offices)]
+        scoping = all_offices[all_offices.index.isin(offices)]
         logging.info(f"{len(scoping)} administraties geselecteerd")
     else:
         scoping = all_offices

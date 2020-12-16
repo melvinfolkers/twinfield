@@ -111,41 +111,41 @@ def import_all(run_params) -> None:
 
     if run_params.module == "030_1":
         # pull_transactions(offices, run_params, login)
-        pull_data_twinfield(offices, run_params, login)
+        pull_data_twinfield(offices, run_params)
 
     if run_params.module == "040_1":
         # pull_consolidatie(offices, run_params, login)
-        pull_data_twinfield(offices, run_params, login)
+        pull_data_twinfield(offices, run_params)
 
     if run_params.module == "100":
         if run_params.rerun:
             offices = set_rerun(run_params, login)
             # pull_openstaande_debiteuren(offices, run_params, login)
-            pull_data_twinfield(offices, run_params, login)
+            pull_data_twinfield(offices, run_params)
             return logging.info("rerun afgerond!")
         else:
             offices = set_update(run_params, offices, run_params.module_names.get("100"))
 
         # pull_openstaande_debiteuren(offices, run_params, login)
-        pull_data_twinfield(offices, run_params, login)
+        pull_data_twinfield(offices, run_params)
         offices = set_rerun(run_params, login)
         # pull_openstaande_debiteuren(offices, run_params, login)
-        pull_data_twinfield(offices, run_params, login)
+        pull_data_twinfield(offices, run_params)
 
     if run_params.module == "200":
         if run_params.rerun:
             offices = set_rerun(run_params, login)
             # pull_openstaande_crediteuren(offices, run_params, login)
-            pull_data_twinfield(offices, run_params, login)
+            pull_data_twinfield(offices, run_params)
             return logging.info("rerun afgerond!")
         else:
             offices = set_update(run_params, offices, run_params.module_names.get("200"))
 
         # pull_openstaande_crediteuren(offices, run_params, login)
-        pull_data_twinfield(offices, run_params, login)
+        pull_data_twinfield(offices, run_params)
         offices = set_rerun(run_params, login)
         # pull_openstaande_crediteuren(offices, run_params, login)
-        pull_data_twinfield(offices, run_params, login)
+        pull_data_twinfield(offices, run_params)
 
 
 def add_metadata(df, office, rows) -> pd.DataFrame:
@@ -170,7 +170,7 @@ def add_metadata(df, office, rows) -> pd.DataFrame:
     return df
 
 
-def pull_data_twinfield(offices, run_params, login) -> None:
+def pull_data_twinfield(offices, run_params) -> None:
     """
     Get data from Twinfield API and write to pickle files.
     Parameters
@@ -188,6 +188,7 @@ def pull_data_twinfield(offices, run_params, login) -> None:
     """
     for office, rows in tqdm(offices.iterrows(), total=offices.shape[0]):
         logging.debug(f"\t {3 * '-'} {rows['shortname']} {3 * '-'}")
+        login = twinfield_login()
         # refresh login (session id) for every run
         select_office(office, param=login)
         if run_params.module == "100":

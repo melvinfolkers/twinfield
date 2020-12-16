@@ -55,7 +55,7 @@ def set_update(run_params, offices, module) -> pd.DataFrame:
     """
 
     df = functions.import_files(run_params)
-    if not len(df):
+    if not None or len(df):
         return offices
     succes = df["administratienaam"].unique().tolist()
     offices = offices[~offices.name.isin(succes)]

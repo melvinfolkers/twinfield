@@ -453,4 +453,4 @@ def rename_column_labels(df, module):
         fields = get_metadata(module, login)
         df.rename(columns=fields["label"], inplace=True)
 
-        return df
+    return df

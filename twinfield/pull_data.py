@@ -3,10 +3,12 @@ import os
 
 import pandas as pd
 from . import functions, modules, transform
-from .functions import select_office
+from .functions import select_office, import_xml
 from .modules import read_offices
 from tqdm import tqdm
 from .credentials import twinfield_login
+from .responses import parse_response_dimension_addresses, parse_response_dimensions
+import requests
 
 
 def scoping_offices(offices: list, login) -> pd.DataFrame:
@@ -54,7 +56,7 @@ def set_update(run_params, offices, module) -> pd.DataFrame:
         Only offices that are not already imported to the temp directory
     """
 
-    df = functions.import_files(run_params)
+    df = functions.import_files(run_params, run_params.module)
     if not None or len(df):
         return offices
     succes = df["administratienaam"].unique().tolist()
@@ -81,7 +83,7 @@ def set_rerun(run_params, login) -> pd.DataFrame:
     """
 
     offices = scoping_offices(run_params.offices, login)
-    df = functions.import_files(run_params)
+    df = functions.import_files(run_params, run_params.module)
 
     if "faultcode" in df.columns:
         errors = df.loc[~df["faultcode"].isna(), "administratienummer"].tolist()
@@ -147,6 +149,9 @@ def import_all(run_params) -> None:
         # pull_openstaande_crediteuren(offices, run_params, login)
         pull_data_twinfield(offices, run_params)
 
+    if run_params.module.startswith("dimensions"):
+        pull_dimensions(offices, run_params)
+
 
 def add_metadata(df, office, rows) -> pd.DataFrame:
     """
@@ -168,6 +173,48 @@ def add_metadata(df, office, rows) -> pd.DataFrame:
     df["wm"] = rows["shortname"]
 
     return df
+
+
+def pull_dimensions(offices: pd.DataFrame, run_params) -> None:
+    """
+    Function for pulling data based om the dimensions template
+
+    Parameters
+    ----------
+    offices : pd.DataFrame
+        dataframe with the offices that are selected in the run
+    run_params
+        : run parameters class set at the start of the scripts
+    Returns
+    -------
+    None
+        exports the datasets
+    """
+    dim_type = run_params.module.split("_")[1].upper()
+
+    for office, rows in tqdm(offices.iterrows(), total=offices.shape[0]):
+        logging.debug(f"\t {3 * '-'} {rows['shortname']} {3 * '-'}")
+        login = twinfield_login()
+        select_office(office, param=login)
+        template_xml = import_xml(os.path.join("xml_templates", "template_dimensions.xml"))
+        url = f"https://{login.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
+        body = template_xml.format(login.session_id, dim_type)
+        response = requests.post(url=url, headers=login.header, data=body)
+
+        # dimensions
+        dimensions = parse_response_dimensions(response, login)
+        dimensions = add_metadata(dimensions, office, rows)
+        dimensions.to_pickle(
+            os.path.join(run_params.pickledir, f"{office}_{run_params.module}.pkl")
+        )
+
+        if dim_type in ["DEB", "CRD"]:
+            # dimensions addresses
+            dim_addresses = parse_response_dimension_addresses(response, login)
+            dim_addresses = add_metadata(dim_addresses, office, rows)
+            dim_addresses.to_pickle(
+                os.path.join(run_params.pickledir, f"{office}_{run_params.module}_addresses.pkl")
+            )
 
 
 def pull_data_twinfield(offices, run_params) -> None:

@@ -27,7 +27,7 @@ More modules will be added in the near future.
 <br><br>
 `df = twinfield.query("040_1", jaar=2020)`
 
-## Environments variables
+## Environment variables
 
 ---
 Some credentials are needed for connecting with the twinfield API. Add the following credentials to your environment variables.<br> 

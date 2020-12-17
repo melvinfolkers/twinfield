@@ -8,7 +8,7 @@ with open("requirements.txt") as fp:
 
 setup(
     name="twinfield",
-    version="1.0.5-rc.1",
+    version="1.0.5",
     author="Melvin Folkers, Erfan Nariman",
     author_email="melvin@zypp.io, erfan@zypp.io",
     description="Read and insert data using the Twinfield API.",
@@ -18,7 +18,7 @@ setup(
     url="https://github.com/zypp-io/twinfield",
     packages=find_packages(),
     install_requires=install_requires,
-    package_data={"xml_message": ["twinfield/xml_templates/*.xml"]},
+    include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

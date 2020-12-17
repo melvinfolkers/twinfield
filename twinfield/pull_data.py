@@ -196,7 +196,7 @@ def pull_dimensions(offices: pd.DataFrame, run_params) -> None:
         logging.debug(f"\t {3 * '-'} {rows['shortname']} {3 * '-'}")
         login = twinfield_login()
         select_office(office, param=login)
-        template_xml = import_xml("xml_templates/template_dimensions.xml")
+        template_xml = import_xml(os.path.join("xml_templates", "template_dimensions.xml"))
         url = f"https://{login.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
         body = template_xml.format(login.session_id, dim_type)
         response = requests.post(url=url, headers=login.header, data=body)

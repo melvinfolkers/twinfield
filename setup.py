@@ -8,13 +8,13 @@ with open("requirements.txt") as fp:
 
 setup(
     name="twinfield",
-    version="1.0.3",
+    version="1.0.4",
     author="Melvin Folkers, Erfan Nariman",
     author_email="melvin@zypp.io, erfan@zypp.io",
-    description="Read data from Twinfield through API with SOAP messages and write to Azure",
+    description="Read and insert data using the Twinfield API.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    keywords="python, twinfield, azure, API",
+    keywords="python, twinfield, API",
     url="https://github.com/zypp-io/twinfield",
     packages=find_packages(),
     install_requires=install_requires,

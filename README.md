@@ -2,7 +2,8 @@
 
 # twinfield
 
-> Repository for downloading twinfield data to a azure database
+> Repository for reading and insert data in twinfield using their API.
+
 The repository currently supports the import of the following modules:
 
 <b>Browse codes</b>
@@ -23,9 +24,11 @@ The repository currently supports the import of the following modules:
 `df = twinfield.query("040_1",jaar =2020)`
 
 ## Environments variables
-some credentials are needed for connecting with the twinfield API.Add the following credentials to the environment variables.<br> 
+Some credentials are needed for connecting with the twinfield API.Add the following credentials to the environment variables.<br> 
 ```
 TW_USER_LS=""
 TW_PW_LS=""
 TW_ORG_LS=""
 ```
+
+[Link](https://www.twinfield.nl/api) to the Twinfield API documentation.

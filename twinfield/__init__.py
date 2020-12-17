@@ -1,4 +1,7 @@
 import logging
+import os
+from .exceptions import EnvironmentVariablesError
+
 
 logging.basicConfig(
     format="%(asctime)s.%(msecs)03d [%(levelname)-5s] [%(name)s] - %(message)s",
@@ -15,3 +18,14 @@ MODULES = {
     "dimensions_crd": "stamgegevens_crediteuren",
     "dimensions_kpl": "stamgegevens_kpl",
 }
+
+
+# Test if environment variables are set for Twinfield login
+TW_USER_LS = os.environ.get("TW_USER_LS")
+TW_PW_LS = os.environ.get("TW_PW_LS")
+TW_ORG_LS = os.environ.get("TW_ORG_LS")
+
+if not all([TW_USER_LS, TW_PW_LS, TW_ORG_LS]):
+    raise EnvironmentVariablesError(
+        "One of the environment variables TW_USERS_LS, TW_PW_LS, TW_ORG_LS is not set"
+    )

@@ -8,7 +8,7 @@ with open("requirements.txt") as fp:
 
 setup(
     name="twinfield",
-    version="0.0.1",
+    version="1.0.2",
     author="Melvin Folkers",
     author_email="melvin@zypp.io",
     description="Read data from Twinfield through API with SOAP messages and write to Azure",

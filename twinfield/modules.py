@@ -64,9 +64,9 @@ def read_module(param, periode, module, jaar=None) -> pd.DataFrame:
             raise ValueError(
                 "Let op: je runt nu consolidatie / transacties, maar jaar is niet opgegeven."
             )
-        body = templates.import_xml(
-            os.path.join("xml_templates", f"template_{module}.xml")
-        ).format(param.session_id, jaar, periode["from"], jaar, periode["to"])
+        body = templates.import_xml(os.path.join("xml_templates", f"template_{module}.xml")).format(
+            param.session_id, jaar, periode["from"], jaar, periode["to"]
+        )
     elif module.startswith("dimensions"):
         dim_type = module.split("_")[1].upper()
         body = templates.import_xml(

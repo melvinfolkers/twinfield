@@ -1,7 +1,5 @@
-<img src="https://www.zypp.io/static/assets/img/logos/Main logo - White/Zypp - White - PNG 250px.png" width="200">
-
+<p align="center"><img alt="logo" src="https://www.zypp.io/static/assets/img/logos/Main logo - White/Zypp - White - JPG.jpg" width="200"></p>
 # twinfield
-
 
 > Repository for downloading twinfield data to a azure database
 The repository currently supports the import of the following modules:

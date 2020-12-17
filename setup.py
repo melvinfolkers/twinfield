@@ -18,6 +18,7 @@ setup(
     url="https://github.com/zypp-io/twinfield",
     packages=find_packages(),
     install_requires=install_requires,
+    package_data={"xml_message": ["twinfield/xml_templates/*.xml"]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

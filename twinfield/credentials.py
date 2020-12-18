@@ -137,4 +137,3 @@ class SessionParameters:
             raise EnvironmentVariablesError(
                 "One of the environment variables TW_USERS_LS, TW_PW_LS, TW_ORG_LS is not set"
             )
-

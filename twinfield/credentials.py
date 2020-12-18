@@ -3,6 +3,7 @@ from xml.etree import ElementTree as ET
 import os
 import requests
 from . import templates
+from .exceptions import EnvironmentVariablesError
 
 
 def twinfield_login():
@@ -39,6 +40,7 @@ class SessionParameters:
         self.user = user
         self.password = pw
         self.organisation = organisation
+        self.check_environment_variables()
 
         self.url = "https://login.twinfield.com/webservices/session.asmx"
         self.header = {"Content-Type": "text/xml", "Accept-Charset": "utf-8"}
@@ -127,3 +129,12 @@ class SessionParameters:
             logging.info("niet gelukt om data binnen te halen")
 
         return [session_id, cluster]
+
+    def check_environment_variables(self):
+        # Test if environment variables are set for Twinfield login
+
+        if not all([self.user, self.password, self.organisation]):
+            raise EnvironmentVariablesError(
+                "One of the environment variables TW_USERS_LS, TW_PW_LS, TW_ORG_LS is not set"
+            )
+

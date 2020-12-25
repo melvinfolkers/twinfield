@@ -48,7 +48,6 @@ def set_update(run_params, offices, module) -> pd.DataFrame:
         input parameters of script (set at start of script)
     offices
         list of offices
-    module
 
     Returns
     -------
@@ -112,41 +111,33 @@ def import_all(run_params) -> None:
     offices = scoping_offices(run_params.offices, login)
 
     if run_params.module == "030_1":
-        # pull_transactions(offices, run_params, login)
         pull_data_twinfield(offices, run_params)
 
     if run_params.module == "040_1":
-        # pull_consolidatie(offices, run_params, login)
         pull_data_twinfield(offices, run_params)
 
     if run_params.module == "100":
         if run_params.rerun:
             offices = set_rerun(run_params, login)
-            # pull_openstaande_debiteuren(offices, run_params, login)
             pull_data_twinfield(offices, run_params)
             return logging.info("rerun afgerond!")
         else:
             offices = set_update(run_params, offices, run_params.module_names.get("100"))
 
-        # pull_openstaande_debiteuren(offices, run_params, login)
         pull_data_twinfield(offices, run_params)
         offices = set_rerun(run_params, login)
-        # pull_openstaande_debiteuren(offices, run_params, login)
         pull_data_twinfield(offices, run_params)
 
     if run_params.module == "200":
         if run_params.rerun:
             offices = set_rerun(run_params, login)
-            # pull_openstaande_crediteuren(offices, run_params, login)
             pull_data_twinfield(offices, run_params)
             return logging.info("rerun afgerond!")
         else:
             offices = set_update(run_params, offices, run_params.module_names.get("200"))
 
-        # pull_openstaande_crediteuren(offices, run_params, login)
         pull_data_twinfield(offices, run_params)
         offices = set_rerun(run_params, login)
-        # pull_openstaande_crediteuren(offices, run_params, login)
         pull_data_twinfield(offices, run_params)
 
     if run_params.module.startswith("dimensions"):

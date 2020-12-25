@@ -35,7 +35,8 @@ def query(
     run_params = RunParameters(jaar=jaar, module=module, offices=offices, rerun=rerun)
 
     logging.info(
-        f"{3 * '*'} Starting import of {run_params.module_names.get(run_params.module)} {3 * '*'}"
+        f"{3 * '*'} Starting import of {run_params.module_names.get(run_params.module)} "
+        f"with user: {os.environ.get('TW_USER_LS')} {3 * '*'}"
     )
     import_all(run_params)
 

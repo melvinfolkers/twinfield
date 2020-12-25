@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Union
 import pandas as pd
 from twinfield.pull_data import import_all

@@ -191,7 +191,7 @@ def parse_response_dimension_addresses(response, login) -> pd.DataFrame:
 
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
+    run_params:  input parameters of module (set at start of module)
     response: response from twinfield server
     login:  login parameters (SessionParameters)
 
@@ -232,7 +232,7 @@ def parse_response_dimensions(response, login) -> pd.DataFrame:
 
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
+    run_params:  input parameters of module (set at start of module)
     response: response from twinfield server
     login:  login parameters (SessionParameters)
 
@@ -255,7 +255,7 @@ def parse_response_transactions(run_params, response, login) -> pd.DataFrame:
 
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
+    run_params:  input parameters of module (set at start of module)
     response: response from twinfield server
     login:  login parameters (SessionParameters)
 
@@ -298,12 +298,12 @@ def parse_result_status(data_xml, module) -> str:
     return result
 
 
-def parse_memo(run_params, response, login) -> pd.DataFrame:
+def parse_memo(module, response, login) -> pd.DataFrame:
     """
 
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
+    module:  input parameters of module (set at start of module)
     response: response from twinfield server
     login:  login parameters (SessionParameters)
 
@@ -377,12 +377,12 @@ def get_header_data(trx) -> dict:
     return info
 
 
-def parse_response(run_params, response, login) -> pd.DataFrame:
+def parse_response(module, response, login) -> pd.DataFrame:
     """
 
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
+    module:  id of module
     response: response from twinfield server
     login:  login parameters (SessionParameters)
 
@@ -390,33 +390,33 @@ def parse_response(run_params, response, login) -> pd.DataFrame:
     -------
 
     """
-    if run_params.modules == "vrk":
-        data = parse_response_ljp(run_params, response, login)
-    elif run_params.modules == "ink":
-        data = parse_response_ljp(run_params, response, login)
-    elif run_params.modules == "memo":
-        data = parse_memo(run_params, response, login)
-    elif run_params.modules == "ljp":
-        data = parse_response_transactions(run_params, response, login)
-    elif run_params.modules == "salesinvoice":
-        data = parse_response_ljp(run_params, response, login)
-    elif run_params.modules == "upload_dimensions":
-        logging.debug(f"geen parsing mogelijk voor {run_params.modules}")
+    if module == "vrk":
+        data = parse_response_ljp(module, response, login)
+    elif module == "ink":
+        data = parse_response_ljp(module, response, login)
+    elif module == "memo":
+        data = parse_memo(module, response, login)
+    elif module == "ljp":
+        data = parse_response_transactions(module, response, login)
+    elif module == "salesinvoice":
+        data = parse_response_ljp(module, response, login)
+    elif module == "dimensions":
+        logging.debug(f"geen parsing mogelijk voor {module}")
         data = pd.DataFrame()
         # data = parse_response_ljp(run_params, response, login)
     else:
-        logging.info(f"response niet kunnen parsen voor script {run_params.modules}")
+        logging.info(f"response niet kunnen parsen voor module {module}")
         data = pd.DataFrame()
 
     return data
 
 
-def parse_response_ljp(run_params, response, login) -> pd.DataFrame:
+def parse_response_ljp(module, response, login) -> pd.DataFrame:
     """
 
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
+    module:  input id of module
     response: response from twinfield server
     login:  login parameters (SessionParameters)
 
@@ -429,19 +429,18 @@ def parse_response_ljp(run_params, response, login) -> pd.DataFrame:
 
     data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", login.ns)
 
-    if run_params.modules == "vrk" or run_params.modules == "ink":
+    if module == "vrk" or module == "ink":
         trx = data.findall("transactions/transaction")[0]
-    elif run_params.modules == "salesinvoice":
+    elif module == "salesinvoice":
         trx = data.findall("salesinvoices/salesinvoice")[0]
-
     else:
         trx = None
-        logging.info(f"geen routine gemaakt voor script {run_params.modules}")
+        logging.info(f"geen routine gemaakt voor module {module}")
     # raise KostenPlaatsError("Kostenplaats ontbreekt in TwinField.")
 
     ttl_records = list()
 
-    if run_params.modules == "debtors":
+    if module == "debtors":
         status_dict = {}
         lines = trx
     else:
@@ -470,7 +469,7 @@ def parse_response_ljp(run_params, response, login) -> pd.DataFrame:
             else:
                 info = {**info, col.tag: col.text}
 
-        if run_params.modules != "debtors":
+        if module != "debtors":
             headerdata = get_header_data(trx)
             info = {**info, **headerdata}
 

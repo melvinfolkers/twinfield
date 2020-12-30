@@ -5,6 +5,16 @@
 ---
 > Python package for reading and insert data in Twinfield using the official Twinfield API.
 
+## Installation
+
+---
+```commandline
+pip install twinfield
+```
+
+## Scoping
+
+---
 This package currently supports the import of the following modules:
 
 <b>Browse codes</b>
@@ -44,3 +54,9 @@ How to set environment variables?
 ---
 
 [Link](https://www.twinfield.nl/api) to the Twinfield API documentation.
+
+---
+
+For business inquiries concerning this package, contact us at:
+- melvin@zypp.io
+- erfan@zypp.io

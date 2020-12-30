@@ -2,8 +2,15 @@ import logging
 import os
 from typing import Union
 import pandas as pd
+import requests
+
 from twinfield.pull_data import import_all
-from twinfield.functions import RunParameters, import_files, remove_and_create_dir
+from twinfield.functions import RunParameters, import_files, select_office, remove_and_create_dir
+from twinfield.templates import import_xml
+from twinfield.credentials import SessionParameters
+from twinfield.responses import parse_response
+from twinfield.send_soap_msg import add_office_code_to_xml_header
+from twinfield import TEMPLATES
 
 
 def query(
@@ -54,5 +61,35 @@ def query(
     return df
 
 
-def insert(module, xml_messages):
-    pass
+def insert(module: str, officecode: str, soap_msg: str, login: SessionParameters) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    module: str
+        choosen module for inserting the soap message into Twinfield
+    officecode: str
+        office code of administration in which data needs to be inserted
+    soap_msg: str
+        XML message containing the data for the insert
+    login: SessionParameters
+        class containing login information for current session
+
+    Returns: pd.DataFrame
+        dataframe containing response of twinfield server.
+    -------
+
+    """
+
+    select_office(officecode=officecode, param=login)
+
+    template_file = TEMPLATES.get(module)
+    template_xml = import_xml(os.path.join("xml_templates", template_file))
+    soap_msg = add_office_code_to_xml_header(officecode, soap_msg)
+    body = template_xml.format(login.session_id, soap_msg)
+
+    url = f"https://{login.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
+    response = requests.post(url=url, headers=login.header, data=body.encode("utf16"))
+    df = parse_response(module, response, login)
+
+    return df

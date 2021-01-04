@@ -15,3 +15,11 @@ MODULES = {
     "dimensions_crd": "stamgegevens_crediteuren",
     "dimensions_kpl": "stamgegevens_kpl",
 }
+
+TEMPLATES = {
+    "vrk": "template_transactions.xml",
+    "ink": "template_transactions.xml",
+    "memo": "template_transactions.xml",
+    "salesinvoice": "template_salesinvoices.xml",
+    "dimensions": "upload_dimensions.xml",
+}

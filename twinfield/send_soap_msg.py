@@ -10,7 +10,6 @@ from xml.etree import ElementTree as ET
 
 def add_office_code_to_xml_header(officecode: str, soap_msg: str) -> str:
     """
-
     Parameters
     ----------
     officecode: str
@@ -18,7 +17,9 @@ def add_office_code_to_xml_header(officecode: str, soap_msg: str) -> str:
     soap_msg: str
         soap_message in XML containing the data to be inserted
 
-    Returns: str
+    Returns
+    -------
+    changed_msg: str
         xml message where the office code is added (or replaced if existed) to the header
     -------
 
@@ -33,15 +34,15 @@ def add_office_code_to_xml_header(officecode: str, soap_msg: str) -> str:
 
 def parse_errors(data) -> pd.DataFrame:
     """
-
     Parameters
     ----------
-    run_params:  input parameters of script (set at start of script)
-    data: dataset containing potential errors
+    data
+        dataset containing potential errors
 
-    Returns pd.DataFrame with errors
+    Returns
     -------
-
+    errors: pd.DataFrame
+        DataFrame with errors
     """
     if "msgtype" in data.columns:
         errors = data.loc[data.msgtype == "error"]
@@ -56,17 +57,21 @@ def parse_errors(data) -> pd.DataFrame:
 
 def get_response(script, soap_msg, login, office):
     """
-
     Parameters
     ----------
-    script: Choosen script for creating record in Twinfield.
-    soap_msg:  Soap message for selecte module.
-    login:  login parameters (SessionParameters).
-    office:  Office code for selected request.
+    script
+        Choosen script for creating record in Twinfield.
+    soap_msg
+        Soap message for selecte module.
+    login
+        login parameters (SessionParameters).
+    office
+        Office code for selected request.
 
-    Returns: response.
+    Returns
     -------
-
+    response
+        Response of the Twinfield API.
     """
     select_office(officecode=office, param=login)
 

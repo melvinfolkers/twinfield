@@ -63,11 +63,10 @@ def query(
 
 def insert(module: str, officecode: str, soap_msg: str, login: SessionParameters) -> pd.DataFrame:
     """
-
     Parameters
     ----------
     module: str
-        choosen module for inserting the soap message into Twinfield
+        chosen module for inserting the soap message into Twinfield
     officecode: str
         office code of administration in which data needs to be inserted
     soap_msg: str
@@ -75,10 +74,10 @@ def insert(module: str, officecode: str, soap_msg: str, login: SessionParameters
     login: SessionParameters
         class containing login information for current session
 
-    Returns: pd.DataFrame
-        dataframe containing response of twinfield server.
+    Returns
     -------
-
+    df: pd.DataFrame
+        dataframe containing response of twinfield server.
     """
 
     select_office(officecode=officecode, param=login)

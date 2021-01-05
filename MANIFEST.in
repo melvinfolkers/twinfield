@@ -1,1 +1,2 @@
 include twinfield/xml_templates/*.xml
+include requirements.txt

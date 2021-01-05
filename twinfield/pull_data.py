@@ -239,7 +239,7 @@ def pull_data_twinfield(offices, run_params) -> None:
             periodes = functions.period_groups(window="year")
             batch = request_consolidatie_data(login, periodes, run_params.jaar)
         elif run_params.module == "030_1":
-            periodes = functions.period_groups(window="year")
+            periodes = functions.period_groups(window="month")
             batch = request_transaction_data(login, periodes, run_params.jaar)
         else:
             continue

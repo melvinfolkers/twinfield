@@ -34,7 +34,7 @@ def read_offices(param) -> pd.DataFrame:
     return data
 
 
-def get_amount_filter(batch: dict)-> str:
+def get_amount_filter(batch: dict) -> str:
     """
 
     Parameters
@@ -49,7 +49,9 @@ def get_amount_filter(batch: dict)-> str:
     amount = batch.get("amount")
     if amount:
         amount_param = """<from>{}</from>
-            <to>{}</to>""".format(amount.get("from"), amount.get("to"))
+            <to>{}</to>""".format(
+            amount.get("from"), amount.get("to")
+        )
     else:
         amount_param = ""
 
@@ -79,7 +81,6 @@ def read_module(param, batch, module, jaar=None) -> pd.DataFrame:
 
     periode = batch.get("period")
     amount_filter = get_amount_filter(batch)
-
 
     logging.debug(f"start request periode van {periode['from']} t/m {periode['to']}")
 

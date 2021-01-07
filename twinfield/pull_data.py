@@ -329,4 +329,4 @@ def request_openstaande_crediteuren_data(login, batches) -> pd.DataFrame:
         df = modules.read_module(login, batch, "200")
         data = pd.concat([data, df], axis=0, ignore_index=True, sort=False)
 
-    return databatch
+    return data

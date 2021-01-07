@@ -255,11 +255,11 @@ def periods_from_start(run_params) -> list:
 
     debit = {
         "period": {"from": "2015/00", "to": "2019/55"},
-        "amount": {"from": 0, "to": 99999999999}
+        "amount": {"from": 0, "to": 99999999999},
     }
     credit = {
         "period": {"from": "2020/00", "to": f"{datetime.now().year}/55"},
-        "amount": {"from": -99999999999, "to": 0}
+        "amount": {"from": -99999999999, "to": 0},
     }
 
     periodlist.append(debit.copy())
@@ -293,11 +293,11 @@ def periods_from_start(run_params) -> list:
             for period in periods:
                 debit = {
                     "period": {"from": f"{year}/{period}", "to": f"{year}/{period}"},
-                    "amount": {"from": 0, "to": 99999999999}
+                    "amount": {"from": 0, "to": 99999999999},
                 }
                 credit = {
                     "period": {"from": f"{year}/{period}", "to": f"{year}/{period}"},
-                    "amount": {"from": -99999999999, "to": 0}
+                    "amount": {"from": -99999999999, "to": 0},
                 }
 
                 periodlist.append(debit.copy())

@@ -230,30 +230,30 @@ def pull_data_twinfield(offices, run_params) -> None:
         # refresh login (session id) for every run
         select_office(office, param=login)
         if run_params.module == "100":
-            periodes = functions.periods_from_start(run_params)
-            batch = request_openstaande_debiteuren_data(login, periodes)
+            batches = functions.periods_from_start(run_params)
+            batch = request_openstaande_debiteuren_data(login, batches)
         elif run_params.module == "200":
-            periodes = functions.periods_from_start(run_params)
-            batch = request_openstaande_crediteuren_data(login, periodes)
+            batches = functions.periods_from_start(run_params)
+            batch = request_openstaande_crediteuren_data(login, batches)
         elif run_params.module == "040_1":
-            periodes = functions.period_groups(window="year")
-            batch = request_consolidatie_data(login, periodes, run_params.jaar)
+            batches = functions.period_groups(window="year")
+            batch = request_consolidatie_data(login, batches, run_params.jaar)
         elif run_params.module == "030_1":
-            periodes = functions.period_groups(window="month")
-            batch = request_transaction_data(login, periodes, run_params.jaar)
+            batches = functions.period_groups(window="month")
+            batch = request_transaction_data(login, batches, run_params.jaar)
         else:
             continue
         batch = add_metadata(batch, office, rows)
         batch.to_pickle(os.path.join(run_params.pickledir, f"{office}_{run_params.module}.pkl"))
 
 
-def request_transaction_data(login, periodes, jaar) -> pd.DataFrame:
+def request_transaction_data(login, batches, jaar) -> pd.DataFrame:
     """
 
     Parameters
     ----------
     login:  login parameters (SessionParameters)
-    periodes: list of period offsets that will be iterated over in the requests.
+    batches: list of period offsets that will be iterated over in the requests.
 
     Returns dataset containing records for selected module
     -------
@@ -261,20 +261,20 @@ def request_transaction_data(login, periodes, jaar) -> pd.DataFrame:
     """
     data = pd.DataFrame()
 
-    for periode in periodes:
-        batch = modules.read_module(login, periode, "030_1", jaar)
-        batch = transform.format_030_1(batch)
-        data = pd.concat([data, batch], axis=0, ignore_index=True, sort=False)
+    for batch in batches:
+        df = modules.read_module(login, batch, "030_1", jaar)
+        df = transform.format_030_1(df)
+        data = pd.concat([data, df], axis=0, ignore_index=True, sort=False)
 
     return data
 
 
-def request_consolidatie_data(login, periodes, jaar) -> pd.DataFrame:
+def request_consolidatie_data(login, batches, jaar) -> pd.DataFrame:
     """
     Parameters
     ----------
     login:  login parameters (SessionParameters)
-    periodes: list of period offsets that will be iterated over in the requests.
+    batches: list of period offsets that will be iterated over in the requests.
 
     Returns dataset containing records for selected module
     -------
@@ -283,20 +283,20 @@ def request_consolidatie_data(login, periodes, jaar) -> pd.DataFrame:
 
     data = pd.DataFrame()
 
-    for periode in periodes:
-        batch = modules.read_module(login, periode, "040_1", jaar)
-        data = pd.concat([data, batch], axis=0, ignore_index=True, sort=False)
+    for batch in batches:
+        df = modules.read_module(login, batch, "040_1", jaar)
+        data = pd.concat([data, df], axis=0, ignore_index=True, sort=False)
 
     return data
 
 
-def request_openstaande_debiteuren_data(login, periodes) -> pd.DataFrame:
+def request_openstaande_debiteuren_data(login, batches) -> pd.DataFrame:
     """
 
     Parameters
     ----------
     login:  login parameters (SessionParameters)
-    periodes: list of period offsets that will be iterated over in the requests.
+    batches: list of period offsets that will be iterated over in the requests.
 
     Returns dataset containing records for selected module
     -------
@@ -304,20 +304,20 @@ def request_openstaande_debiteuren_data(login, periodes) -> pd.DataFrame:
     """
     data = pd.DataFrame()
 
-    for periode in periodes:
-        batch = modules.read_module(login, periode, "100")
-        data = pd.concat([data, batch], axis=0, ignore_index=True, sort=False)
+    for batch in batches:
+        df = modules.read_module(login, batch, "100")
+        data = pd.concat([data, df], axis=0, ignore_index=True, sort=False)
 
     return data
 
 
-def request_openstaande_crediteuren_data(login, periodes) -> pd.DataFrame:
+def request_openstaande_crediteuren_data(login, batches) -> pd.DataFrame:
     """
 
     Parameters
     ----------
     login:  login parameters (SessionParameters)
-    periodes: list of period offsets that will be iterated over in the requests.
+    batches: list of period offsets that will be iterated over in the requests.
 
     Returns dataset containing records for selected module
     -------
@@ -325,8 +325,8 @@ def request_openstaande_crediteuren_data(login, periodes) -> pd.DataFrame:
     """
     data = pd.DataFrame()
 
-    for periode in periodes:
-        batch = modules.read_module(login, periode, "200")
-        data = pd.concat([data, batch], axis=0, ignore_index=True, sort=False)
+    for batch in batches:
+        df = modules.read_module(login, batch, "200")
+        data = pd.concat([data, df], axis=0, ignore_index=True, sort=False)
 
     return data

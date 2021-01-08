@@ -34,7 +34,31 @@ def read_offices(param) -> pd.DataFrame:
     return data
 
 
-def read_module(param, periode, module, jaar=None) -> pd.DataFrame:
+def get_amount_filter(batch: dict) -> str:
+    """
+
+    Parameters
+    ----------
+    batch : current batch settings
+
+    Returns xml format of amount parameter, if amount parameter is set in batch settings.
+    -------
+
+    """
+
+    amount = batch.get("amount")
+    if amount:
+        amount_param = """<from>{}</from>
+            <to>{}</to>""".format(
+            amount.get("from"), amount.get("to")
+        )
+    else:
+        amount_param = ""
+
+    return amount_param
+
+
+def read_module(param, batch, module, jaar=None) -> pd.DataFrame:
     """
     Parameters
     ----------
@@ -42,8 +66,8 @@ def read_module(param, periode, module, jaar=None) -> pd.DataFrame:
         login class with twinfield credentials
     jaar
         jaar van scope
-    periode
-        scope of period in request.
+    batch
+        batch settings for requesting data
     module
         module nummer om uit te vragen
 
@@ -55,12 +79,15 @@ def read_module(param, periode, module, jaar=None) -> pd.DataFrame:
 
     start = datetime.now()
 
-    # logging.debug(f"start request periode van {periode['from']} t/m {periode['to']}")
+    periode = batch.get("period")
+    amount_filter = get_amount_filter(batch)
+
+    logging.debug(f"start request periode van {periode['from']} t/m {periode['to']}")
 
     url = f"https://{param.cluster}.twinfield.com/webservices/processxml.asmx?wsdl"
     if module in ["100", "200"]:
         body = templates.import_xml(os.path.join("xml_templates", f"template_{module}.xml")).format(
-            param.session_id, periode["from"], periode["to"]
+            param.session_id, periode["from"], periode["to"], amount_filter
         )
     elif module in ["030_1", "040_1"]:
         if not jaar:

@@ -251,16 +251,24 @@ def periods_from_start(run_params) -> list:
         list of periods that will be iterated over when sending the request.
     """
 
-    periodlist = [
-        {"from": "2015/00", "to": "2019/55"},
-        {"from": "2020/00", "to": f"{datetime.now().year}/55"},
-    ]
+    periodlist = []
+
+    debit = {
+        "period": {"from": "2015/00", "to": "2019/55"},
+        "amount": {"from": 0, "to": 99999999999},
+    }
+    credit = {
+        "period": {"from": "2020/00", "to": f"{datetime.now().year}/55"},
+        "amount": {"from": -99999999999, "to": 0},
+    }
+
+    periodlist.append(debit.copy())
+    periodlist.append(credit.copy())
 
     if run_params.rerun:
         periodlist = []
         min_years = 2015
-        years_to_add = datetime.now().year + 1 - min_years
-        years = [x + min_years for x in range(years_to_add)]
+        years = list(range(min_years, datetime.now().year + 1))
 
         periods = [
             "00",
@@ -282,8 +290,17 @@ def periods_from_start(run_params) -> list:
 
         for year in years:
             for period in periods:
-                period = {"from": f"{year}/{period}", "to": f"{year}/{period}"}
-                periodlist.append(period.copy())
+                debit = {
+                    "period": {"from": f"{year}/{period}", "to": f"{year}/{period}"},
+                    "amount": {"from": 0, "to": 99999999999},
+                }
+                credit = {
+                    "period": {"from": f"{year}/{period}", "to": f"{year}/{period}"},
+                    "amount": {"from": -99999999999, "to": 0},
+                }
+
+                periodlist.append(debit.copy())
+                periodlist.append(credit.copy())
 
     return periodlist
 
@@ -302,47 +319,47 @@ def period_groups(window="year") -> list:
         list of periods that will be iterated over when sending the request.
     """
     if window == "year":
-        period = [{"from": "00", "to": "55"}]
+        period = [{"period": {"from": "00", "to": "55"}}]
     elif window == "half-year":
-        period = [{"from": "00", "to": "06"}, {"from": "07", "to": "55"}]
+        period = [{"period": {"from": "00", "to": "06"}}, {"period": {"from": "07", "to": "55"}}]
     elif window == "quarter":
         period = [
-            {"from": "00", "to": "03"},
-            {"from": "04", "to": "06"},
-            {"from": "07", "to": "09"},
-            {"from": "10", "to": "55"},
+            {"period": {"from": "00", "to": "03"}},
+            {"period": {"from": "04", "to": "06"}},
+            {"period": {"from": "07", "to": "09"}},
+            {"period": {"from": "10", "to": "55"}},
         ]
     elif window == "two_months":
         period = [
-            {"from": "00", "to": "02"},
-            {"from": "03", "to": "04"},
-            {"from": "05", "to": "06"},
-            {"from": "07", "to": "08"},
-            {"from": "09", "to": "10"},
-            {"from": "11", "to": "12"},
-            {"from": "13", "to": "55"},
+            {"period": {"from": "00", "to": "02"}},
+            {"period": {"from": "03", "to": "04"}},
+            {"period": {"from": "05", "to": "06"}},
+            {"period": {"from": "07", "to": "08"}},
+            {"period": {"from": "09", "to": "10"}},
+            {"period": {"from": "11", "to": "12"}},
+            {"period": {"from": "13", "to": "55"}},
         ]
     elif window == "month":
         period = [
-            {"from": "00", "to": "00"},
-            {"from": "01", "to": "01"},
-            {"from": "02", "to": "02"},
-            {"from": "03", "to": "03"},
-            {"from": "04", "to": "04"},
-            {"from": "05", "to": "05"},
-            {"from": "06", "to": "06"},
-            {"from": "07", "to": "07"},
-            {"from": "08", "to": "08"},
-            {"from": "09", "to": "09"},
-            {"from": "10", "to": "10"},
-            {"from": "11", "to": "11"},
-            {"from": "12", "to": "12"},
-            {"from": "13", "to": "13"},
-            {"from": "55", "to": "55"},
+            {"period": {"from": "00", "to": "00"}},
+            {"period": {"from": "01", "to": "01"}},
+            {"period": {"from": "02", "to": "02"}},
+            {"period": {"from": "03", "to": "03"}},
+            {"period": {"from": "04", "to": "04"}},
+            {"period": {"from": "05", "to": "05"}},
+            {"period": {"from": "06", "to": "06"}},
+            {"period": {"from": "07", "to": "07"}},
+            {"period": {"from": "08", "to": "08"}},
+            {"period": {"from": "09", "to": "09"}},
+            {"period": {"from": "10", "to": "10"}},
+            {"period": {"from": "11", "to": "11"}},
+            {"period": {"from": "12", "to": "12"}},
+            {"period": {"from": "13", "to": "13"}},
+            {"period": {"from": "55", "to": "55"}},
         ]
     else:
         logging.info("geen periode kunnen toewijzen")
-        period = [{"from": "00", "to": "55"}]
+        period = [{"period": {"from": "00", "to": "55"}}]
 
     return period
 

@@ -268,7 +268,7 @@ def periods_from_start(run_params) -> list:
     if run_params.rerun:
         periodlist = []
         min_years = 2015
-        years = list(range(min_years, datetime.now().year+1))
+        years = list(range(min_years, datetime.now().year + 1))
 
         periods = [
             "00",

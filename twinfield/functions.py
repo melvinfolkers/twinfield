@@ -418,30 +418,6 @@ def create_dir(destination: str) -> str:
     return destination
 
 
-def remove_and_create_dir(destination: str) -> str:
-    """
-    Parameters
-    ----------
-    destination: str
-        The file path that needs to be created
-
-    Returns
-    -------
-    destination: str
-        the original file_path
-    """
-
-    if os.path.exists(destination):
-        logging.warning(f"tmp folder exists, removing {destination}")
-        shutil.rmtree(destination)
-        os.makedirs(destination)
-    else:
-        logging.warning(f"tmp folder does not exists, creating {destination}")
-        os.makedirs(destination)
-
-    return destination
-
-
 def stop_time(start) -> str:
     """
     Parameters

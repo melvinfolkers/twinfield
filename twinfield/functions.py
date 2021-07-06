@@ -3,7 +3,6 @@ import os
 import tempfile
 import xml.etree.ElementTree as ET
 from datetime import datetime
-import shutil
 import pandas as pd
 import requests
 from .credentials import twinfield_login

@@ -1,8 +1,8 @@
 import logging
 import os
+import tempfile
 import xml.etree.ElementTree as ET
 from datetime import datetime
-import shutil
 import pandas as pd
 import requests
 from .credentials import twinfield_login
@@ -388,10 +388,10 @@ class RunParameters:
         self.module = module
         self.module_names = MODULES
         self.offices = offices
-        self.datadir = "/tmp/twinfield"
-        self.logdir = create_dir(destination=os.path.join(self.datadir, "data", "log"))
-        self.pickledir = create_dir(destination=os.path.join(self.datadir, "data", "pickles"))
-        self.stagingdir = create_dir(destination=os.path.join(self.datadir, "data", "staging"))
+        self.datadir = tempfile.TemporaryDirectory(suffix="_twinfield")
+        self.logdir = create_dir(destination=os.path.join(self.datadir.name, "data", "log"))
+        self.pickledir = create_dir(destination=os.path.join(self.datadir.name, "data", "pickles"))
+        self.stagingdir = create_dir(destination=os.path.join(self.datadir.name, "data", "staging"))
         self.starttijd = datetime.now()
         self.start = timeit.default_timer()
 
@@ -410,30 +410,6 @@ def create_dir(destination: str) -> str:
     """
     if os.path.exists(destination):
         pass
-    else:
-        logging.warning(f"tmp folder does not exists, creating {destination}")
-        os.makedirs(destination)
-
-    return destination
-
-
-def remove_and_create_dir(destination: str) -> str:
-    """
-    Parameters
-    ----------
-    destination: str
-        The file path that needs to be created
-
-    Returns
-    -------
-    destination: str
-        the original file_path
-    """
-
-    if os.path.exists(destination):
-        logging.warning(f"tmp folder exists, removing {destination}")
-        shutil.rmtree(destination)
-        os.makedirs(destination)
     else:
         logging.warning(f"tmp folder does not exists, creating {destination}")
         os.makedirs(destination)

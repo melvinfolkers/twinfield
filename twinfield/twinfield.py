@@ -5,7 +5,7 @@ import pandas as pd
 import requests
 
 from twinfield.pull_data import import_all
-from twinfield.functions import RunParameters, import_files, select_office, remove_and_create_dir
+from twinfield.functions import RunParameters, import_files, select_office
 from twinfield.templates import import_xml
 from twinfield.credentials import SessionParameters
 from twinfield.responses import parse_response
@@ -56,7 +56,7 @@ def query(
     df = import_files(run_params, run_params.module)
     # clean up directory where files are stored
     if clean:
-        remove_and_create_dir(run_params.pickledir)
+        run_params.datadir.cleanup()
 
     return df
 

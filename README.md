@@ -1,9 +1,16 @@
 <p align="center"><img alt="logo" src="https://www.zypp.io/static/assets/img/logos/zypp/white/500px.png" width="200"></p>
 
-# Twinfield
+[![Downloads](https://pepy.tech/badge/twinfield)](https://pepy.tech/project/keyvault)
+![PyPI](https://img.shields.io/pypi/v/twinfield)
+[![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+
+Twinfield
+====
 
 ---
-> Python package for reading and insert data in Twinfield using the official Twinfield API.
+> Python package for reading Twinfield data using the Twinfield API.
 
 ## Installation
 
@@ -12,40 +19,34 @@
 pip install twinfield
 ```
 
-## Scoping
-
----
-This package currently supports the import of the following modules:
-
-<b>Browse codes</b>
-1. 030_1 (Transactions)
-2. 040_1 (Annual report)
-3. 100 (Customers)
-4. 200 (Suppliers) 
-
-<b>Dimensions</b>
-1. dimensions_kpl (kostenplaatsen)
-2. dimensions_deb (debiteuren stamgegevens)
-3. dimensions_crd (crediteuren stamgegevens)
-
-More modules will be added in the near future.
-
 ## Usage
+```python
+from twinfield import TwinfieldApi
 
----
-`from twinfield import twinfield` 
-<br><br>
-`df = twinfield.query("040_1", jaar=2020)`
+# logging in
+tw = TwinfieldApi()
 
-## Environment variables
+# sending browse request.
+df = tw.query_by_year(code="030_1", year=2021)
 
----
-Some credentials are needed for connecting with the twinfield API. Add the following credentials to your environment variables.<br> 
+# sending dimensions request
+df = tw.dimensions(dim_type="CRD")
 ```
-TW_USER_LS=""
-TW_PW_LS=""
-TW_ORG_LS=""
+## required environment variables
+Twinfield works with OpenID Connect. OpenID Connect is a simple identity layer on top of the OAuth 2.0 protocol.
+In order to authenticate with the twinfield server, the following environment variables must be set. Please see the
+[Twinfield webservice documentation](https://accounting.twinfield.com/webservices/documentation/#/ApiReference/Authentication/OpenIdConnect)
+on the walktrough how to obtain the refresh token and set the app registration.
+
+```shell
+"TWINFIELD_ORGANISATION"
+"TWINFIELD_CLIENT_ID"
+"TWINFIELD_CLIENT_SECRET"
+"TWINFIELD_REFRESH_TOKEN"
 ```
+
+
+
 How to set environment variables?
 - [Windows](https://stackoverflow.com/questions/5898131/set-a-persistent-environment-variable-from-cmd-exe)
 - [macOS](https://apple.stackexchange.com/questions/106778/how-do-i-set-environment-variables-on-os-x)

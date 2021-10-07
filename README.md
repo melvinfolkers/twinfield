@@ -20,6 +20,8 @@ pip install twinfield
 ```
 
 ## Usage
+for an extensive list of examples, please checkout the [twinfield test suite](twinfield/tests/test_twinfield.py).
+
 ```python
 from twinfield import TwinfieldApi
 

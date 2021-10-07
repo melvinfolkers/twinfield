@@ -3,8 +3,8 @@
 [![Downloads](https://pepy.tech/badge/twinfield)](https://pepy.tech/project/keyvault)
 [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-![PyPI](https://img.shields.io/pypi/v/twinfield)
-[![Latest release](https://badgen.net/github/release/zypp-io/twinfield)](https://github.com/Naereen/Strapdown.js/releases)
+[![PyPI](https://img.shields.io/pypi/v/twinfield)](https://pypi.org/project/twinfield/)
+[![Latest release](https://badgen.net/github/release/zypp-io/twinfield)](https://github.com/zypp-io/twinfield/releases)
 
 Twinfield
 ====

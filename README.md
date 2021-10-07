@@ -1,10 +1,10 @@
 <p align="center"><img alt="logo" src="https://www.zypp.io/static/assets/img/logos/zypp/white/500px.png" width="200"></p>
 
 [![Downloads](https://pepy.tech/badge/twinfield)](https://pepy.tech/project/keyvault)
-![PyPI](https://img.shields.io/pypi/v/twinfield)
 [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-
+![PyPI](https://img.shields.io/pypi/v/twinfield)
+[![Latest release](https://badgen.net/github/release/zypp-io/twinfield)](https://github.com/Naereen/Strapdown.js/releases)
 
 Twinfield
 ====

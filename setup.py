@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -8,7 +8,7 @@ with open("requirements.txt") as fp:
 
 setup(
     name="twinfield",
-    version="1.0.9",
+    version="2.0.0",
     author="Melvin Folkers, Erfan Nariman",
     author_email="melvin@zypp.io, erfan@zypp.io",
     description="Read and insert data using the Twinfield API.",

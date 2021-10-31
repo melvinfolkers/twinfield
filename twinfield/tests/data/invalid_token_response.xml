@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Example of a access denied message, for test purposes.-->
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <soap:Body>
+        <soap:Fault>
+            <faultcode>soap:Client</faultcode>
+            <faultstring>Access denied. Token invalid.</faultstring>
+            <faultactor>https://api.accounting2.twinfield.com/webservices/processxml.asmx?wsdl</faultactor>
+            <detail>
+                <message>Access denied. Token invalid.</message>
+                <code>354</code>
+                <source>ProcessXmlDocument</source>
+            </detail>
+        </soap:Fault>
+    </soap:Body>
+</soap:Envelope>

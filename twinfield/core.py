@@ -1,4 +1,5 @@
 import logging
+from xml.etree import ElementTree as Et
 
 import requests
 
@@ -48,10 +49,38 @@ class Base(TwinfieldLogin):
                 headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
                 data=body,
             )
-            if not response:
+            invalid_token = self.check_invalid_token(response)
+            if invalid_token:
+                logging.info(f"Token expired, requesting new token. Retry number: {retry}")
+                self.access_token = self.refresh_access_token()
+                retry += 1
+            elif not response:
                 logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
                 retry += 1
             else:
                 success = True
 
         return response
+
+    def check_invalid_token(self, response: requests.Response) -> bool:
+        """
+        Checks if the response message is about the token being expired.
+
+        Parameters
+        ----------
+        response: requests.Response
+            response from twinfield server
+
+        Returns
+        -------
+        True or False, depending on wether the token is expired.
+
+        """
+        fault_string = Et.fromstring(response.text).find("env:Body/env:Fault/faultstring", self.namespaces)
+
+        if fault_string:
+            # if the there is a faultcode, check if its about the token being expired.
+            return fault_string.text == "Access denied. Token invalid."
+        else:
+            # if not, return False.
+            return False

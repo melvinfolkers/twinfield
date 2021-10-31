@@ -66,7 +66,7 @@ class TwinfieldApi(Base):
         # construct the request in the Browse class
         browse = Browse(access_token=self.access_token, code=code, fields=fields, filters=filters, company=company)
         # send the request.
-        response = browse.send_request(body=browse.body())
+        response = browse.send_request(browse=browse)
         df = browse.parse_response(response)
 
         return df

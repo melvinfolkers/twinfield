@@ -8,7 +8,7 @@ with open("requirements.txt") as fp:
 
 setup(
     name="twinfield",
-    version="2.0.0-rc.1",
+    version="2.0.0-rc.2",
     author="Melvin Folkers, Erfan Nariman",
     author_email="melvin@zypp.io, erfan@zypp.io",
     description="Read and insert data using the Twinfield API.",

@@ -2,7 +2,6 @@
 *.fsys
 *.idea
 *.DS_Store
-*data
 /venv
 /data/_old
 /yml*
@@ -476,5 +475,3 @@ __pycache__/
 # OpenCover UI analysis results
 OpenCover/
 junit/
-
-

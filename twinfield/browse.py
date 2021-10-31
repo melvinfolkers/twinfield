@@ -1,3 +1,4 @@
+import logging
 from xml.etree import ElementTree as Et
 
 import pandas as pd
@@ -5,6 +6,7 @@ import pandas as pd
 from twinfield.core import Base
 from twinfield.exceptions import TwinfieldFaultCode
 from twinfield.messages import COLUMN, COLUMN_FILTER, PROCESS_XML
+from twinfield.metadata import Metadata
 
 
 class Browse(Base):
@@ -33,6 +35,9 @@ class Browse(Base):
         self.filters = filters
         self.access_token = access_token
         self.company = company
+        self.metadata = Metadata(
+            access_token=self.access_token, code=self.browsecode, company=self.company
+        ).send_request(self.cluster)
 
     def set_fields(self) -> str:
         """
@@ -46,7 +51,7 @@ class Browse(Base):
         column_list = []
 
         for field in self.fields:
-            xml = COLUMN.format(field)
+            xml = COLUMN.format(field, self.metadata.loc[field].visible)
             column_list.append(xml)
 
         columns = "".join(column_list)
@@ -70,8 +75,13 @@ class Browse(Base):
             # 1. filter name: between or equal
             # 2. filter dict: dict with from, to or only from
             filter_name, filter_dict = filter_name_val
-
-            xml = COLUMN_FILTER.format(filter_column, filter_name, filter_dict.get("from"), filter_dict.get("to"))
+            xml = COLUMN_FILTER.format(
+                filter_column,
+                filter_name,
+                filter_dict.get("from"),
+                filter_dict.get("to"),
+                self.metadata.loc[filter_column].visible,
+            )
             filter_list.append(xml)
 
         columns = "".join(filter_list)
@@ -126,6 +136,10 @@ class Browse(Base):
         body = root.find("env:Body", self.namespaces)
 
         if body.find("env:Fault", self.namespaces):
+
+            # TODO: toegevoegd voor debugging.
+            fault = Et.tostring(body)
+            logging.info(fault)
             raise TwinfieldFaultCode()
 
         data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", self.namespaces)

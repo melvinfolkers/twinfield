@@ -85,7 +85,7 @@ def test_module_200():
 
 
 def test_login_expired():
-    error_xml = Et.parse(os.path.join("data", "invalid_token_response.xml"))
+    error_xml = Et.parse(os.path.join("twinfield", "tests", "data", "invalid_token_response.xml"))
     fault_string = error_xml.find("env:Body/env:Fault/faultstring", tw.namespaces).text
     # refresh the access token if  the token is invalid.
     tw.access_token = tw.refresh_access_token()

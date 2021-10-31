@@ -22,12 +22,12 @@ class Base(TwinfieldLogin):
 
         self.namespaces_txt = {k: "{" + v + "}" for k, v in self.namespaces.items()}
 
-    def send_request(self, body) -> requests.Response:
+    def send_request(self, browse) -> requests.Response:
         """
         Parameters
         ----------
-        body: str
-            body for the processxml request.
+        browse
+            Browse class for the xml request.
 
         Returns
         -------
@@ -47,7 +47,7 @@ class Base(TwinfieldLogin):
             response = requests.post(
                 url=f"{self.cluster}/webservices/processxml.asmx?wsdl",
                 headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
-                data=body,
+                data=browse.body(),
             )
             invalid_token = self.check_invalid_token(response)
             if invalid_token:

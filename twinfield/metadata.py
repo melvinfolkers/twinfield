@@ -110,7 +110,6 @@ class Metadata(Base):
         df: pd.DataFrame
             dataframe containing the records.
         """
-        body = self.body()
 
         success = False
         max_retries = 5
@@ -121,6 +120,8 @@ class Metadata(Base):
             if retry > max_retries:
                 logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
                 break
+
+            body = self.body()
             response = requests.post(
                 url=f"{cluster}/webservices/processxml.asmx?wsdl",
                 headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},

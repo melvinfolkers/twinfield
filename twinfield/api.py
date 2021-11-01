@@ -41,7 +41,7 @@ class TwinfieldApi(Base):
             selects the office.
         """
 
-        offices = Offices(access_token=self.access_token, cluster=self.cluster)
+        offices = Offices(access_token=self.refresh_access_token(), cluster=self.cluster)
         offices.select(officecode=officecode)
 
     @staticmethod

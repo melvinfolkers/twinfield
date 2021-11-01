@@ -49,13 +49,9 @@ class Base(TwinfieldLogin):
                 headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
                 data=browse.body(),
             )
-            invalid_token = self.check_invalid_token(response)
-            if invalid_token:
-                logging.info(f"Token expired, requesting new token. Retry number: {retry}")
-                self.access_token = self.refresh_access_token()
-                retry += 1
-            elif not response:
+            if not response:
                 logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
+                self.access_token = self.refresh_access_token()
                 retry += 1
             else:
                 success = True

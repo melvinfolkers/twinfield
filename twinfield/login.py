@@ -16,7 +16,6 @@ class TwinfieldLogin:
         self.check_environment_variables()
 
         self.header = self.create_authorization_header()
-        self.access_token = self.refresh_access_token()
         self.cluster = self.determine_cluster()
 
     def check_environment_variables(self):
@@ -49,7 +48,8 @@ class TwinfieldLogin:
         return access_token
 
     def determine_cluster(self):
-        url = f"https://login.twinfield.com/auth/authentication/connect/accesstokenvalidation?token={self.access_token}"
+        access_token = self.refresh_access_token()
+        url = f"https://login.twinfield.com/auth/authentication/connect/accesstokenvalidation?token={access_token}"
 
         response = requests.get(url=url, headers=self.header)
         json_data = json.loads(response.text)

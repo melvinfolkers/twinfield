@@ -9,14 +9,12 @@ from twinfield.messages import COLUMN, COLUMN_FILTER, PROCESS_XML
 
 
 class Browse(Base):
-    def __init__(self, access_token: str, code: str, fields: list, filters: dict, company: str, metadata: pd.DataFrame):
+    def __init__(self, code: str, fields: list, filters: dict, company: str, metadata: pd.DataFrame):
         """
         This class is for building the Browse SOAP requests that will be send to the Twinfield API.
 
         Parameters
         ----------
-        access_token: str
-            access_token obtained from TwinfieldLogin class.
         code: str
             specific browsecode for request (e.g. 100)
         fields: list
@@ -34,7 +32,7 @@ class Browse(Base):
         self.browsecode = code
         self.fields = [x for x in fields if x not in filters.keys()]
         self.filters = filters
-        self.access_token = access_token
+        self.access_token = self.refresh_access_token()
         self.company = company
         self.metadata = metadata
 

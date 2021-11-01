@@ -23,7 +23,7 @@ class TwinfieldApi(Base):
         self.offices = self.list_offices().index.tolist()
 
     def list_offices(self) -> pd.DataFrame:
-        offices = Offices(access_token=self.access_token, cluster=self.cluster)
+        offices = Offices(access_token=self.refresh_access_token(), cluster=self.cluster)
         offices_df = offices.list_offices()
 
         return offices_df
@@ -44,7 +44,8 @@ class TwinfieldApi(Base):
         offices = Offices(access_token=self.access_token, cluster=self.cluster)
         offices.select(officecode=officecode)
 
-    def browse(self, code: str, fields: list, filters: dict, company: str, metadata: pd.DataFrame) -> pd.DataFrame:
+    @staticmethod
+    def browse(code: str, fields: list, filters: dict, company: str, metadata: pd.DataFrame) -> pd.DataFrame:
         """
 
         Parameters
@@ -67,7 +68,6 @@ class TwinfieldApi(Base):
 
         # construct the request in the Browse class
         browse = Browse(
-            access_token=self.access_token,
             code=code,
             fields=fields,
             filters=filters,
@@ -99,7 +99,7 @@ class TwinfieldApi(Base):
             adress_df_list = []
         for company in tqdm(self.offices, desc=f"importing dimensions {dim_type}..."):
             # construct the request in the Browse class
-            dim = Dimensions(access_token=self.access_token, dim_type=dim_type, company=company)
+            dim = Dimensions(dim_type=dim_type, company=company)
             # send the request.
             response = dim.send_request(browse=dim)
             df = dim.parse_response_dimensions(response)
@@ -132,7 +132,7 @@ class TwinfieldApi(Base):
 
         for company in tqdm(self.offices, desc=f"importing dimensions {dim_type}..."):
             # construct the request in the Browse class
-            dim = Dimensions(access_token=self.access_token, dim_type=dim_type, company=company)
+            dim = Dimensions(dim_type=dim_type, company=company)
             # send the request.
             response = dim.send_request(browse=dim)
             df = dim.parse_response_dimension_addresses(response)
@@ -144,7 +144,7 @@ class TwinfieldApi(Base):
         return df
 
     def metadata(self, code: str) -> pd.DataFrame:
-        metadata = Metadata(access_token=self.access_token, code=code, company=self.offices[0])
+        metadata = Metadata(code=code, company=self.offices[0])
         df = metadata.send_request(cluster=self.cluster)
 
         return df

@@ -10,14 +10,12 @@ from twinfield.messages import METADATA_XML
 
 
 class Metadata(Base):
-    def __init__(self, access_token: str, code: str, company: str):
+    def __init__(self, code: str, company: str):
         """
         This class is for building the Browse SOAP requests for getting metadata of browse codes
 
         Parameters
         ----------
-        access_token: str
-            access_token obtained from TwinfieldLogin class.
         code: str
             specific browsecode of which we want to get the metadata
         company: str
@@ -25,8 +23,8 @@ class Metadata(Base):
         """
         super().__init__()
         self.browsecode = code
-        self.access_token = access_token
         self.company = company
+        self.access_token = self.refresh_access_token()
 
     def create_metadata_query(self) -> str:
         """

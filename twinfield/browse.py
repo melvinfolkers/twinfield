@@ -6,11 +6,10 @@ import pandas as pd
 from twinfield.core import Base
 from twinfield.exceptions import TwinfieldFaultCode
 from twinfield.messages import COLUMN, COLUMN_FILTER, PROCESS_XML
-from twinfield.metadata import Metadata
 
 
 class Browse(Base):
-    def __init__(self, access_token: str, code: str, fields: list, filters: dict, company: str):
+    def __init__(self, access_token: str, code: str, fields: list, filters: dict, company: str, metadata: pd.DataFrame):
         """
         This class is for building the Browse SOAP requests that will be send to the Twinfield API.
 
@@ -26,6 +25,8 @@ class Browse(Base):
             dictionary containing specific fields that need to be filtered.
         company: str
             company code (office) for request
+        metadata: pd.DataFrame
+            information about fields (visiblity etc.)
         """
 
         super().__init__()
@@ -35,9 +36,7 @@ class Browse(Base):
         self.filters = filters
         self.access_token = access_token
         self.company = company
-        self.metadata = Metadata(
-            access_token=self.access_token, code=self.browsecode, company=self.company
-        ).send_request(self.cluster)
+        self.metadata = metadata
 
     def set_fields(self) -> str:
         """
@@ -158,5 +157,6 @@ class Browse(Base):
             ttl_records.append(info)
 
         df = pd.DataFrame(ttl_records)
+        df.columns = [x.replace("fin.trs.", "") for x in df.columns]
 
         return df

@@ -19,18 +19,18 @@ PROCESS_XML = """<?xml version="1.0" encoding="utf-16"?>
           </soap:Body>
         </soap:Envelope>"""
 
-COLUMN = """<column>
+COLUMN = """<column xmlns="">
        <field>{}</field>
-       <visible>true</visible>
+       <visible>{}</visible>
    </column>
    """
 
-COLUMN_FILTER = """<column>
+COLUMN_FILTER = """<column xmlns="">
        <field>{}</field>
        <operator>{}</operator>
        <from>{}</from>
        <to>{}</to>
-       <visible>true</visible>
+       <visible>{}</visible>
    </column>
    """
 

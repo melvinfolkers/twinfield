@@ -1,4 +1,5 @@
 import logging
+from xml.etree import ElementTree as Et
 
 import requests
 
@@ -21,12 +22,12 @@ class Base(TwinfieldLogin):
 
         self.namespaces_txt = {k: "{" + v + "}" for k, v in self.namespaces.items()}
 
-    def send_request(self, body) -> requests.Response:
+    def send_request(self, browse) -> requests.Response:
         """
         Parameters
         ----------
-        body: str
-            body for the processxml request.
+        browse
+            Browse class for the xml request.
 
         Returns
         -------
@@ -46,12 +47,36 @@ class Base(TwinfieldLogin):
             response = requests.post(
                 url=f"{self.cluster}/webservices/processxml.asmx?wsdl",
                 headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
-                data=body,
+                data=browse.body(),
             )
             if not response:
                 logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
+                self.access_token = self.refresh_access_token()
                 retry += 1
             else:
                 success = True
 
         return response
+
+    def check_invalid_token(self, response: requests.Response) -> bool:
+        """
+        Checks if the response message is about the token being expired.
+
+        Parameters
+        ----------
+        response: requests.Response
+            response from twinfield server
+
+        Returns
+        -------
+        True or False, depending on wether the token is expired.
+
+        """
+        fault_string = Et.fromstring(response.text).find("env:Body/env:Fault/faultstring", self.namespaces)
+
+        if fault_string:
+            # if the there is a faultcode, check if its about the token being expired.
+            return fault_string.text == "Access denied. Token invalid."
+        else:
+            # if not, return False.
+            return False

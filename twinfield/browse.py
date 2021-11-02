@@ -1,3 +1,4 @@
+import logging
 from xml.etree import ElementTree as Et
 
 import pandas as pd
@@ -8,14 +9,12 @@ from twinfield.messages import COLUMN, COLUMN_FILTER, PROCESS_XML
 
 
 class Browse(Base):
-    def __init__(self, access_token: str, code: str, fields: list, filters: dict, company: str):
+    def __init__(self, code: str, fields: list, filters: dict, company: str, metadata: pd.DataFrame):
         """
         This class is for building the Browse SOAP requests that will be send to the Twinfield API.
 
         Parameters
         ----------
-        access_token: str
-            access_token obtained from TwinfieldLogin class.
         code: str
             specific browsecode for request (e.g. 100)
         fields: list
@@ -24,6 +23,8 @@ class Browse(Base):
             dictionary containing specific fields that need to be filtered.
         company: str
             company code (office) for request
+        metadata: pd.DataFrame
+            information about fields (visiblity etc.)
         """
 
         super().__init__()
@@ -31,8 +32,9 @@ class Browse(Base):
         self.browsecode = code
         self.fields = [x for x in fields if x not in filters.keys()]
         self.filters = filters
-        self.access_token = access_token
+        self.access_token = self.refresh_access_token()
         self.company = company
+        self.metadata = metadata
 
     def set_fields(self) -> str:
         """
@@ -46,7 +48,7 @@ class Browse(Base):
         column_list = []
 
         for field in self.fields:
-            xml = COLUMN.format(field)
+            xml = COLUMN.format(field, self.metadata.loc[field].visible)
             column_list.append(xml)
 
         columns = "".join(column_list)
@@ -70,8 +72,13 @@ class Browse(Base):
             # 1. filter name: between or equal
             # 2. filter dict: dict with from, to or only from
             filter_name, filter_dict = filter_name_val
-
-            xml = COLUMN_FILTER.format(filter_column, filter_name, filter_dict.get("from"), filter_dict.get("to"))
+            xml = COLUMN_FILTER.format(
+                filter_column,
+                filter_name,
+                filter_dict.get("from"),
+                filter_dict.get("to"),
+                self.metadata.loc[filter_column].visible,
+            )
             filter_list.append(xml)
 
         columns = "".join(filter_list)
@@ -126,6 +133,10 @@ class Browse(Base):
         body = root.find("env:Body", self.namespaces)
 
         if body.find("env:Fault", self.namespaces):
+
+            # TODO: toegevoegd voor debugging.
+            fault = Et.tostring(body)
+            logging.info(fault)
             raise TwinfieldFaultCode()
 
         data = body.find("tw:ProcessXmlDocumentResponse/tw:ProcessXmlDocumentResult", self.namespaces)
@@ -144,5 +155,6 @@ class Browse(Base):
             ttl_records.append(info)
 
         df = pd.DataFrame(ttl_records)
+        df.columns = [x.replace("fin.trs.", "") for x in df.columns]
 
         return df

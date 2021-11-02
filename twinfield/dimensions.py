@@ -8,20 +8,18 @@ from twinfield.messages import PROCESS_XML
 
 
 class Dimensions(Base):
-    def __init__(self, access_token: str, company: str, dim_type: str):
+    def __init__(self, company: str, dim_type: str):
         """
         This class is for building the Browse SOAP requests for getting metadata of browse codes
 
         Parameters
         ----------
-        access_token: str
-            access_token obtained from TwinfieldLogin class.
         company: str
             specific the office code of the request
         """
         super().__init__()
 
-        self.access_token = access_token
+        self.access_token = self.refresh_access_token()
         self.company = company
         self.dimension_type = dim_type
 

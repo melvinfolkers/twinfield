@@ -1,3 +1,4 @@
+import logging
 from xml.etree import ElementTree as Et
 
 import pandas as pd
@@ -9,14 +10,12 @@ from twinfield.messages import METADATA_XML
 
 
 class Metadata(Base):
-    def __init__(self, access_token: str, code: str, company: str):
+    def __init__(self, code: str, company: str):
         """
         This class is for building the Browse SOAP requests for getting metadata of browse codes
 
         Parameters
         ----------
-        access_token: str
-            access_token obtained from TwinfieldLogin class.
         code: str
             specific browsecode of which we want to get the metadata
         company: str
@@ -24,8 +23,8 @@ class Metadata(Base):
         """
         super().__init__()
         self.browsecode = code
-        self.access_token = access_token
         self.company = company
+        self.access_token = self.refresh_access_token()
 
     def create_metadata_query(self) -> str:
         """
@@ -75,6 +74,10 @@ class Metadata(Base):
         body = root.find("env:Body", self.namespaces)
 
         if body.find("env:Fault", self.namespaces):
+            # TODO: toegevoegd voor debugging.
+            fault = Et.tostring(body)
+            print(fault)
+
             raise ServerError()
 
         data = body.find("tw:ProcessXmlStringResponse/tw:ProcessXmlStringResult", self.namespaces)
@@ -105,12 +108,29 @@ class Metadata(Base):
         df: pd.DataFrame
             dataframe containing the records.
         """
-        body = self.body()
-        response = requests.post(
-            url=f"{cluster}/webservices/processxml.asmx?wsdl",
-            headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
-            data=body,
-        )
+
+        success = False
+        max_retries = 5
+        retry = 1
+        sec_wait = 10
+        response = None
+        while not success:
+            if retry > max_retries:
+                logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
+                break
+
+            body = self.body()
+            response = requests.post(
+                url=f"{cluster}/webservices/processxml.asmx?wsdl",
+                headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
+                data=body,
+            )
+            if not response:
+                self.access_token = self.refresh_access_token()
+                logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
+                retry += 1
+            else:
+                success = True
 
         metadata = self.parse_metadata_response(response)
         metadata.loc[metadata.label.isna(), "label"] = metadata.field

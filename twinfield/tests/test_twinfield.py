@@ -65,7 +65,7 @@ def test_module_030_1():
 def test_module_040_1():
     module = "040_1"
     filters = {
-        "fin.trs.head.regime": ["equal", {"from": "generic", "to": "generic"}],
+        "fin.trs.head.balanceregimeprompt": ["equal", {"from": "generic"}],
     }
 
     df = tw.query_by_year(code=module, year=2021, filters=filters)
@@ -97,15 +97,15 @@ def test_login_expired():
 
 if __name__ == "__main__":
     tw.offices = ["061018084000"]
-    # test_get_metadata()
-    # test_module_100()
-    # test_module_200()
-    # test_module_030_1()
+    test_get_metadata()
+    test_module_100()
+    test_module_200()
+    test_module_030_1()
     test_module_040_1()
-    # test_module_with_filter()
-    # test_dimensions_deb()
-    # test_dimensions_deb_with_addresses()
-    # test_dimensions_cred()
-    # test_dimensions_cred_with_addresses()
-    # test_dimensions_kpl()
-    # test_login_expired()
+    test_module_with_filter()
+    test_dimensions_deb()
+    test_dimensions_deb_with_addresses()
+    test_dimensions_cred()
+    test_dimensions_cred_with_addresses()
+    test_dimensions_kpl()
+    test_login_expired()

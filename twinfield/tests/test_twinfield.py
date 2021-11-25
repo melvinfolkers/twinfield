@@ -8,28 +8,28 @@ from twinfield.tests import tw
 def test_get_metadata():
     module = "040_1"
     df = tw.metadata(code=module)
-    logging.info(f"imported {df.shape[0]} records for metadata of module {module}")
+    logging.info(f"imported {df.shape} records and {df.shape[1]} columns for module {module}")
 
 
 def test_module_100():
     module = "100"
     df = tw.query_by_year(code=module, year=2021)
-    logging.info(f"imported {df.shape[0]} records for module {module}")
+    logging.info(f"imported {df.shape} records and {df.shape[1]} columns for module {module}")
 
 
 def test_dimensions_deb():
     dim_type = "DEB"
     df = tw.dimensions(dim_type=dim_type)
 
-    logging.info(f"imported {df.shape[0]} records for module {dim_type}")
+    logging.info(f"imported {df.shape} records and {df.shape[1]} columns for module {dim_type}")
 
 
 def test_dimensions_deb_with_addresses():
     dim_type = "DEB"
     df, df_address = tw.dimensions(dim_type=dim_type, addresses=True)
 
-    logging.info(f"imported {df.shape[0]} records for module {dim_type}")
-    logging.info(f"imported {df_address.shape[0]} addresses  module {dim_type}")
+    logging.info(f"imported {df.shape} records and {df.shape[1]} columns for module {dim_type}")
+    logging.info(f"imported {df_address.shape} records and {df_address.shape[1]} columns for module {dim_type}_address")
 
 
 def test_dimensions_cred():
@@ -37,15 +37,15 @@ def test_dimensions_cred():
     tw.offices = ["1074700"]
     df = tw.dimensions(dim_type=dim_type)
 
-    logging.info(f"imported {df.shape[0]} records for module {dim_type}")
+    logging.info(f"imported {df.shape} records and {df.shape[1]} columns for module {dim_type}")
 
 
 def test_dimensions_cred_with_addresses():
     dim_type = "CRD"
     df, df_address = tw.dimensions(dim_type=dim_type, addresses=True)
 
-    logging.info(f"imported {df.shape[0]} records for module {dim_type}")
-    logging.info(f"imported {df_address.shape[0]} addresses  module {dim_type}")
+    logging.info(f"imported {df.shape} records and {df.shape[1]} columns for module {dim_type}")
+    logging.info(f"imported {df_address.shape} records and {df_address.shape[1]} columns for module {dim_type}_address")
 
 
 def test_dimensions_kpl():
@@ -53,13 +53,13 @@ def test_dimensions_kpl():
     tw.offices = ["1074700"]
     df = tw.dimensions(dim_type=dim_type)
 
-    logging.info(f"imported {df.shape[0]} records for module {dim_type}")
+    logging.info(f"imported {df.shape} records and {df.shape[1]} columns for module {dim_type}")
 
 
 def test_module_030_1():
     module = "030_1"
     df = tw.query_by_year(code=module, year=2021)
-    logging.info(f"imported {df.shape[0]} records and {df.shape[1]} columns for module {module}")
+    logging.info(f"imported {df.shape} records and {df.shape[1]} columns for module {module}")
 
 
 def test_module_040_1():

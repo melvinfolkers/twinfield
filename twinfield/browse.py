@@ -48,7 +48,12 @@ class Browse(Base):
         column_list = []
 
         for field in self.fields:
-            xml = COLUMN.format(field, self.metadata.loc[field].visible)
+            if self.browsecode in ["100", "200"]:
+                # exception for browsecodes 100 and 200. all fields must be set to visible. If not, some columns will
+                # be missing from the output (line.openvaluesigned, line valuesigned, line.availableforpayruns)
+                xml = COLUMN.format(field, "true")
+            else:
+                xml = COLUMN.format(field, self.metadata.loc[field].visible)
             column_list.append(xml)
 
         columns = "".join(column_list)

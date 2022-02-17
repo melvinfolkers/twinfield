@@ -1,4 +1,5 @@
 import logging
+import time
 from xml.etree import ElementTree as Et
 
 import requests
@@ -44,17 +45,18 @@ class Base(TwinfieldLogin):
             if retry > max_retries:
                 logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
                 break
-            response = requests.post(
+            with requests.post(
                 url=f"{self.cluster}/webservices/processxml.asmx?wsdl",
                 headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
                 data=browse.body(),
-            )
-            if not response:
-                logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
-                self.access_token = self.refresh_access_token()
-                retry += 1
-            else:
-                success = True
+            ) as response:
+                if not response:
+                    logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
+                    time.sleep(sec_wait)
+                    self.access_token = self.refresh_access_token()
+                    retry += 1
+                else:
+                    success = True
 
         return response
 

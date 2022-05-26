@@ -1,6 +1,8 @@
 import base64
 import json
+import logging
 import os
+import time
 
 import requests
 
@@ -37,22 +39,49 @@ class TwinfieldLogin:
 
     def refresh_access_token(self):
         url = "https://login.twinfield.com/auth/authentication/connect/token"
-        response = requests.post(
-            url=url, headers=self.header, data={"grant_type": "refresh_token", "refresh_token": self.refresh_token}
-        )
-        if not response:
-            raise LoginSessionError()
-        json_data = json.loads(response.text)
-        access_token = json_data.get("access_token")
+        success = False
+        max_retries = 5
+        retry = 1
+        sec_wait = 10
+        while not success:
+            if retry > max_retries:
+                logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
+                break
+            try:
+                with requests.post(
+                    url=url,
+                    headers=self.header,
+                    data={"grant_type": "refresh_token", "refresh_token": self.refresh_token},
+                ) as response:
+                    if not response:
+                        raise LoginSessionError()
+                    json_data = json.loads(response.text)
+                    access_token = json_data.get("access_token")
+            except ConnectionError:
+                logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
+                time.sleep(sec_wait)
+                retry += 1
 
         return access_token
 
     def determine_cluster(self):
         access_token = self.refresh_access_token()
         url = f"https://login.twinfield.com/auth/authentication/connect/accesstokenvalidation?token={access_token}"
-
-        response = requests.get(url=url, headers=self.header)
-        json_data = json.loads(response.text)
-        cluster = json_data.get("twf.clusterUrl")
+        success = False
+        max_retries = 5
+        retry = 1
+        sec_wait = 10
+        while not success:
+            if retry > max_retries:
+                logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
+                break
+            try:
+                with requests.get(url=url, headers=self.header) as response:
+                    json_data = json.loads(response.text)
+                    cluster = json_data.get("twf.clusterUrl")
+            except ConnectionError:
+                logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
+                time.sleep(sec_wait)
+                retry += 1
 
         return cluster

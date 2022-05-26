@@ -1,4 +1,5 @@
 import logging
+import time
 from xml.etree import ElementTree as Et
 
 import pandas as pd
@@ -114,25 +115,30 @@ class Metadata(Base):
         retry = 1
         sec_wait = 10
         response = None
+        body = self.body()
         while not success:
             if retry > max_retries:
                 logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
                 break
 
-            body = self.body()
-            response = requests.post(
-                url=f"{cluster}/webservices/processxml.asmx?wsdl",
-                headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
-                data=body,
-            )
-            if not response:
-                self.access_token = self.refresh_access_token()
+            try:
+                with requests.post(
+                    url=f"{cluster}/webservices/processxml.asmx?wsdl",
+                    headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
+                    data=body,
+                ) as response:
+                    if not response:
+                        self.access_token = self.refresh_access_token()
+                        logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
+                        retry += 1
+                    else:
+                        metadata = self.parse_metadata_response(response)
+                        success = True
+            except ConnectionError:
                 logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
+                time.sleep(sec_wait)
                 retry += 1
-            else:
-                success = True
 
-        metadata = self.parse_metadata_response(response)
         metadata.loc[metadata.label.isna(), "label"] = metadata.field
         metadata.set_index("field", inplace=True)
 

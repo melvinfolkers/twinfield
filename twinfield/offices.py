@@ -1,4 +1,5 @@
 import logging
+import time
 from xml.etree import ElementTree as Et
 
 import pandas as pd
@@ -41,26 +42,48 @@ class Offices(Base):
 
         logging.debug(f"selecting office: {officecode}...")
         body = SELECT_OFFICE.format(self.access_token, officecode)
-
-        response = requests.post(
-            url=f"{self.cluster}/webservices/session.asmx?wsdl",
-            headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
-            data=body,
-        )
-
-        result = self.check_response(response)
-        logging.debug(result)
+        success = False
+        max_retries = 5
+        retry = 1
+        sec_wait = 10
+        while not success:
+            if retry > max_retries:
+                logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
+                break
+            try:
+                with requests.post(
+                    url=f"{self.cluster}/webservices/session.asmx?wsdl",
+                    headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
+                    data=body,
+                ) as response:
+                    result = self.check_response(response)
+                    logging.debug(result)
+            except ConnectionError:
+                logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
+                time.sleep(sec_wait)
+                retry += 1
 
     def list_offices(self):
         body = LIST_OFFICES_XML.format(self.access_token)
-
-        response = requests.post(
-            url=f"{self.cluster}/webservices/processxml.asmx?wsdl",
-            headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
-            data=body,
-        )
-
-        df = self.parse_list_offices_response(response)
+        success = False
+        max_retries = 5
+        retry = 1
+        sec_wait = 10
+        while not success:
+            if retry > max_retries:
+                logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
+                break
+            try:
+                with requests.post(
+                    url=f"{self.cluster}/webservices/processxml.asmx?wsdl",
+                    headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
+                    data=body,
+                ) as response:
+                    df = self.parse_list_offices_response(response)
+            except ConnectionError:
+                logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
+                time.sleep(sec_wait)
+                retry += 1
 
         return df
 

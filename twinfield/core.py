@@ -37,28 +37,25 @@ class Base(TwinfieldLogin):
 
         """
         success = False
-        max_retries = 5
         retry = 1
-        sec_wait = 10
-        response = None
         while not success:
-            if retry > max_retries:
-                logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
+            if retry > self.max_retries:
+                logging.warning(f"Max retries ({self.max_retries}) exceeded, " f"stopping requests for this office.")
                 break
-            with requests.post(
-                url=f"{self.cluster}/webservices/processxml.asmx?wsdl",
-                headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
-                data=browse.body(),
-            ) as response:
-                if not response:
-                    logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
-                    time.sleep(sec_wait)
-                    self.access_token = self.refresh_access_token()
-                    retry += 1
-                else:
+            try:
+                with requests.post(
+                    url=f"{self.cluster}/webservices/processxml.asmx?wsdl",
+                    headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
+                    data=browse.body(),
+                ) as response:
+                    output = response
                     success = True
+            except ConnectionError:
+                logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
+                time.sleep(self.sec_wait)
+                retry += 1
 
-        return response
+        return output
 
     def check_invalid_token(self, response: requests.Response) -> bool:
         """

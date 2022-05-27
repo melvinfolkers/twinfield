@@ -19,6 +19,8 @@ class TwinfieldLogin:
 
         self.header = self.create_authorization_header()
         self.cluster = self.determine_cluster()
+        self.max_retries = 5
+        self.sec_wait = 10
 
     def check_environment_variables(self):
         # Test if environment variables are set for Twinfield login
@@ -40,12 +42,10 @@ class TwinfieldLogin:
     def refresh_access_token(self):
         url = "https://login.twinfield.com/auth/authentication/connect/token"
         success = False
-        max_retries = 5
         retry = 1
-        sec_wait = 10
         while not success:
-            if retry > max_retries:
-                logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
+            if retry > self.max_retries:
+                logging.warning(f"Max retries ({self.max_retries}) exceeded, " f"stopping requests for this office.")
                 break
             try:
                 with requests.post(
@@ -57,9 +57,10 @@ class TwinfieldLogin:
                         raise LoginSessionError()
                     json_data = json.loads(response.text)
                     access_token = json_data.get("access_token")
+                success = True
             except ConnectionError:
-                logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
-                time.sleep(sec_wait)
+                logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
+                time.sleep(self.sec_wait)
                 retry += 1
 
         return access_token
@@ -68,20 +69,19 @@ class TwinfieldLogin:
         access_token = self.refresh_access_token()
         url = f"https://login.twinfield.com/auth/authentication/connect/accesstokenvalidation?token={access_token}"
         success = False
-        max_retries = 5
         retry = 1
-        sec_wait = 10
         while not success:
-            if retry > max_retries:
-                logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
+            if retry > self.max_retries:
+                logging.warning(f"Max retries ({self.max_retries}) exceeded, " f"stopping requests for this office.")
                 break
             try:
                 with requests.get(url=url, headers=self.header) as response:
                     json_data = json.loads(response.text)
                     cluster = json_data.get("twf.clusterUrl")
+                success = True
             except ConnectionError:
-                logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
-                time.sleep(sec_wait)
+                logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
+                time.sleep(self.sec_wait)
                 retry += 1
 
         return cluster

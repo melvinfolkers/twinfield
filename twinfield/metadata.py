@@ -111,14 +111,11 @@ class Metadata(Base):
         """
 
         success = False
-        max_retries = 5
         retry = 1
-        sec_wait = 10
-        response = None
         body = self.body()
         while not success:
-            if retry > max_retries:
-                logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
+            if retry > self.max_retries:
+                logging.warning(f"Max retries ({self.max_retries}) exceeded, " f"stopping requests for this office.")
                 break
 
             try:
@@ -129,14 +126,14 @@ class Metadata(Base):
                 ) as response:
                     if not response:
                         self.access_token = self.refresh_access_token()
-                        logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
+                        logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
                         retry += 1
                     else:
                         metadata = self.parse_metadata_response(response)
                         success = True
             except ConnectionError:
-                logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
-                time.sleep(sec_wait)
+                logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
+                time.sleep(self.sec_wait)
                 retry += 1
 
         metadata.loc[metadata.label.isna(), "label"] = metadata.field

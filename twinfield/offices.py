@@ -43,12 +43,10 @@ class Offices(Base):
         logging.debug(f"selecting office: {officecode}...")
         body = SELECT_OFFICE.format(self.access_token, officecode)
         success = False
-        max_retries = 5
         retry = 1
-        sec_wait = 10
         while not success:
-            if retry > max_retries:
-                logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
+            if retry > self.max_retries:
+                logging.warning(f"Max retries ({self.max_retries}) exceeded, " f"stopping requests for this office.")
                 break
             try:
                 with requests.post(
@@ -58,20 +56,19 @@ class Offices(Base):
                 ) as response:
                     result = self.check_response(response)
                     logging.debug(result)
+                success = True
             except ConnectionError:
-                logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
-                time.sleep(sec_wait)
+                logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
+                time.sleep(self.sec_wait)
                 retry += 1
 
     def list_offices(self):
         body = LIST_OFFICES_XML.format(self.access_token)
         success = False
-        max_retries = 5
         retry = 1
-        sec_wait = 10
         while not success:
-            if retry > max_retries:
-                logging.warning(f"Max retries ({max_retries}) exceeded, " f"stopping requests for this office.")
+            if retry > self.max_retries:
+                logging.warning(f"Max retries ({self.max_retries}) exceeded, " f"stopping requests for this office.")
                 break
             try:
                 with requests.post(
@@ -80,9 +77,10 @@ class Offices(Base):
                     data=body,
                 ) as response:
                     df = self.parse_list_offices_response(response)
+                success = True
             except ConnectionError:
-                logging.info(f"No response, retrying in {sec_wait} seconds. Retry number: {retry}")
-                time.sleep(sec_wait)
+                logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
+                time.sleep(self.sec_wait)
                 retry += 1
 
         return df

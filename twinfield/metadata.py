@@ -1,5 +1,3 @@
-import logging
-import time
 from xml.etree import ElementTree as Et
 
 import pandas as pd
@@ -25,7 +23,6 @@ class Metadata(Base):
         super().__init__()
         self.browsecode = code
         self.company = company
-        self.access_token = self.refresh_access_token()
 
     def create_metadata_query(self) -> str:
         """
@@ -110,32 +107,10 @@ class Metadata(Base):
             dataframe containing the records.
         """
 
-        success = False
-        retry = 1
         body = self.body()
-        while not success:
-            if retry > self.max_retries:
-                logging.warning(f"Max retries ({self.max_retries}) exceeded, " f"stopping requests for this office.")
-                break
-
-            try:
-                with requests.post(
-                    url=f"{cluster}/webservices/processxml.asmx?wsdl",
-                    headers={"Content-Type": "text/xml", "Accept-Charset": "utf-8"},
-                    data=body,
-                ) as response:
-                    if not response:
-                        self.access_token = self.refresh_access_token()
-                        logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
-                        retry += 1
-                    else:
-                        metadata = self.parse_metadata_response(response)
-                        success = True
-            except ConnectionError:
-                logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
-                time.sleep(self.sec_wait)
-                retry += 1
-
+        url = f"{cluster}/webservices/processxml.asmx?wsdl"
+        headers = {"Content-Type": "text/xml", "Accept-Charset": "utf-8"}
+        metadata = self.do_retry_request(url=url, headers=headers, data=body)
         metadata.loc[metadata.label.isna(), "label"] = metadata.field
         metadata.set_index("field", inplace=True)
 

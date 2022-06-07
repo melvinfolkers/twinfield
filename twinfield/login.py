@@ -11,6 +11,8 @@ from twinfield.exceptions import EnvironmentVariablesError, LoginSessionError
 
 class TwinfieldLogin:
     def __init__(self):
+        self.max_retries = 5
+        self.sec_wait = 10
         self.organisation = os.environ.get("TWINFIELD_ORGANISATION")
         self.client_id = os.environ.get("TWINFIELD_CLIENT_ID")
         self.client_secret = os.environ.get("TWINFIELD_CLIENT_SECRET")
@@ -19,8 +21,7 @@ class TwinfieldLogin:
 
         self.header = self.create_authorization_header()
         self.cluster = self.determine_cluster()
-        self.max_retries = 5
-        self.sec_wait = 10
+
         self.access_token = self.refresh_access_token()
 
     def check_environment_variables(self):

@@ -51,7 +51,8 @@ class Offices(Base):
         body = LIST_OFFICES_XML.format(self.access_token)
         url = f"{self.cluster}/webservices/processxml.asmx?wsdl"
         headers = {"Content-Type": "text/xml", "Accept-Charset": "utf-8"}
-        df = self.do_retry_request(url=url, headers=headers, data=body)
+        response = self.do_retry_request(url=url, headers=headers, data=body)
+        df = self.parse_list_offices_response(response)
         return df
 
     def parse_list_offices_response(self, response: requests.Response) -> pd.DataFrame:

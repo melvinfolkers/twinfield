@@ -59,11 +59,28 @@ class TwinfieldLogin:
         cluster = json_data.get("twf.clusterUrl")
         return cluster
 
-    def do_request(self, url, headers, data=None, special_error=None, req_type="POST"):
+    def do_request(self, url: str, headers: dict, data=None, special_error=None, req_type: str = "POST"):
         """
         Function that executes a request (either POST or GET). It tries
         to do a requests while not yet a success. There is maximum of self.max_retries
         If there is no reaction from the API, the function waits and tries again
+        Parameters
+        ----------
+        url: str
+            String with the url to do the request to
+        headers: dict
+            Dictionary with the header information for the request
+        data:
+            Data that is sent with the post request (None in case of get request)
+        special_error
+            Exception to be raised in a specific situation if response is not given
+        req_type: str
+            The request type, POST or GET
+
+        Returns
+        -------
+        output
+            The response of the API request
         """
         success = False
         retry = 1

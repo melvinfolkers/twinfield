@@ -109,8 +109,7 @@ class Metadata(Base):
 
         body = self.body()
         url = f"{cluster}/webservices/processxml.asmx?wsdl"
-        headers = {"Content-Type": "text/xml", "Accept-Charset": "utf-8"}
-        response = self.do_retry_request(url=url, headers=headers, data=body)
+        response = self.do_request(url=url, headers=self.header_req, data=body)
         metadata = self.parse_metadata_response(response)
         metadata.loc[metadata.label.isna(), "label"] = metadata.field
         metadata.set_index("field", inplace=True)

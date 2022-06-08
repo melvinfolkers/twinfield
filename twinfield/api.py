@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime
 
 import pandas as pd
@@ -200,11 +199,11 @@ class TwinfieldApi(Base):
             fields = metadata.index.tolist()
 
         df_list = []
-        for office in tqdm(self.offices, desc=f"importing module {code}..."):
+        pbar = tqdm(self.offices, desc=f"importing module {code}...")
+        for office in pbar:
             # self.select_office(office)
             for batch in batches:
-                logging.debug(f"requesting {office} - {batch}...")
-
+                pbar.set_description(f"importing module {code} - {office} - {batch}...")
                 period_filters = {"fin.trs.head.yearperiod": ("between", batch)}
                 filters = {**filters, **period_filters}
 

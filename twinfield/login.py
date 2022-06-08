@@ -44,7 +44,9 @@ class TwinfieldLogin:
     def refresh_access_token(self):
         url = "https://login.twinfield.com/auth/authentication/connect/token"
         data = {"grant_type": "refresh_token", "refresh_token": self.refresh_token}
-        response = self.do_retry_request(url=url, headers=self.header, data=data, special_error=LoginSessionError)
+        response = self.do_request(
+            url=url, headers=self.header, data=data, special_error=LoginSessionError("Could not refresh access token")
+        )
         json_data = json.loads(response.text)
         access_token = json_data.get("access_token")
         return access_token
@@ -52,12 +54,17 @@ class TwinfieldLogin:
     def determine_cluster(self):
         access_token = self.refresh_access_token()
         url = f"https://login.twinfield.com/auth/authentication/connect/accesstokenvalidation?token={access_token}"
-        response = self.do_retry_request(url=url, headers=self.header, req_type="GET")
+        response = self.do_request(url=url, headers=self.header, req_type="GET")
         json_data = json.loads(response.text)
         cluster = json_data.get("twf.clusterUrl")
         return cluster
 
-    def do_retry_request(self, url, headers, data=None, special_error=None, req_type="POST"):
+    def do_request(self, url, headers, data=None, special_error=None, req_type="POST"):
+        """
+        Function that executes a request (either POST or GET). It tries
+        to do a requests while not yet a success. There is maximum of self.max_retries
+        If there is no reaction from the API, the function waits and tries again
+        """
         success = False
         retry = 1
         if req_type not in ["POST", "GET"]:
@@ -81,7 +88,7 @@ class TwinfieldLogin:
                         output = response
                 success = True
             except ConnectionError:
-                self.access_token = self.refresh_access_token()
+                self.cluster = self.determine_cluster()
                 logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
                 time.sleep(self.sec_wait)
                 retry += 1

@@ -42,16 +42,14 @@ class Offices(Base):
         logging.debug(f"selecting office: {officecode}...")
         body = SELECT_OFFICE.format(self.access_token, officecode)
         url = f"{self.cluster}/webservices/session.asmx?wsdl"
-        headers = {"Content-Type": "text/xml", "Accept-Charset": "utf-8"}
-        result = self.do_retry_request(url=url, headers=headers, data=body)
+        result = self.do_request(url=url, headers=self.header_req, data=body)
         result = self.check_response(result)
         logging.debug(result)
 
     def list_offices(self):
         body = LIST_OFFICES_XML.format(self.access_token)
         url = f"{self.cluster}/webservices/processxml.asmx?wsdl"
-        headers = {"Content-Type": "text/xml", "Accept-Charset": "utf-8"}
-        response = self.do_retry_request(url=url, headers=headers, data=body)
+        response = self.do_request(url=url, headers=self.header_req, data=body)
         df = self.parse_list_offices_response(response)
         return df
 
@@ -61,8 +59,6 @@ class Offices(Base):
         ----------
         response
             response xml from twinfield server
-        param
-            login parameters (SessionParameters)
 
         Returns
         -------

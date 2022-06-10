@@ -44,9 +44,8 @@ class TwinfieldLogin:
     def refresh_access_token(self):
         url = "https://login.twinfield.com/auth/authentication/connect/token"
         data = {"grant_type": "refresh_token", "refresh_token": self.refresh_token}
-        response = self.do_request(
-            url=url, headers=self.header, data=data, special_error=LoginSessionError("Could not refresh access token")
-        )
+        response = self.do_request(url=url, headers=self.header, data=data)
+
         json_data = json.loads(response.text)
         access_token = json_data.get("access_token")
         return access_token
@@ -59,7 +58,7 @@ class TwinfieldLogin:
         cluster = json_data.get("twf.clusterUrl")
         return cluster
 
-    def do_request(self, url: str, headers: dict, data=None, special_error=None, req_type: str = "POST"):
+    def do_request(self, url: str, headers: dict, data=None, req_type: str = "POST"):
         """
         Function that executes a request (either POST or GET). It tries
         to do a requests while not yet a success. There is maximum of self.max_retries
@@ -72,8 +71,6 @@ class TwinfieldLogin:
             Dictionary with the header information for the request
         data:
             Data that is sent with the post request (None in case of get request)
-        special_error
-            Exception to be raised in a specific situation if response is not given
         req_type: str
             The request type, POST or GET
 
@@ -84,27 +81,23 @@ class TwinfieldLogin:
         """
         success = False
         retry = 1
-        if req_type not in ["POST", "GET"]:
-            raise ValueError(f"{req_type} is not a valid requests type.")
-        if req_type == "POST" and not data:
-            raise ValueError("Parameter data is not given while req_type POST")
+
         while not success:
             if retry > self.max_retries:
                 logging.warning(f"Max retries ({self.max_retries}) exceeded, stopping requests for this office.")
                 break
             try:
+                # start of the request
                 if req_type == "POST":
                     with requests.post(url=url, headers=headers, data=data) as response:
-                        if not response and special_error:
-                            raise special_error
                         output = response
                 else:
                     with requests.get(url=url, headers=headers) as response:
-                        if not response and special_error:
-                            raise special_error
                         output = response
                 success = True
+
             except ConnectionError:
+                # failed request, retry with new login.
                 self.cluster = self.determine_cluster()
                 logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
                 time.sleep(self.sec_wait)

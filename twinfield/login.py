@@ -6,7 +6,7 @@ import time
 
 import requests
 
-from twinfield.exceptions import EnvironmentVariablesError, LoginSessionError
+from twinfield.exceptions import EnvironmentVariablesError
 
 
 class TwinfieldLogin:

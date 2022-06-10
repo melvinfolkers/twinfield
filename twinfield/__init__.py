@@ -3,3 +3,5 @@
 
 from . import exceptions
 from .api import TwinfieldApi
+
+__version__ = "2.0.2"

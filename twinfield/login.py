@@ -1,14 +1,18 @@
 import base64
 import json
+import logging
 import os
+import time
 
 import requests
 
-from twinfield.exceptions import EnvironmentVariablesError, LoginSessionError
+from twinfield.exceptions import EnvironmentVariablesError
 
 
 class TwinfieldLogin:
     def __init__(self):
+        self.max_retries = 5
+        self.sec_wait = 10
         self.organisation = os.environ.get("TWINFIELD_ORGANISATION")
         self.client_id = os.environ.get("TWINFIELD_CLIENT_ID")
         self.client_secret = os.environ.get("TWINFIELD_CLIENT_SECRET")
@@ -17,6 +21,8 @@ class TwinfieldLogin:
 
         self.header = self.create_authorization_header()
         self.cluster = self.determine_cluster()
+
+        self.access_token = self.refresh_access_token()
 
     def check_environment_variables(self):
         # Test if environment variables are set for Twinfield login
@@ -37,22 +43,63 @@ class TwinfieldLogin:
 
     def refresh_access_token(self):
         url = "https://login.twinfield.com/auth/authentication/connect/token"
-        response = requests.post(
-            url=url, headers=self.header, data={"grant_type": "refresh_token", "refresh_token": self.refresh_token}
-        )
-        if not response:
-            raise LoginSessionError()
+        data = {"grant_type": "refresh_token", "refresh_token": self.refresh_token}
+        response = self.do_request(url=url, headers=self.header, data=data)
+
         json_data = json.loads(response.text)
         access_token = json_data.get("access_token")
-
         return access_token
 
     def determine_cluster(self):
         access_token = self.refresh_access_token()
         url = f"https://login.twinfield.com/auth/authentication/connect/accesstokenvalidation?token={access_token}"
-
-        response = requests.get(url=url, headers=self.header)
+        response = self.do_request(url=url, headers=self.header, req_type="GET")
         json_data = json.loads(response.text)
         cluster = json_data.get("twf.clusterUrl")
-
         return cluster
+
+    def do_request(self, url: str, headers: dict, data=None, req_type: str = "POST"):
+        """
+        Function that executes a request (either POST or GET). It tries
+        to do a requests while not yet a success. There is maximum of self.max_retries
+        If there is no reaction from the API, the function waits and tries again
+        Parameters
+        ----------
+        url: str
+            String with the url to do the request to
+        headers: dict
+            Dictionary with the header information for the request
+        data:
+            Data that is sent with the post request (None in case of get request)
+        req_type: str
+            The request type, POST or GET
+
+        Returns
+        -------
+        output
+            The response of the API request
+        """
+        success = False
+        retry = 1
+
+        while not success:
+            if retry > self.max_retries:
+                logging.warning(f"Max retries ({self.max_retries}) exceeded, stopping requests for this office.")
+                break
+            try:
+                # start of the request
+                if req_type == "POST":
+                    with requests.post(url=url, headers=headers, data=data) as response:
+                        output = response
+                else:
+                    with requests.get(url=url, headers=headers) as response:
+                        output = response
+                success = True
+
+            except ConnectionError:
+                # failed request, retry with new login.
+                self.cluster = self.determine_cluster()
+                logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
+                time.sleep(self.sec_wait)
+                retry += 1
+        return output

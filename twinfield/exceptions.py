@@ -28,9 +28,3 @@ class EnvironmentVariablesError(Exception):
     """Exception when not all env variables are set"""
 
     pass
-
-
-class LoginSessionError(Exception):
-    """Exception when response from login is not valid"""
-
-    pass

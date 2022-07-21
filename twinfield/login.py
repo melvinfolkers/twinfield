@@ -56,6 +56,9 @@ class TwinfieldLogin:
         response = self.do_request(url=url, headers=self.header, req_type="GET")
         json_data = json.loads(response.text)
         cluster = json_data.get("twf.clusterUrl")
+        if not cluster:
+            logging.warning(f"could not retrieve cluster, server message: {response.text}")
+
         return cluster
 
     def do_request(self, url: str, headers: dict, data=None, req_type: str = "POST"):

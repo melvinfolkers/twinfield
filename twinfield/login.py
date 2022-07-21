@@ -57,7 +57,7 @@ class TwinfieldLogin:
         json_data = json.loads(response.text)
         cluster = json_data.get("twf.clusterUrl")
         if not cluster:
-            logging.warning(f"could not retrieve cluster, server message: {response.text}")
+            logging.warning(f"could not retrieve cluster, message from server: {response.text}")
 
         return cluster
 

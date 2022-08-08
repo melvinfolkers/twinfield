@@ -5,10 +5,10 @@ from tqdm import tqdm
 
 from twinfield.browse import Browse
 from twinfield.core import Base
+from twinfield.deleted import DeletedTransactions
 from twinfield.dimensions import Dimensions
 from twinfield.metadata import Metadata
 from twinfield.offices import Offices
-from twinfield.deleted import DeletedTransactions
 
 
 class TwinfieldApi(Base):
@@ -130,7 +130,7 @@ class TwinfieldApi(Base):
         """
 
         df_list = []
-        for company in tqdm(self.offices, desc=f"importing deleted transacions..."):
+        for company in tqdm(self.offices, desc="importing deleted transacions..."):
             # construct the request in the Browse class
             deleted = DeletedTransactions(company, date_from=date_from)
             # send the request.

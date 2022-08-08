@@ -17,6 +17,7 @@ class Base(TwinfieldLogin):
         self.namespaces = {
             "env": "http://schemas.xmlsoap.org/soap/envelope/",
             "tw": "http://www.twinfield.com/",
+            "del": "http://schemas.datacontract.org/2004/07/Twinfield.WebServices.DeletedTransactionsService",
         }
 
         self.namespaces_txt = {k: "{" + v + "}" for k, v in self.namespaces.items()}

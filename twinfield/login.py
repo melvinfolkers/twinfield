@@ -101,7 +101,7 @@ class TwinfieldLogin:
                 success = True
 
             except (ConnectionError, SSLError) as e:
-                logging.info(
+                logging.exception(
                     f"No response or error, retrying in {self.sec_wait} seconds. "
                     f"Retry number: {retry}. Error message: {e}"
                 )

@@ -24,8 +24,7 @@ class Base(TwinfieldLogin):
         self.header_req = {
             "Content-Type": "text/xml",
             "Accept-Charset": "utf-8",
-            "Accept-Encoding": "gzip, deflate",
-            "Connection": "Keep-Alive",
+            "SOAPAction": "http://www.twinfield.com/ProcessXmlDocument",
         }
 
     def send_request(self, browse) -> requests.Response:

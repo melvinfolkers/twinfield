@@ -21,11 +21,7 @@ class Base(TwinfieldLogin):
 
         self.namespaces_txt = {k: "{" + v + "}" for k, v in self.namespaces.items()}
         self.access_token = self.refresh_access_token()
-        self.header_req = {
-            "Content-Type": "text/xml",
-            "Accept-Charset": "utf-8",
-            "SOAPAction": "http://www.twinfield.com/ProcessXmlDocument",
-        }
+        self.header_req = {"Content-Type": "text/xml", "Accept-Charset": "utf-8"}
 
     def send_request(self, browse) -> requests.Response:
         """

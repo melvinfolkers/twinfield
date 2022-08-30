@@ -5,6 +5,7 @@ import os
 import time
 
 import requests
+from requests.exceptions import SSLError
 
 from twinfield.exceptions import EnvironmentVariablesError
 
@@ -99,10 +100,13 @@ class TwinfieldLogin:
                         output = response
                 success = True
 
-            except ConnectionError:
+            except (ConnectionError, SSLError) as e:
+                logging.exception(
+                    f"No response or error, retrying in {self.sec_wait} seconds. "
+                    f"Retry number: {retry}. Error message: {e}"
+                )
+                time.sleep(self.sec_wait)
                 # failed request, retry with new login.
                 self.cluster = self.determine_cluster()
-                logging.info(f"No response, retrying in {self.sec_wait} seconds. Retry number: {retry}")
-                time.sleep(self.sec_wait)
                 retry += 1
         return output

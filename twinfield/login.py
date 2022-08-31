@@ -77,7 +77,6 @@ class TwinfieldLogin:
             Data that is sent with the post request (None in case of get request)
         req_type: str
             The request type, POST or GET
-
         Returns
         -------
         output
@@ -85,7 +84,7 @@ class TwinfieldLogin:
         """
         success = False
         retry = 0
-
+        login_request = True if "https://login.twinfield.com/auth/authentication/connect" in url else False
         while not success:
             if retry > self.max_retries:
                 logging.warning(f"Max retries ({self.max_retries}) exceeded, stopping requests for this office.")
@@ -107,6 +106,7 @@ class TwinfieldLogin:
                     f"Retry number: {retry}. Error message: {e}"
                 )
                 time.sleep(self.sec_wait)
-                # failed request, retry with new login.
-                self.cluster = self.determine_cluster()
+                # failed request, retry with new login. DO not do whne making login requests
+                if not login_request:
+                    self.cluster = self.determine_cluster()
         return output

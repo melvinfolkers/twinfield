@@ -84,7 +84,7 @@ class TwinfieldLogin:
             The response of the API request
         """
         success = False
-        retry = 1
+        retry = 0
 
         while not success:
             if retry > self.max_retries:
@@ -101,6 +101,7 @@ class TwinfieldLogin:
                 success = True
 
             except (ConnectionError, SSLError) as e:
+                retry += 1
                 logging.exception(
                     f"No response or error, retrying in {self.sec_wait} seconds. "
                     f"Retry number: {retry}. Error message: {e}"
@@ -108,5 +109,4 @@ class TwinfieldLogin:
                 time.sleep(self.sec_wait)
                 # failed request, retry with new login.
                 self.cluster = self.determine_cluster()
-                retry += 1
         return output

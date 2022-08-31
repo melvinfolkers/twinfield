@@ -84,7 +84,7 @@ class TwinfieldLogin:
         """
         success = False
         retry = 0
-        login_request = True if "https://login.twinfield.com/auth/authentication/connect" in url else False
+        login_request = "https://login.twinfield.com/auth/authentication/connect" in url
         while not success:
             if retry > self.max_retries:
                 logging.warning(f"Max retries ({self.max_retries}) exceeded, stopping requests for this office.")

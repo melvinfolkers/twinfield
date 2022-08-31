@@ -106,7 +106,7 @@ class TwinfieldLogin:
                     f"Retry number: {retry}. Error message: {e}"
                 )
                 time.sleep(self.sec_wait)
-                # failed request, retry with new login. DO not do whne making login requests
+                # failed request, retry with new login. Do not do when making login requests
                 if not login_request:
                     self.cluster = self.determine_cluster()
         return output

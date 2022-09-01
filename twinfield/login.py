@@ -77,15 +77,14 @@ class TwinfieldLogin:
             Data that is sent with the post request (None in case of get request)
         req_type: str
             The request type, POST or GET
-
         Returns
         -------
         output
             The response of the API request
         """
         success = False
-        retry = 1
-
+        retry = 0
+        login_request = "https://login.twinfield.com/auth/authentication/connect" in url
         while not success:
             if retry > self.max_retries:
                 logging.warning(f"Max retries ({self.max_retries}) exceeded, stopping requests for this office.")
@@ -101,12 +100,13 @@ class TwinfieldLogin:
                 success = True
 
             except (ConnectionError, SSLError) as e:
+                retry += 1
                 logging.exception(
                     f"No response or error, retrying in {self.sec_wait} seconds. "
                     f"Retry number: {retry}. Error message: {e}"
                 )
                 time.sleep(self.sec_wait)
-                # failed request, retry with new login.
-                self.cluster = self.determine_cluster()
-                retry += 1
+                # failed request, retry with new login. Do not do when making login requests
+                if not login_request:
+                    self.cluster = self.determine_cluster()
         return output

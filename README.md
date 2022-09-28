@@ -29,7 +29,7 @@ from twinfield import TwinfieldApi
 tw = TwinfieldApi()
 
 # sending browse request.
-df = tw.query_by_year(code="030_1", year=2021)
+df = tw.query_by_year(code="030_3", year=2021)
 
 # sending dimensions request
 df = tw.dimensions(dim_type="CRD")
@@ -47,12 +47,21 @@ on the walktrough how to obtain the refresh token and set the app registration.
 "TWINFIELD_REFRESH_TOKEN"
 ```
 
-
-
 How to set environment variables?
 - [Windows](https://stackoverflow.com/questions/5898131/set-a-persistent-environment-variable-from-cmd-exe)
 - [macOS](https://apple.stackexchange.com/questions/106778/how-do-i-set-environment-variables-on-os-x)
 - [Linux](https://unix.stackexchange.com/questions/117467/how-to-permanently-set-environmental-variables)
+
+---
+
+## api scoping (security) advice
+Please note that there are different levels of API access in Twinfield app's. It is recommended to use level 3 access over level 1 access.
+Level 3 is sufficient for working with the dataservices.
+
+### Twinfield deprecation notices
+- The module salesinvoice is only to be used if invoices need to be generated. If only the transaction registration is necessary, use the transactions endpoint.
+- modules have versions, for instance the 030 module can be pulled with suffix _1 or _3. It is advised to use the latest version because the speed of the requests is greater.
+
 
 ---
 

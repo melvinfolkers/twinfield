@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 from twinfield.browse import Browse
 from twinfield.core import Base
+from twinfield.deleted import DeletedTransactions
 from twinfield.dimensions import Dimensions
 from twinfield.metadata import Metadata
 from twinfield.offices import Offices
@@ -114,6 +115,32 @@ class TwinfieldApi(Base):
             return (df, pd.concat(adress_df_list))  # noqa
         else:
             return df
+
+    def deleted(self, date_from: str):
+        """
+
+        Parameters
+        ----------
+        date_from: str
+            start date of the request.
+        Returns
+        -------
+        df: pd.DataFrame
+            dataframe containing deleted transactions
+        """
+
+        df_list = []
+        for company in tqdm(self.offices, desc="importing deleted transacions..."):
+            # construct the request in the Browse class
+            deleted = DeletedTransactions(company, date_from=date_from)
+            # send the request.
+            response = deleted.get_deleted_transactions()
+            df = deleted.parse_response(response)
+            df_list.append(df)
+
+        df = pd.concat(df_list)
+
+        return df
 
     def dimension_addresses(self, dim_type: str) -> pd.DataFrame:
         """

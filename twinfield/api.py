@@ -235,6 +235,9 @@ class TwinfieldApi(Base):
                 filters = {**filters, **period_filters}
 
                 df = self.browse(code=code, fields=fields, filters=filters, company=office, metadata=metadata)
+                if "head.office" not in df.columns:
+                    df["head.office"] = office
+
                 df_list.append(df)
 
         df = pd.concat(df_list)
@@ -265,6 +268,8 @@ class TwinfieldApi(Base):
             pbar.set_description(f"importing module {code} - {office}...")
 
             df = self.browse(code=code, fields=fields, filters=filters, company=office, metadata=metadata)
+            if "head.office" not in df.columns:
+                df["head.office"] = office
             df_list.append(df)
 
         df = pd.concat(df_list)

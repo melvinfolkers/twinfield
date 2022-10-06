@@ -235,37 +235,10 @@ class TwinfieldApi(Base):
                 filters = {**filters, **period_filters}
 
                 df = self.browse(code=code, fields=fields, filters=filters, company=office, metadata=metadata)
+                if "head.office" not in df.columns:
+                    df["head.office"] = office
+
                 df_list.append(df)
-
-        df = pd.concat(df_list)
-
-        return df
-
-    def query_by_year_fast(self, code: str, year: int, filters: dict, fields: list = None):
-        """
-        Fastest way of querying browse code data. user is required to use filters, without it the results are to large
-        to be returned by the twinfield server.
-        """
-
-        metadata = self.metadata(code)
-
-        if not filters:
-            filters = {}
-
-        if not fields:
-            fields = metadata.index.tolist()
-
-        year_filter = {"fin.trs.head.yearperiod": ("between", {"from": f"{year}/00", "to": f"{year}/55"})}
-        filters = {**filters, **year_filter}
-
-        df_list = []
-        pbar = tqdm(self.offices, desc=f"importing module {code}...")
-        for office in pbar:
-            # self.select_office(office)
-            pbar.set_description(f"importing module {code} - {office}...")
-
-            df = self.browse(code=code, fields=fields, filters=filters, company=office, metadata=metadata)
-            df_list.append(df)
 
         df = pd.concat(df_list)
 

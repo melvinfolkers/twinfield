@@ -4,4 +4,4 @@
 from . import exceptions
 from .api import TwinfieldApi
 
-version = "2.1.0-rc.3"
+version = "2.1.0-rc.4"

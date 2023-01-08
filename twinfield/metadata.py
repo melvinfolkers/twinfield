@@ -1,3 +1,4 @@
+import logging
 from xml.etree import ElementTree as Et
 
 import pandas as pd
@@ -72,10 +73,9 @@ class Metadata(Base):
         body = root.find("env:Body", self.namespaces)
 
         if body.find("env:Fault", self.namespaces):
-            # TODO: toegevoegd voor debugging.
+            # TODO: added for debugging
             fault = Et.tostring(body)
-            print(fault)
-
+            logging.error(fault)
             raise ServerError()
 
         data = body.find("tw:ProcessXmlStringResponse/tw:ProcessXmlStringResult", self.namespaces)

@@ -7,7 +7,7 @@ import time
 import requests
 from requests.exceptions import SSLError
 
-from twinfield.exceptions import EnvironmentVariablesError
+from twinfield.exceptions import EnvironmentVariablesError, LoginError
 
 
 class TwinfieldLogin:
@@ -22,8 +22,7 @@ class TwinfieldLogin:
 
         self.header = self.create_authorization_header()
         self.cluster = self.determine_cluster()
-
-        self.access_token = self.refresh_access_token()
+        self.access_token = None
 
     def check_environment_variables(self):
         # Test if environment variables are set for Twinfield login
@@ -35,7 +34,7 @@ class TwinfieldLogin:
             )
 
     def create_authorization_header(self):
-        # encode client_id en client_secret to be send as an authorization header in the request.
+        # Encode client_id en client_secret to be sent as an authorization header in the request.
         raw = f"{self.client_id}:{self.client_secret}".encode("ascii")
         base64_credentials = base64.b64encode(raw).decode("ascii")
         header = {"Content-Type": "application/x-www-form-urlencoded ", "Authorization": f"Basic {base64_credentials}"}
@@ -52,13 +51,13 @@ class TwinfieldLogin:
         return access_token
 
     def determine_cluster(self):
-        access_token = self.refresh_access_token()
-        url = f"https://login.twinfield.com/auth/authentication/connect/accesstokenvalidation?token={access_token}"
+        self.access_token = self.refresh_access_token()
+        url = f"https://login.twinfield.com/auth/authentication/connect/accesstokenvalidation?token={self.access_token}"
         response = self.do_request(url=url, headers=self.header, req_type="GET")
         json_data = json.loads(response.text)
         cluster = json_data.get("twf.clusterUrl")
         if not cluster:
-            raise ValueError(f"could not retrieve cluster, message from server: {response.text}")
+            raise LoginError(f"could not retrieve cluster, message from server: {response.text}")
 
         return cluster
 
@@ -99,7 +98,7 @@ class TwinfieldLogin:
                         output = response
                 success = True
 
-            except (ConnectionError, SSLError) as e:
+            except (ConnectionError, SSLError, LoginError) as e:
                 retry += 1
                 logging.exception(
                     f"No response or error, retrying in {self.sec_wait} seconds. "

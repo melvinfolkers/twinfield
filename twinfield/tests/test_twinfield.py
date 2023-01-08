@@ -106,19 +106,3 @@ def test_login_expired():
     # refresh the access token if  the token is invalid.
     tw.access_token = tw.refresh_access_token()
     assert fault_string == "Access denied. Token invalid."
-
-
-if __name__ == "__main__":
-    tw.offices = ["1060271"]
-    test_get_metadata()
-    test_module_100()
-    test_module_200()
-    test_module_030_1()
-    test_module_040_1()
-    test_module_with_filter()
-    test_dimensions_deb()
-    test_dimensions_deb_with_addresses()
-    test_dimensions_cred()
-    test_dimensions_cred_with_addresses()
-    test_dimensions_kpl()
-    test_login_expired()

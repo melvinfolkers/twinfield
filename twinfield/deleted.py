@@ -21,7 +21,6 @@ class DeletedTransactions(Base):
         """
         super().__init__()
 
-        self.access_token = self.refresh_access_token()
         self.company = company
         self.date_from = date_from
         self.date_to = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")

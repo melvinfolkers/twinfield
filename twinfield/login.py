@@ -21,8 +21,9 @@ class TwinfieldLogin:
         self.check_environment_variables()
 
         self.header = self.create_authorization_header()
-        self.cluster = self.determine_cluster()
         self.access_token = None
+        self.refresh_access_token()
+        self.cluster = self.determine_cluster()
 
     def check_environment_variables(self):
         # Test if environment variables are set for Twinfield login
@@ -48,10 +49,12 @@ class TwinfieldLogin:
 
         json_data = json.loads(response.text)
         access_token = json_data.get("access_token")
-        return access_token
+
+        # store the new access token.
+        self.access_token = access_token
 
     def determine_cluster(self):
-        self.access_token = self.refresh_access_token()
+
         url = f"https://login.twinfield.com/auth/authentication/connect/accesstokenvalidation?token={self.access_token}"
         response = self.do_request(url=url, headers=self.header, req_type="GET")
         json_data = json.loads(response.text)
@@ -105,7 +108,7 @@ class TwinfieldLogin:
                     f"Retry number: {retry}. Error message: {e}"
                 )
                 time.sleep(self.sec_wait)
-                # failed request, retry with new login. Do not do when making login requests
+                # failed request, retry with new access token. Do not do when making login requests
                 if not login_request:
-                    self.cluster = self.determine_cluster()
+                    self.access_token = self.refresh_access_token()
         return output

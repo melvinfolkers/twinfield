@@ -22,13 +22,15 @@ class TwinfieldApi(Base):
         super().__init__()
         self.offices = self.list_offices().index.tolist()
 
-    def list_offices(self) -> pd.DataFrame:
-        offices = Offices(access_token=self.refresh_access_token(), cluster=self.cluster)
+    @staticmethod
+    def list_offices() -> pd.DataFrame:
+        offices = Offices()
         offices_df = offices.list_offices()
 
         return offices_df
 
-    def select_office(self, officecode):
+    @staticmethod
+    def select_office(officecode):
         """
 
         Parameters
@@ -41,7 +43,7 @@ class TwinfieldApi(Base):
             selects the office.
         """
 
-        offices = Offices(access_token=self.refresh_access_token(), cluster=self.cluster)
+        offices = Offices()
         offices.select(officecode=officecode)
 
     @staticmethod

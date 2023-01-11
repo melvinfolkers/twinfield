@@ -10,20 +10,11 @@ from twinfield.messages import LIST_OFFICES_XML, SELECT_OFFICE
 
 
 class Offices(Base):
-    def __init__(self, access_token: str, cluster: str):
+    def __init__(self):
         """
         This class is for building the Browse SOAP requests for getting metadata of browse codes
-
-        Parameters
-        ----------
-        access_token: str
-            access_token obtained from TwinfieldApi class.
-        cluster: str
-            cluster obtained from TwinfieldApi class.
         """
         super().__init__()
-        self.access_token = access_token
-        self.cluster = cluster
 
     def select(self, officecode):
         """

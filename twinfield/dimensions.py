@@ -19,7 +19,6 @@ class Dimensions(Base):
         """
         super().__init__()
 
-        self.access_token = self.refresh_access_token()
         self.company = company
         self.dimension_type = dim_type
 

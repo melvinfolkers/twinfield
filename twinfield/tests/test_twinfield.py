@@ -95,6 +95,7 @@ def test_module_with_filter():
 
 def test_module_200():
     module = "200"
+    tw.offices = ["1060271"]
     df = tw.query_by_year(code=module, year=2021)
     logging.info(f"imported {df.shape[0]} records and {df.shape[1]} columns for module {module}")
     assert df["line.id"].is_unique

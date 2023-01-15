@@ -32,7 +32,6 @@ class Browse(Base):
         self.browsecode = code
         self.fields = [x for x in fields if x not in filters.keys()]
         self.filters = filters
-        self.access_token = self.refresh_access_token()
         self.company = company
         self.metadata = metadata
 

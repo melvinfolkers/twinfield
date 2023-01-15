@@ -28,3 +28,9 @@ class EnvironmentVariablesError(Exception):
     """Exception when not all env variables are set"""
 
     pass
+
+
+class LoginError(Exception):
+    """Exception when login fails"""
+
+    pass

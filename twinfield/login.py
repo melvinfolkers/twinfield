@@ -49,6 +49,8 @@ class TwinfieldLogin:
 
         json_data = json.loads(response.text)
         access_token = json_data.get("access_token")
+        if not access_token:
+            raise LoginError(f"Could not retrieve access token, message from server: {response.text}")
 
         # store the new access token.
         self.access_token = access_token

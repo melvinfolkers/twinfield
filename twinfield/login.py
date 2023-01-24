@@ -103,7 +103,7 @@ class TwinfieldLogin:
                         output = response
                 success = True
 
-            except (ConnectionError, RequestException, LoginError) as e:
+            except (ConnectionError, RequestException, LoginError, json.JSONDecodeError) as e:
                 retry += 1
                 logging.exception(
                     f"No response or error, retrying in {self.sec_wait} seconds. "

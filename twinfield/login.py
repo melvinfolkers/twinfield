@@ -5,7 +5,7 @@ import os
 import time
 
 import requests
-from requests.exceptions import SSLError
+from requests.exceptions import RequestException
 
 from twinfield.exceptions import EnvironmentVariablesError, LoginError
 
@@ -103,7 +103,7 @@ class TwinfieldLogin:
                         output = response
                 success = True
 
-            except (ConnectionError, SSLError, LoginError) as e:
+            except (ConnectionError, RequestException, LoginError, json.JSONDecodeError) as e:
                 retry += 1
                 logging.exception(
                     f"No response or error, retrying in {self.sec_wait} seconds. "
